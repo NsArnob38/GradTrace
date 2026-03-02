@@ -44,7 +44,7 @@ def main():
     records, attempted, earned = process_transcript(filepath)
 
     from engine.course_db import ALL_COURSES
-    unrecognized = set(r.course_code for r in records if r.course_code not in ALL_COURSES and r.grade not in ("W", "I"))
+    unrecognized = set(r.course_code for r in records if r.course_code not in ALL_COURSES)
     if unrecognized:
         print(header_bar("LEVEL 1 — CREDIT TALLY REPORT"))
         print(f"  Transcript File  : {os.path.basename(filepath)}")

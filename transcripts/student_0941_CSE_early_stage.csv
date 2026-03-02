@@ -1,0 +1,12 @@
+course_code,course_name,credits,grade,semester
+ENG102,Introduction to Composition,3,T,Spring2019
+CSE115L,Programming Language I Lab,1,C+,Fall2020
+PHY108L,Physics II Lab,1,F,Fall2020
+MAT116,Pre-Calculus,3,D,Fall2020
+PHY108,Physics II,3,B,Fall2020
+CSE115,Programming Language I,3,D,Fall2020
+MAT120,Calculus I,3,D,Spring2021
+CSE327,Software Engineering,3,C+,Spring2021
+GEO205,Geography,3,A-,Spring2021
+CSE173,Discrete Mathematics,3,B-,Spring2021
+PHY108L,Physics II Lab,1,W,Spring2021

@@ -1,0 +1,15 @@
+course_code,course_name,credits,grade,semester
+MAT112,College Algebra,0,T,Spring2019
+MAT116,Pre-Calculus,3,C,Fall2023
+EEE141L,Electrical Circuits I Lab,1,D,Fall2023
+CSE115L,Programming Language I Lab,1,B,Fall2023
+CSE115,Programming Language I,3,C+,Fall2023
+EEE141,Electrical Circuits I,3,C+,Fall2023
+MAT120,Calculus I,3,B,Spring2024
+ECO101,Intro to Microeconomics,3,C-,Spring2024
+CSE331L,Microprocessor Interfacing Lab,1,B-,Spring2024
+CSE173,Discrete Mathematics,3,C+,Spring2024
+CSE215,Programming Language II,3,B,Summer2024
+CSE215L,Programming Language II Lab,1,C+,Summer2024
+CSE101,Introduction to Python Programming,3,F,Summer2024
+MAT130,Calculus II,3,B-,Summer2024

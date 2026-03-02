@@ -1,9 +1,14 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,F,Fall2019
-MAT116,Pre-Calculus,3,F,Fall2019
-PHY108L,Physics II Lab,1,F,Fall2019
-CSE331L,Microprocessor Interfacing Lab,1,D+,Fall2019
-HIS102,World Civilization,3,D+,Fall2019
-CSE115,Programming Language I,3,F,Spring2020
-MAT116,Pre-Calculus,3,F,Spring2020
-MAT125,Linear Algebra,3,F,Spring2020
+ENG102,Introduction to Composition,3,T,Spring2019
+CSE225L,Data Structures & Algorithms Lab,1,D,Summer2021
+CSE115,Programming Language I,3,F,Summer2021
+MAT116,Pre-Calculus,3,F,Summer2021
+CSE115,Programming Language I,3,B,Fall2021
+CSE115L,Programming Language I Lab,1,D+,Fall2021
+EEE141L,Electrical Circuits I Lab,1,C,Fall2021
+MAT116,Pre-Calculus,3,F,Fall2021
+CSE173,Discrete Mathematics,3,D+,Spring2022
+MAT116,Pre-Calculus,3,I,Spring2022
+CSE311L,Database Management Systems Lab,1,C,Spring2022
+POL104,Political Science,3,F,Spring2022
+ENG103,Intermediate Composition,3,C-,Spring2022

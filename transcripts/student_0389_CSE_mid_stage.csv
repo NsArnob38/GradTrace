@@ -1,0 +1,16 @@
+course_code,course_name,credits,grade,semester
+ENV203,Environmental Studies,3,D+,Spring2024
+CSE115,Programming Language I,3,B,Spring2024
+ECO101,Intro to Microeconomics,3,B+,Spring2024
+CSE115L,Programming Language I Lab,1,D+,Spring2024
+SOC101,Intro to Sociology,3,D+,Spring2024
+MAT116,Pre-Calculus,3,B+,Spring2024
+POL101,Intro to Political Science,3,B,Summer2024
+CSE425,Concepts of Programming Languages,3,C,Summer2024
+CSE173,Discrete Mathematics,3,B-,Summer2024
+MAT120,Calculus I,3,D,Summer2024
+CSE145,Introduction to Artificial Intelligence,3,C,Fall2024
+CSE215L,Programming Language II Lab,1,C,Fall2024
+PHI104,Introduction to Ethics,3,C+,Fall2024
+MAT130,Calculus II,3,D,Fall2024
+CSE215,Programming Language II,3,D+,Fall2024

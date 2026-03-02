@@ -1,0 +1,16 @@
+course_code,course_name,credits,grade,semester
+MAT112,College Algebra,0,T,Spring2019
+MAT116,Pre-Calculus,0,T,Spring2019
+ENG102,Introduction to Composition,3,T,Spring2019
+EEE111L,Analog Electronics I Lab,1,B-,Fall2021
+ENG105,Advanced Composition,3,B,Fall2021
+MAT120,Calculus I,3,B+,Fall2021
+CSE115,Programming Language I,3,A,Fall2021
+BIO103L,Biology I Lab,1,B,Fall2021
+CSE115L,Programming Language I Lab,1,C,Fall2021
+MAT130,Calculus II,3,B-,Spring2022
+CSE173,Discrete Mathematics,3,A,Spring2022
+EEE141L,Electrical Circuits I Lab,1,B,Spring2022
+CSE145,Introduction to Artificial Intelligence,3,C,Spring2022
+EEE141,Electrical Circuits I,3,B+,Spring2022
+CSE327,Software Engineering,3,C+,Spring2022

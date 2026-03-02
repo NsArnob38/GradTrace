@@ -1,32 +1,46 @@
 course_code,course_name,credits,grade,semester
-INB372,International Business,3,A-,Spring2022
-LAW200,Legal Environment of Business,3,C+,Spring2022
-MIS207,Management Information Systems,3,B+,Spring2022
-PHI401,Ethics / Philosophy,3,B,Summer2022
-MGT368,Entrepreneurship,3,A-,Summer2022
-MKT202,Introduction to Marketing,3,B-,Summer2022
-MGT212,Principles of Management,3,B-,Fall2022
-MIS107,Introduction to Computers,3,B,Fall2022
-ACT201,Intro to Financial Accounting,3,A,Fall2022
-BUS251,Business Communication,3,B,Fall2022
-ECO101,Intro to Microeconomics,3,B,Fall2022
-ECO104,Intro to Macroeconomics,3,B+,Spring2023
-ACT202,Intro to Managerial Accounting,3,C-,Spring2023
-CSE311L,Database Management Systems Lab,1,D,Summer2023
-PHY107L,Physics I Lab,1,A,Summer2023
-CSE225L,Data Structures & Algorithms Lab,1,B+,Summer2023
-BIO103,Biology I,3,W,Summer2023
-CSE331,Microprocessor Interfacing,3,C+,Fall2023
-CSE331L,Microprocessor Interfacing Lab,1,A,Fall2023
-HIS102,World Civilization,3,A-,Fall2023
-CSE101,Introduction to Python Programming,3,B,Fall2023
-CSE327,Software Engineering,3,C+,Fall2023
-CHE101L,Chemistry I Lab,1,B-,Fall2023
-CSE231L,Digital Logic Design Lab,1,B-,Spring2024
-CSE215L,Programming Language II Lab,1,C-,Spring2024
-CSE226,Fundamentals of Vibe Coding,3,B+,Spring2024
-EEE141,Electrical Circuits I,3,F,Spring2024
-EEE111L,Analog Electronics I Lab,1,C+,Spring2024
-ENG105,Advanced Composition,3,A,Summer2024
-MAT116,Pre-Calculus,3,F,Summer2024
-HIS101,Bangladesh History,3,B,Summer2024
+LAW200,Legal Environment of Business,3,C-,Fall2020
+BUS251,Business Communication,3,B,Fall2020
+MIS207,Management Information Systems,3,A,Fall2020
+MGT212,Principles of Management,3,B,Fall2020
+MGT368,Entrepreneurship,3,A-,Spring2021
+MIS107,Introduction to Computers,3,C+,Spring2021
+PHI401,Ethics / Philosophy,3,C+,Spring2021
+MKT202,Introduction to Marketing,3,B,Spring2021
+MGT351,Human Resource Management,3,B+,Summer2021
+INB372,International Business,3,B+,Summer2021
+ACT201,Intro to Financial Accounting,3,C-,Summer2021
+BIO103L,Biology I Lab,1,A-,Fall2021
+BIO103,Biology I,3,C,Fall2021
+CSE331L,Microprocessor Interfacing Lab,1,B+,Fall2021
+CSE331,Microprocessor Interfacing,3,D,Fall2021
+CSE115,Programming Language I,3,B-,Spring2022
+CSE115L,Programming Language I Lab,1,A,Spring2022
+CSE225L,Data Structures & Algorithms Lab,1,C-,Spring2022
+CSE311L,Database Management Systems Lab,1,B-,Spring2022
+CSE215L,Programming Language II Lab,1,B+,Spring2022
+HIS102,World Civilization,3,A,Summer2022
+ENG111,Public Speaking,3,F,Summer2022
+CSE173,Discrete Mathematics,3,B,Summer2022
+PHY108L,Physics II Lab,1,B,Fall2022
+CSE425,Concepts of Programming Languages,3,D+,Fall2022
+EEE141,Electrical Circuits I,3,D+,Fall2022
+CSE101,Introduction to Python Programming,3,B-,Fall2022
+EEE141L,Electrical Circuits I Lab,1,A,Fall2022
+HIS101,Bangladesh History,3,B+,Spring2023
+PHY108,Physics II,3,B-,Spring2023
+ENG105,Advanced Composition,3,C+,Spring2023
+EEE111,Analog Electronics I,3,A,Spring2023
+CSE145,Introduction to Artificial Intelligence,3,C+,Spring2023
+EEE111L,Analog Electronics I Lab,1,B-,Spring2023
+ENG111,Public Speaking,3,C-,Summer2023
+CHE101L,Chemistry I Lab,1,C,Summer2023
+CSE231L,Digital Logic Design Lab,1,C,Summer2023
+CHE101,Chemistry I,3,C,Summer2023
+EEE452,Engineering Economics,3,D,Summer2023
+ENG103,Intermediate Composition,3,D+,Fall2023
+CEE110,Engineering Drawing,1,F,Fall2023
+PHI104,Introduction to Ethics,3,F,Fall2023
+MAT125,Linear Algebra,3,C,Spring2024
+CEE110,Engineering Drawing,1,C-,Spring2024
+CSE226,Fundamentals of Vibe Coding,3,A-,Spring2024

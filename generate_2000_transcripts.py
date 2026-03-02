@@ -49,46 +49,74 @@ PROFILES = [
 ]
 
 
-def grade_for_profile(profile):
-    """Return a weighted random grade based on student profile."""
-    if profile == "top_student":
-        return random.choices(
-            ["A", "A-", "B+", "B", "B-", "C+"],
-            weights=[30, 25, 20, 15, 7, 3], k=1)[0]
-    elif profile == "good_student":
-        return random.choices(
-            ["A", "A-", "B+", "B", "B-", "C+", "C", "C-"],
-            weights=[10, 15, 20, 20, 15, 10, 7, 3], k=1)[0]
-    elif profile == "struggling":
-        return random.choices(
-            ["B", "B-", "C+", "C", "C-", "D+", "D", "F"],
-            weights=[5, 8, 12, 20, 15, 15, 15, 10], k=1)[0]
-    elif profile == "retake_heavy":
-        return random.choices(
-            ["C", "C-", "D+", "D", "F", "W"],
-            weights=[15, 15, 15, 15, 25, 15], k=1)[0]
-    elif profile == "probation":
-        return random.choices(
-            ["C-", "D+", "D", "F", "I"],
-            weights=[15, 20, 25, 30, 10], k=1)[0]
-    elif profile == "withdrawn_heavy":
-        return random.choices(
-            ["A", "B+", "B", "C+", "C", "D", "F", "W"],
-            weights=[8, 10, 12, 10, 10, 5, 5, 40], k=1)[0]
-    elif profile == "transfer_student":
-        return random.choices(
-            ["A", "A-", "B+", "B", "C+", "C", "T"],
-            weights=[12, 12, 15, 15, 10, 10, 26], k=1)[0]
-    else:
-        return random.choices(
-            ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "W"],
-            weights=[8, 8, 10, 12, 10, 10, 10, 8, 7, 7, 6, 4], k=1)[0]
+def grade_for_profile(profile, grade_counts=None):
+    """Return a weighted random grade based on student profile.
+    If grade_counts is provided, ensures no single passing grade (A through D) 
+    appears more than 5 times."""
+    
+    if grade_counts is None:
+        grade_counts = {}
+
+    def get_raw_grade():
+        if profile == "top_student":
+            return random.choices(
+                ["A", "A-", "B+", "B", "B-", "C+"],
+                weights=[30, 25, 20, 15, 7, 3], k=1)[0]
+        elif profile == "good_student":
+            return random.choices(
+                ["A", "A-", "B+", "B", "B-", "C+", "C", "C-"],
+                weights=[10, 15, 20, 20, 15, 10, 7, 3], k=1)[0]
+        elif profile == "struggling":
+            return random.choices(
+                ["B", "B-", "C+", "C", "C-", "D+", "D", "F"],
+                weights=[10, 15, 15, 20, 15, 10, 10, 5], k=1)[0]
+        elif profile == "retake_heavy":
+            return random.choices(
+                ["B", "B-", "C+", "C", "C-", "D+", "D", "F", "W"],
+                weights=[5, 10, 10, 15, 15, 10, 10, 15, 10], k=1)[0]
+        elif profile == "probation":
+            return random.choices(
+                ["B", "B-", "C+", "C", "C-", "D+", "D", "F", "I"],
+                weights=[5, 5, 10, 15, 15, 15, 15, 15, 5], k=1)[0]
+        elif profile == "withdrawn_heavy":
+            return random.choices(
+                ["A", "B+", "B", "C+", "C", "D", "F", "W"],
+                weights=[8, 10, 12, 10, 10, 5, 5, 40], k=1)[0]
+        elif profile == "transfer_student":
+            return random.choices(
+                ["A", "A-", "B+", "B", "C+", "C", "T"],
+                weights=[12, 12, 15, 15, 10, 10, 26], k=1)[0]
+        else:
+            return random.choices(
+                ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "W"],
+                weights=[8, 8, 10, 12, 10, 10, 10, 8, 7, 7, 6, 4], k=1)[0]
+
+    # Try up to 10 times to get a grade that hasn't hit the limit
+    for _ in range(10):
+        grade = get_raw_grade()
+        if grade not in ("F", "W", "I", "T"):
+            if grade_counts.get(grade, 0) < 5:
+                # Grade limit not reached
+                return grade
+        else:
+            return grade # Don't limit F, W, I, T
+            
+    # If we couldn't find one that hasn't hit the limit, just return the lowest valid passing grade or F as fallback
+    fallback_grades = ["C-", "D+", "D", "F"]
+    for fg in fallback_grades:
+        if fg == "F" or grade_counts.get(fg, 0) < 5:
+            return fg
+    return "F"
 
 
 def sort_rows(rows):
-    """Sort transcript rows chronologically by semester."""
+    """Sort transcript rows chronologically by semester, and randomly scatter within semester."""
     # Create a mapping for quick lookup
     sem_map = {sem: i for i, sem in enumerate(SEMESTERS)}
+    
+    # Randomly shuffle rows first so that stable sorting scrambles courses within the same semester
+    random.shuffle(rows)
+    
     # If a semester is not in the list (e.g. transfer), give it index -1
     return sorted(rows, key=lambda r: sem_map.get(r[4], -1))
 
@@ -138,6 +166,7 @@ def generate_cse_student(profile, student_id):
     rows = []
     passed_courses = set()
     credits_earned = 0
+    grade_counts = {}
     
     # ── Simulation Parameters ──
     # Determine progress based on profile
@@ -231,8 +260,12 @@ def generate_cse_student(profile, student_id):
         # 4. Process the selected courses
         sem_passed = []
         for code in taking:
+            if code in sem_passed:
+                continue # Prevent accidental duplicate in same semester
+                
             name, credits = ALL_COURSES[code]
-            grade = grade_for_profile(profile)
+            grade = grade_for_profile(profile, grade_counts)
+            grade_counts[grade] = grade_counts.get(grade, 0) + 1
             rows.append([code, name, str(credits), grade, sem])
             
             if grade not in ("F", "W", "I"):
@@ -241,39 +274,53 @@ def generate_cse_student(profile, student_id):
                 
                 # If theory passed, allow lab in next sem (already covered by get_eligible)
                 # If lab is in all_eligible and theory is also taken this sem, let's just allow it
-                if not code.endswith("L") and code + "L" in ALL_COURSES and code + "L" in all_eligible:
+                if not code.endswith("L") and code + "L" in ALL_COURSES and code + "L" in all_eligible and (code + "L") not in sem_passed:
                     if random.random() < 0.8: # Take lab with theory
                          l_code = code + "L"
                          l_name, l_credits = ALL_COURSES[l_code]
-                         l_grade = grade_for_profile(profile)
+                         l_grade = grade_for_profile(profile, grade_counts)
+                         grade_counts[l_grade] = grade_counts.get(l_grade, 0) + 1
                          rows.append([l_code, l_name, str(l_credits), l_grade, sem])
                          if l_grade not in ("F", "W", "I"):
                              sem_passed.append(l_code)
                              credits_earned += l_credits
+                             
+        # Sometimes intentionally do an unauthorized retake (retake a passed course) if struggling/retake_heavy
+        if profile in ("struggling", "retake_heavy") and len(passed_courses) > 5 and random.random() < 0.10:
+            # Pick a course already passed with a good grade
+            possible_retakes = [r for r in rows if r[0] in passed_courses and r[3] in ("A", "A-", "B+", "B", "B-")]
+            if possible_retakes:
+                retake_course = random.choice(possible_retakes)
+                code = retake_course[0]
+                if code not in sem_passed: # Don't retake it the same semester we just passed it
+                    name, credits = ALL_COURSES[code]
+                    grade = grade_for_profile(profile, grade_counts)
+                    grade_counts[grade] = grade_counts.get(grade, 0) + 1
+                    rows.append([code, name, str(credits), grade, sem])
+                    # No need to add to sem_passed or credits_earned because it's an unauthorized retake
 
         passed_courses.update(sem_passed)
 
     return sort_rows(rows)
 
 
-def generate_bba_student(profile, student_id, concentration=None):
-    """Generate a BBA student transcript strictly following prerequisites."""
+def generate_bba_student(profile, student_id):
+    """Generate a BBA student transcript."""
     rows = []
-    if concentration is None:
-        concentration = random.choice(BBA_CONC_NAMES)
-        
     passed_courses = set()
     credits_earned = 0
+    concentration = random.choice(BBA_CONC_NAMES)
+    grade_counts = {}
     
     # ── Simulation Parameters ──
     if profile == "top_student":
-        target_credits = 130
+        target_credits = 124
         pref_load = 5
     elif profile == "good_student":
-        target_credits = random.randint(100, 130)
+        target_credits = random.randint(100, 124)
         pref_load = random.randint(4, 5)
     elif profile == "nearly_done":
-        target_credits = random.randint(115, 128)
+        target_credits = random.randint(110, 120)
         pref_load = 4
     elif profile == "mid_stage":
         target_credits = random.randint(50, 80)
@@ -282,7 +329,7 @@ def generate_bba_student(profile, student_id, concentration=None):
         target_credits = random.randint(12, 40)
         pref_load = random.randint(3, 4)
     else:
-        target_credits = random.randint(30, 110)
+        target_credits = random.randint(30, 100)
         pref_load = random.randint(2, 4)
 
     # ── Waivers ──
@@ -345,31 +392,53 @@ def generate_bba_student(profile, student_id, concentration=None):
         all_eligible.sort(key=lambda c: priority_map.get(c, 0), reverse=True)
         taking = random.sample(all_eligible[:min(len(all_eligible), current_load+2)], current_load)
 
+        # 4. Process the selected courses
         sem_passed = []
         for code in taking:
+            if code in sem_passed:
+                continue # Prevent accidental duplicate in same semester
+                
             name, credits = ALL_COURSES[code]
-            grade = grade_for_profile(profile)
+            grade = grade_for_profile(profile, grade_counts)
+            grade_counts[grade] = grade_counts.get(grade, 0) + 1
             rows.append([code, name, str(credits), grade, sem])
             if grade not in ("F", "W", "I"):
                 sem_passed.append(code)
                 credits_earned += credits
                 
                 # Matching Lab
-                if code in BBA_GED_CHOICE_SCI and code + "L" in ALL_COURSES:
+                if code in BBA_GED_CHOICE_SCI and code + "L" in ALL_COURSES and (code + "L") not in sem_passed:
                     if random.random() < 0.7:
                         l_code = code + "L"
                         l_name, l_credits = ALL_COURSES[l_code]
-                        l_grade = grade_for_profile(profile)
+                        l_grade = grade_for_profile(profile, grade_counts)
+                        grade_counts[l_grade] = grade_counts.get(l_grade, 0) + 1
                         rows.append([l_code, l_name, str(l_credits), l_grade, sem])
                         if l_grade not in ("F", "W", "I"):
                             sem_passed.append(l_code)
                             credits_earned += l_credits
+                            
+        # Sometimes intentionally do an unauthorized retake (retake a passed course) if struggling/retake_heavy
+        if profile in ("struggling", "retake_heavy") and len(passed_courses) > 5 and random.random() < 0.10:
+            # Pick a course already passed with a good grade
+            possible_retakes = [r for r in rows if r[0] in passed_courses and r[3] in ("A", "A-", "B+", "B", "B-")]
+            if possible_retakes:
+                retake_course = random.choice(possible_retakes)
+                code = retake_course[0]
+                if code not in sem_passed: # Don't retake it the same semester we just passed it
+                    name, credits = ALL_COURSES[code]
+                    grade = grade_for_profile(profile, grade_counts)
+                    grade_counts[grade] = grade_counts.get(grade, 0) + 1
+                    rows.append([code, name, str(credits), grade, sem])
+                    # No need to add to sem_passed or credits_earned because it's an unauthorized retake
 
         passed_courses.update(sem_passed)
 
     # Internship
     if credits_earned >= 100 and profile in ("top_student", "good_student", "nearly_done"):
-        rows.append(["BUS498", "Internship", "4", grade_for_profile(profile), avail_sems[-1]])
+        grade = grade_for_profile(profile, grade_counts)
+        grade_counts[grade] = grade_counts.get(grade, 0) + 1
+        rows.append(["BUS498", "Internship", "4", grade, avail_sems[-1]])
 
     return sort_rows(rows), concentration
 
@@ -380,6 +449,7 @@ def generate_dept_change_student(student_id, current_program, previous_program):
     passed_courses = set()
     credits_earned = 0
     concentration = None
+    grade_counts = {}
     
     # Selection of semesters
     n_semesters = random.randint(8, 12)
@@ -423,18 +493,24 @@ def generate_dept_change_student(student_id, current_program, previous_program):
         
         sem_passed = []
         for code in taking:
+            if code in sem_passed:
+                continue
+                
             name, credits = ALL_COURSES[code]
-            grade = grade_for_profile("good_student" if is_old else "mid_stage")
+            grade = grade_for_profile("good_student" if is_old else "mid_stage", grade_counts)
+            grade_counts[grade] = grade_counts.get(grade, 0) + 1
             rows.append([code, name, str(credits), grade, sem])
             if grade not in ("F", "W", "I"):
                 sem_passed.append(code)
                 credits_earned += credits
                 
                 # Lab logic
-                if code + "L" in ALL_COURSES and code + "L" in eligible:
+                if code + "L" in ALL_COURSES and code + "L" in eligible and (code + "L") not in sem_passed:
                     l_code = code + "L"
                     l_name, l_credits = ALL_COURSES[l_code]
-                    rows.append([l_code, l_name, str(l_credits), grade_for_profile("good_student"), sem])
+                    l_grade = grade_for_profile("good_student", grade_counts)
+                    grade_counts[l_grade] = grade_counts.get(l_grade, 0) + 1
+                    rows.append([l_code, l_name, str(l_credits), l_grade, sem])
                     sem_passed.append(l_code)
                     credits_earned += l_credits
 

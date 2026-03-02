@@ -1,0 +1,12 @@
+course_code,course_name,credits,grade,semester
+ENG102,Introduction to Composition,3,T,Spring2019
+MAT112,College Algebra,0,T,Spring2019
+BIO103,Biology I,3,C-,Spring2023
+BIO103L,Biology I Lab,1,D,Spring2023
+CSE115L,Programming Language I Lab,1,A-,Spring2023
+EEE141L,Electrical Circuits I Lab,1,B,Spring2023
+CSE115,Programming Language I,3,C-,Spring2023
+MAT116,Pre-Calculus,3,C+,Spring2023
+CSE173,Discrete Mathematics,3,B,Summer2023
+MAT120,Calculus I,3,A,Summer2023
+POL104,Political Science,3,B-,Summer2023

@@ -442,6 +442,12 @@ def audit_cse(records, waivers, credits_earned, cgpa, credit_reduction=0):
         eligible = False
         reasons.append(f"Major Elective CGPA ({major_elective_cgpa:.2f}) < {CSE_MAJOR_ELECTIVE_CGPA:.2f}")
 
+    # Check for unauthorized retakes
+    for r in records:
+        if r.status == "UNAUTHORIZED-RETAKE":
+            eligible = False
+            reasons.append(f"Invalid course: Unauthorized retake of {r.course_code} ({r.grade} in {r.semester})")
+
     if remaining:
         eligible = False
         total_missing = sum(len(v) for v in remaining.values())
@@ -621,6 +627,12 @@ def audit_bba(records, waivers, credits_earned, cgpa, credit_reduction=0, concen
     if concentration_cgpa < BBA_CONCENTRATION_CGPA:
         eligible = False
         reasons.append(f"Concentration CGPA ({concentration_cgpa:.2f}) < {BBA_CONCENTRATION_CGPA:.2f}")
+
+    # Check for unauthorized retakes
+    for r in records:
+        if r.status == "UNAUTHORIZED-RETAKE":
+            eligible = False
+            reasons.append(f"Invalid course: Unauthorized retake of {r.course_code} ({r.grade} in {r.semester})")
 
     if remaining:
         eligible = False

@@ -1,0 +1,15 @@
+course_code,course_name,credits,grade,semester
+CSE115,Programming Language I,3,D,Fall2019
+CSE115L,Programming Language I Lab,1,B-,Fall2019
+MAT116,Pre-Calculus,3,D,Spring2020
+CSE173,Discrete Mathematics,3,C+,Spring2020
+MAT120,Calculus I,3,B,Summer2020
+CSE215L,Programming Language II Lab,1,C-,Fall2020
+CSE215,Programming Language II,3,C,Fall2020
+CSE101,Introduction to Python Programming,3,C-,Spring2021
+CSE225,Data Structures & Algorithms,3,C-,Spring2021
+MAT130,Calculus II,3,C-,Spring2021
+CSE225L,Data Structures & Algorithms Lab,1,C+,Spring2021
+CSE231L,Digital Logic Design Lab,1,D+,Summer2021
+MAT250,Calculus III,3,D,Summer2021
+CSE231,Digital Logic Design,3,D+,Summer2021

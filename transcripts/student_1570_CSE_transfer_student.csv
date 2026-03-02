@@ -1,0 +1,16 @@
+course_code,course_name,credits,grade,semester
+MAT112,College Algebra,0,T,Spring2019
+MAT116,Pre-Calculus,0,T,Spring2019
+MAT120,Calculus I,3,A,Spring2019
+CSE115L,Programming Language I Lab,1,B,Summer2019
+CSE115,Programming Language I,3,A-,Summer2019
+CSE173,Discrete Mathematics,3,B,Fall2019
+MAT125,Linear Algebra,3,C,Spring2020
+MAT130,Calculus II,3,A,Spring2020
+CSE215L,Programming Language II Lab,1,C+,Spring2020
+CSE215,Programming Language II,3,T,Spring2020
+CSE225,Data Structures & Algorithms,3,T,Summer2020
+ENG103,Intermediate Composition,3,C+,Fall2020
+CSE231L,Digital Logic Design Lab,1,A,Fall2020
+CSE231,Digital Logic Design,3,B+,Fall2020
+MAT250,Calculus III,3,B+,Fall2020

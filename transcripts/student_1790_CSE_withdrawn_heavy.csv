@@ -1,0 +1,13 @@
+course_code,course_name,credits,grade,semester
+MAT116,Pre-Calculus,0,T,Spring2019
+ENG102,Introduction to Composition,3,T,Spring2019
+CSE115L,Programming Language I Lab,1,W,Spring2022
+CSE115,Programming Language I,3,C,Spring2022
+MAT120,Calculus I,3,W,Spring2022
+CSE173,Discrete Mathematics,3,W,Summer2022
+MAT120,Calculus I,3,C,Summer2022
+CSE173,Discrete Mathematics,3,W,Fall2022
+CSE311L,Database Management Systems Lab,1,B+,Fall2022
+MAT130,Calculus II,3,W,Fall2022
+MAT130,Calculus II,3,B,Spring2023
+CSE173,Discrete Mathematics,3,B,Spring2023

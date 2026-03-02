@@ -1,0 +1,160 @@
+﻿
+==================================================
+  LEVEL 3 ΓÇö AUDIT REPORT (CSE)
+==================================================
+  Transcript File  : student_0009_CSE_struggling.csv
+  Program          : CSE
+  Credits Earned   : 44 / 127
+  CGPA             : 1.82 / 4.00
+  Major Core CGPA  : 1.94 / 4.00
+  Major Elec CGPA  : 0.00 / 4.00
+  Academic Standing: DISMISSAL
+  Graduation Eligible: NO
+    X Credits earned (44) < 127 required
+    X Overall CGPA (1.82) < 2.00
+    X Major Core CGPA (1.94) < 2.00
+    X Invalid course: Unauthorized retake of CSE115L (C in Fall2022)
+    X 44 required course(s) still missing
+==================================================
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  MISSING COURSES / REQUIREMENTS
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  [CSE Major Core] ΓÇö 13 course(s), 29 credits
+    Γùï CSE225 (3 credits)
+    Γùï CSE225L (1 credits)
+    Γùï CSE231 (3 credits)
+    Γùï CSE299 (1 credits)
+    Γùï CSE311 (3 credits)
+    Γùï CSE311L (1 credits)
+    Γùï CSE323 (3 credits)
+    Γùï CSE327 (3 credits)
+    Γùï CSE331L (1 credits)
+    Γùï CSE332 (3 credits)
+    Γùï CSE373 (3 credits)
+    Γùï EEE111 (3 credits)
+    Γùï EEE111L (1 credits)
+
+  [Capstone] ΓÇö 3 course(s), 7 credits
+    Γùï CSE499A (2 credits)
+    Γùï CSE499B (2 credits)
+    Γùï EEE452 (3 credits)
+
+  [SEPS Core] ΓÇö 11 course(s), 25 credits
+    Γùï MAT250 (3 credits)
+    Γùï MAT125 (3 credits)
+    Γùï MAT350 (3 credits)
+    Γùï MAT361 (3 credits)
+    Γùï PHY107 (3 credits)
+    Γùï PHY107L (1 credits)
+    Γùï PHY108 (3 credits)
+    Γùï PHY108L (1 credits)
+    Γùï CHE101 (3 credits)
+    Γùï CHE101L (1 credits)
+    Γùï CEE110 (1 credits)
+
+  [GED Required] ΓÇö 7 course(s), 21 credits
+    Γùï ENG103 (3 credits)
+    Γùï ENG105 (3 credits)
+    Γùï ENG111 (3 credits)
+    Γùï PHI104 (3 credits)
+    Γùï HIS102 (3 credits)
+    Γùï CSE101 (3 credits)
+    Γùï CSE226 (3 credits)
+
+  [GED Choice (ECO101 or ECO104)] ΓÇö 2 course(s), 6 credits
+    Γùï ECO101 (3 credits)
+    Γùï ECO104 (3 credits)
+
+  [GED Choice (POL101 or POL104)] ΓÇö 2 course(s), 6 credits
+    Γùï POL101 (3 credits)
+    Γùï POL104 (3 credits)
+
+  [GED Choice (SOC101/ANT101/ENV203/GEO205)] ΓÇö 4 course(s), 12 credits
+    Γùï SOC101 (3 credits)
+    Γùï ANT101 (3 credits)
+    Γùï ENV203 (3 credits)
+    Γùï GEO205 (3 credits)
+
+  [CSE Electives (400-level)] ΓÇö 1 course(s), 9 credits
+    Γùï Any CSE 4xx (3 needed) (9 credits)
+
+  [Open Electives] ΓÇö 1 course(s), 3 credits
+    Γùï Any courses (3 credits needed) (3 credits)
+
+  Total Missing: 44 course(s), 118 credits
+==================================================
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  PATH TO GRADUATION
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  Summary:
+    Credits still needed  : 83
+    Courses to complete   : 44
+    Estimated semesters   : ~8 (at 15 credits/semester)
+
+  Action Items:
+
+    1. [HIGH] CREDITS
+       Earn 83 more credits to reach the 127-credit requirement
+       Currently at 44/127 credits.
+
+    2. [CRITICAL] CGPA
+       Raise overall CGPA from 1.82 to at least 2.00
+       CAUTION: You have exceeded the probation limit. You are at dismissal stage. Contact Academic Advising immediately.
+
+    3. [HIGH] MAJOR GPA
+       Raise Major CGPA from 1.94 to at least 2.00
+       Consider retaking core courses where you scored D/D+ to improve this.
+
+    4. [HIGH] CSE MAJOR CORE
+       Complete 13 course(s) (29 credits)
+       CSE225 (3cr), CSE225L (1cr), CSE231 (3cr), CSE299 (1cr)
+       CSE311 (3cr), CSE311L (1cr), CSE323 (3cr), CSE327 (3cr)
+       CSE331L (1cr), CSE332 (3cr), CSE373 (3cr), EEE111 (3cr)
+       EEE111L (1cr)
+
+    5. [HIGH] CAPSTONE
+       Complete 3 course(s) (7 credits)
+       CSE499A (2cr), CSE499B (2cr), EEE452 (3cr)
+
+    6. [HIGH] SEPS CORE
+       Complete 11 course(s) (25 credits)
+       MAT250 (3cr), MAT125 (3cr), MAT350 (3cr), MAT361 (3cr)
+       PHY107 (3cr), PHY107L (1cr), PHY108 (3cr), PHY108L (1cr)
+       CHE101 (3cr), CHE101L (1cr), CEE110 (1cr)
+
+    7. [HIGH] GED REQUIRED
+       Complete 7 course(s) (21 credits)
+       ENG103 (3cr), ENG105 (3cr), ENG111 (3cr), PHI104 (3cr)
+       HIS102 (3cr), CSE101 (3cr), CSE226 (3cr)
+
+    8. [MEDIUM] GED CHOICE (ECO101 OR ECO104)
+       Complete 1 course from: ECO101 or ECO104
+       Pick any one (6 credits each).
+
+    9. [MEDIUM] GED CHOICE (POL101 OR POL104)
+       Complete 1 course from: POL101 or POL104
+       Pick any one (6 credits each).
+
+    10. [MEDIUM] GED CHOICE (SOC101/ANT101/ENV203/GEO205)
+       Complete 1 course from: SOC101 or ANT101 or ENV203 or GEO205
+       Pick any one (12 credits each).
+
+    11. [MEDIUM] CSE ELECTIVES (400-LEVEL)
+       Complete 9 credits of electives
+       Any CSE 4xx (3 needed) (9cr)
+
+    12. [MEDIUM] OPEN ELECTIVES
+       Complete 3 credits of electives
+       Any courses (3 credits needed) (3cr)
+
+    13. [RECOMMENDED] RETAKE SUGGESTIONS
+       Consider retaking 5 course(s) to boost GPA
+       BIO103 (current: D+, 3cr), CSE145 (current: C-, 3cr)
+       CSE173 (current: C-, 3cr), EEE141 (current: D, 3cr)
+       HIS101 (current: D+, 3cr)
+
+==================================================

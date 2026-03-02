@@ -1,40 +1,22 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,C+,Fall2020
-CSE115L,Programming Language I Lab,1,C+,Fall2020
-MAT116,Pre-Calculus,3,W,Fall2020
-CSE327,Software Engineering,3,D,Fall2020
-CEE110,Engineering Drawing,1,B+,Fall2020
-CSE173,Discrete Mathematics,3,B+,Spring2021
-MAT116,Pre-Calculus,3,C,Spring2021
-EEE111L,Analog Electronics I Lab,1,B,Spring2021
-CSE231L,Digital Logic Design Lab,1,D,Spring2021
-MAT120,Calculus I,3,C+,Summer2021
-CSE215,Programming Language II,3,F,Summer2021
-BIO103,Biology I,3,B+,Summer2021
-BIO103L,Biology I Lab,1,C+,Summer2021
-CSE299,Junior Design Project,1,W,Summer2021
-CSE215,Programming Language II,3,F,Fall2021
-MAT130,Calculus II,3,W,Fall2021
-MAT361,Discrete Mathematics II,3,A,Fall2021
-PHY108L,Physics II Lab,1,C+,Fall2021
-CSE215,Programming Language II,3,W,Spring2022
-MAT130,Calculus II,3,W,Spring2022
-ANT101,Anthropology,3,B+,Spring2022
-CSE215,Programming Language II,3,C,Summer2022
-MAT130,Calculus II,3,C,Summer2022
-PHY107,Physics I,3,C,Summer2022
-PHY107L,Physics I Lab,1,W,Summer2022
-CSE225,Data Structures & Algorithms,3,C+,Fall2022
-CSE225L,Data Structures & Algorithms Lab,1,B,Fall2022
-MAT250,Calculus III,3,B,Fall2022
-CSE231,Digital Logic Design,3,A,Spring2023
-CSE215L,Programming Language II Lab,1,D,Spring2023
-CSE332,Computer Organization & Architecture,3,A,Summer2023
-CSE299,Junior Design Project,1,D,Summer2023
-CSE373,Design & Analysis of Algorithms,3,F,Summer2023
-CSE311,Database Management Systems,3,W,Fall2023
-CSE311L,Database Management Systems Lab,1,C,Fall2023
-CSE311,Database Management Systems,3,W,Spring2024
-CSE323,Operating Systems Design,3,C,Spring2024
-CSE331L,Microprocessor Interfacing Lab,1,W,Spring2024
-HIS101,Bangladesh History,3,B,Spring2024
+MAT112,College Algebra,0,T,Spring2019
+MAT116,Pre-Calculus,3,C,Summer2021
+CSE115,Programming Language I,3,W,Summer2021
+CSE215L,Programming Language II Lab,1,W,Summer2021
+EEE452,Engineering Economics,3,W,Fall2021
+CSE115,Programming Language I,3,F,Fall2021
+MAT120,Calculus I,3,W,Fall2021
+CSE327,Software Engineering,3,C,Fall2021
+PHY108L,Physics II Lab,1,W,Fall2021
+MAT120,Calculus I,3,W,Spring2022
+CHE101L,Chemistry I Lab,1,B,Spring2022
+POL101,Intro to Political Science,3,W,Spring2022
+CSE115,Programming Language I,3,W,Spring2022
+CSE225L,Data Structures & Algorithms Lab,1,F,Summer2022
+CSE331L,Microprocessor Interfacing Lab,1,B,Summer2022
+MAT120,Calculus I,3,B,Summer2022
+CSE115,Programming Language I,3,W,Summer2022
+MAT130,Calculus II,3,B+,Fall2022
+CSE115,Programming Language I,3,A,Fall2022
+CSE115L,Programming Language I Lab,1,A,Fall2022
+CSE101,Introduction to Python Programming,3,C+,Fall2022

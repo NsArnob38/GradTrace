@@ -1,0 +1,63 @@
+course_code,course_name,credits,grade,semester
+CSE115,Programming Language I,3,D+,Spring2019
+MAT120,Calculus I,3,C,Spring2019
+CSE145,Introduction to Artificial Intelligence,3,C+,Spring2019
+MAT116,Pre-Calculus,0,T,Spring2019
+MAT112,College Algebra,0,T,Spring2019
+CSE115L,Programming Language I Lab,1,F,Spring2019
+MAT125,Linear Algebra,3,C-,Summer2019
+ECO101,Intro to Microeconomics,3,F,Summer2019
+MAT130,Calculus II,3,B-,Summer2019
+CSE173,Discrete Mathematics,3,F,Summer2019
+CSE173,Discrete Mathematics,3,C-,Fall2019
+MAT250,Calculus III,3,C,Fall2019
+CSE215,Programming Language II,3,C-,Spring2020
+CSE215L,Programming Language II Lab,1,D+,Spring2020
+POL101,Intro to Political Science,3,C-,Spring2020
+EEE141L,Electrical Circuits I Lab,1,C+,Spring2020
+CSE225L,Data Structures & Algorithms Lab,1,B-,Summer2020
+CSE225,Data Structures & Algorithms,3,C-,Summer2020
+CSE225L,Data Structures & Algorithms Lab,1,W,Summer2020
+SOC101,Intro to Sociology,3,C,Summer2020
+ANT101,Anthropology,3,F,Summer2020
+CHE101L,Chemistry I Lab,1,F,Fall2020
+CSE231L,Digital Logic Design Lab,1,D+,Fall2020
+CSE231,Digital Logic Design,3,C,Fall2020
+HIS102,World Civilization,3,F,Fall2020
+CSE332,Computer Organization & Architecture,3,B-,Spring2021
+CSE299,Junior Design Project,1,D,Spring2021
+ENG103,Intermediate Composition,3,F,Summer2021
+HIS101,Bangladesh History,3,D,Summer2021
+CSE311,Database Management Systems,3,W,Summer2021
+CSE311L,Database Management Systems Lab,1,C,Summer2021
+CSE323,Operating Systems Design,3,F,Fall2021
+CSE311,Database Management Systems,3,W,Fall2021
+CSE331,Microprocessor Interfacing,3,W,Spring2022
+CSE323,Operating Systems Design,3,C+,Spring2022
+CSE311,Database Management Systems,3,B,Spring2022
+ENG105,Advanced Composition,3,D,Spring2022
+CSE331L,Microprocessor Interfacing Lab,1,B-,Summer2022
+CSE327,Software Engineering,3,F,Summer2022
+CSE331,Microprocessor Interfacing,3,D+,Summer2022
+CSE373,Design & Analysis of Algorithms,3,C+,Fall2022
+ENG111,Public Speaking,3,B-,Fall2022
+CSE327,Software Engineering,3,W,Fall2022
+CSE425,Concepts of Programming Languages,3,F,Spring2023
+CSE327,Software Engineering,3,D,Spring2023
+CSE425,Concepts of Programming Languages,3,C+,Summer2023
+CSE471,Compiler Design,3,F,Summer2023
+EEE141,Electrical Circuits I,3,F,Summer2023
+EEE111,Analog Electronics I,3,W,Fall2023
+EEE141,Electrical Circuits I,3,F,Fall2023
+EEE111L,Analog Electronics I Lab,1,F,Fall2023
+CSE332,Computer Organization & Architecture,3,F,Fall2023
+EEE111,Analog Electronics I,3,F,Spring2024
+PHY107L,Physics I Lab,1,F,Spring2024
+CHE101L,Chemistry I Lab,1,F,Spring2024
+EEE141,Electrical Circuits I,3,D,Spring2024
+EEE111L,Analog Electronics I Lab,1,F,Summer2024
+EEE111,Analog Electronics I,3,F,Summer2024
+EEE111L,Analog Electronics I Lab,1,F,Fall2024
+EEE111,Analog Electronics I,3,W,Fall2024
+HIS201,Modern History,3,F,Fall2024
+CSE226,Fundamentals of Vibe Coding,3,F,Fall2024

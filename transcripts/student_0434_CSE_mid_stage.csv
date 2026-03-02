@@ -1,11 +1,8 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,C+,Spring2019
-CSE115L,Programming Language I Lab,1,C,Spring2019
-MAT116,Pre-Calculus,3,D+,Spring2019
-POL101,Intro to Political Science,3,B,Spring2019
-CHE101L,Chemistry I Lab,1,A,Spring2019
-ECO101,Intro to Microeconomics,3,B-,Spring2019
-CSE173,Discrete Mathematics,3,B-,Summer2019
-MAT120,Calculus I,3,B+,Summer2019
-EEE111L,Analog Electronics I Lab,1,B,Summer2019
-CSE215L,Programming Language II Lab,1,C+,Summer2019
+MAT116,Pre-Calculus,0,T,Spring2019
+MAT112,College Algebra,0,T,Spring2019
+MAT120,Calculus I,3,B-,Summer2020
+CSE115,Programming Language I,3,B,Summer2020
+CSE115L,Programming Language I Lab,1,B-,Summer2020
+CSE173,Discrete Mathematics,3,A-,Fall2020
+MAT130,Calculus II,3,D,Fall2020

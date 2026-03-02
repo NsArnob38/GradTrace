@@ -1,0 +1,14 @@
+course_code,course_name,credits,grade,semester
+MAT116,Pre-Calculus,0,T,Spring2019
+ENG102,Introduction to Composition,3,T,Spring2019
+CSE225L,Data Structures & Algorithms Lab,1,B-,Fall2020
+MAT120,Calculus I,3,B,Fall2020
+HIS102,World Civilization,3,C-,Fall2020
+ANT101,Anthropology,3,C,Fall2020
+CSE115,Programming Language I,3,F,Fall2020
+ENG111,Public Speaking,3,D+,Spring2021
+CSE115L,Programming Language I Lab,1,B,Spring2021
+CSE115,Programming Language I,3,C-,Spring2021
+PHY107,Physics I,3,C+,Spring2021
+PHY107L,Physics I Lab,1,B,Spring2021
+MAT130,Calculus II,3,F,Spring2021

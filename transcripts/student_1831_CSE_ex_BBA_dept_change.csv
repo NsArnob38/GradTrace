@@ -1,0 +1,35 @@
+course_code,course_name,credits,grade,semester
+MIS207,Management Information Systems,3,B,Summer2022
+BUS251,Business Communication,3,B+,Summer2022
+ACT201,Intro to Financial Accounting,3,A-,Summer2022
+PHI401,Ethics / Philosophy,3,B-,Summer2022
+MKT202,Introduction to Marketing,3,A,Fall2022
+INB372,International Business,3,C+,Fall2022
+ACT202,Intro to Managerial Accounting,3,A,Fall2022
+LAW200,Legal Environment of Business,3,A-,Fall2022
+MIS107,Introduction to Computers,3,A-,Spring2023
+ECO101,Intro to Microeconomics,3,B,Spring2023
+MGT212,Principles of Management,3,B+,Spring2023
+EEE141L,Electrical Circuits I Lab,1,B+,Summer2023
+CHE101L,Chemistry I Lab,1,B-,Summer2023
+PHY108,Physics II,3,B,Summer2023
+EEE141,Electrical Circuits I,3,A,Summer2023
+CSE115L,Programming Language I Lab,1,B,Summer2023
+CHE101,Chemistry I,3,A-,Summer2023
+PHY108L,Physics II Lab,1,C+,Summer2023
+EEE452,Engineering Economics,3,B+,Fall2023
+CSE425,Concepts of Programming Languages,3,D,Fall2023
+CSE331,Microprocessor Interfacing,3,A,Fall2023
+CSE327,Software Engineering,3,W,Fall2023
+CSE331L,Microprocessor Interfacing Lab,1,B+,Fall2023
+CEE110,Engineering Drawing,1,D+,Spring2024
+HIS102,World Civilization,3,F,Spring2024
+ENG105,Advanced Composition,3,B,Spring2024
+PHY107L,Physics I Lab,1,D,Summer2024
+HIS101,Bangladesh History,3,W,Summer2024
+CSE115,Programming Language I,3,B-,Summer2024
+BIO103L,Biology I Lab,1,F,Summer2024
+HIS101,Bangladesh History,3,C+,Fall2024
+MAT116,Pre-Calculus,3,C+,Fall2024
+CSE311L,Database Management Systems Lab,1,B-,Fall2024
+CSE215L,Programming Language II Lab,1,C+,Fall2024

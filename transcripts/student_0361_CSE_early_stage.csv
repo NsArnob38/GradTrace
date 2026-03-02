@@ -1,11 +1,8 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,B+,Fall2020
-CSE115L,Programming Language I Lab,1,B,Fall2020
-MAT116,Pre-Calculus,3,A,Fall2020
-PHY107L,Physics I Lab,1,D+,Fall2020
-CSE299,Junior Design Project,1,D,Fall2020
-CSE173,Discrete Mathematics,3,B,Spring2021
-MAT120,Calculus I,3,A-,Spring2021
-CSE327,Software Engineering,3,A-,Spring2021
-ENG103,Intermediate Composition,3,F,Spring2021
-CSE101,Introduction to Python Programming,3,C,Spring2021
+CSE425,Concepts of Programming Languages,3,C+,Spring2020
+CSE311L,Database Management Systems Lab,1,B-,Spring2020
+MAT116,Pre-Calculus,3,B,Spring2020
+CSE115L,Programming Language I Lab,1,D,Spring2020
+CSE115,Programming Language I,3,B,Spring2020
+CSE173,Discrete Mathematics,3,B,Summer2020
+MAT120,Calculus I,3,B,Summer2020

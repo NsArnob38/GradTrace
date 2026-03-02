@@ -1,0 +1,21 @@
+course_code,course_name,credits,grade,semester
+MAT112,College Algebra,0,T,Spring2019
+CSE115L,Programming Language I Lab,1,C-,Summer2019
+CSE115,Programming Language I,3,B,Summer2019
+MAT116,Pre-Calculus,3,C-,Summer2019
+POL101,Intro to Political Science,3,C-,Summer2019
+ANT101,Anthropology,3,C-,Summer2019
+GEO205,Geography,3,D,Summer2019
+CSE173,Discrete Mathematics,3,I,Fall2019
+MAT120,Calculus I,3,C,Fall2019
+CSE101,Introduction to Python Programming,3,C+,Fall2019
+MAT130,Calculus II,3,C-,Spring2020
+BIO103,Biology I,3,C,Spring2020
+CSE173,Discrete Mathematics,3,D,Spring2020
+BIO103L,Biology I Lab,1,I,Spring2020
+CSE327,Software Engineering,3,C,Summer2020
+MAT250,Calculus III,3,D+,Summer2020
+CSE299,Junior Design Project,1,F,Summer2020
+EEE111L,Analog Electronics I Lab,1,D+,Summer2020
+CSE215,Programming Language II,3,D+,Summer2020
+CSE215L,Programming Language II Lab,1,B-,Summer2020

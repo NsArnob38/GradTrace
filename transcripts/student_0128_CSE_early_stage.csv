@@ -1,10 +1,21 @@
 course_code,course_name,credits,grade,semester
-MAT120,Calculus I,3,B+,Spring2020
-CSE115,Programming Language I,3,C,Spring2020
-CSE115L,Programming Language I Lab,1,B+,Spring2020
-BIO103L,Biology I Lab,1,C-,Spring2020
-HIS101,Bangladesh History,3,B,Spring2020
-CSE173,Discrete Mathematics,3,D+,Summer2020
-MAT130,Calculus II,3,B,Summer2020
-PHI104,Introduction to Ethics,3,C-,Summer2020
-CHE101L,Chemistry I Lab,1,D+,Summer2020
+MAT112,College Algebra,0,T,Spring2019
+CSE115L,Programming Language I Lab,1,C+,Summer2021
+CSE115,Programming Language I,3,A,Summer2021
+MAT116,Pre-Calculus,3,A-,Summer2021
+MAT120,Calculus I,3,C+,Fall2021
+ECO104,Intro to Macroeconomics,3,B,Fall2021
+HIS101,Bangladesh History,3,B-,Fall2021
+CSE173,Discrete Mathematics,3,B+,Fall2021
+MAT130,Calculus II,3,D,Spring2022
+CSE215,Programming Language II,3,C+,Spring2022
+CSE425,Concepts of Programming Languages,3,B-,Spring2022
+CSE215L,Programming Language II Lab,1,B,Spring2022
+PHY108L,Physics II Lab,1,D+,Spring2022
+CSE225,Data Structures & Algorithms,3,C+,Summer2022
+MAT250,Calculus III,3,B+,Summer2022
+CSE311L,Database Management Systems Lab,1,B+,Summer2022
+CSE225L,Data Structures & Algorithms Lab,1,B+,Fall2022
+CSE231,Digital Logic Design,3,W,Fall2022
+EEE111L,Analog Electronics I Lab,1,A,Fall2022
+CSE299,Junior Design Project,1,B,Fall2022

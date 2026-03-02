@@ -1,10 +1,9 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,B-,Spring2019
-MAT116,Pre-Calculus,3,B+,Spring2019
-CSE311L,Database Management Systems Lab,1,D,Spring2019
-MAT125,Linear Algebra,3,C-,Spring2019
-CSE173,Discrete Mathematics,3,C,Summer2019
-MAT120,Calculus I,3,A,Summer2019
-ENG105,Advanced Composition,3,C+,Summer2019
-HIS101,Bangladesh History,3,A,Summer2019
-CSE215L,Programming Language II Lab,1,A-,Summer2019
+MAT112,College Algebra,0,T,Spring2019
+EEE141,Electrical Circuits I,3,C,Summer2019
+CSE115,Programming Language I,3,B-,Summer2019
+MAT116,Pre-Calculus,3,C-,Summer2019
+EEE141L,Electrical Circuits I Lab,1,B+,Summer2019
+CSE173,Discrete Mathematics,3,B-,Fall2019
+CSE101,Introduction to Python Programming,3,A-,Fall2019
+MAT120,Calculus I,3,A-,Fall2019

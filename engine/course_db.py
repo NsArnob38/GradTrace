@@ -237,11 +237,3 @@ for conc in BBA_CONC_COURSES.values():
     ALL_COURSES.update(conc['required'])
     ALL_COURSES.update(conc['elective'])
 
-# Curriculum Traps & Legacy Aliases
-LEGACY_COURSE_MAP = {
-    "CSC115": "CSE115", "CSC115L": "CSE115L",
-    "CSC225": "CSE225", "CSC225L": "CSE225L",
-    "CSC215": "CSE215", "CSC215L": "CSE215L",
-    "CSC311": "CSE311", "CSC311L": "CSE311L",
-    "MGT210": "MGT212", # Corrected curriculum 143 BBA change
-}

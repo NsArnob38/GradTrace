@@ -7,7 +7,7 @@ and assigns status labels to each course attempt.
 import csv
 import re
 from collections import defaultdict
-from engine.course_db import ALL_COURSES, LEGACY_COURSE_MAP
+from engine.course_db import ALL_COURSES
 
 # ─── Academic Timeline ──────────────────────────────────
 SEMESTERS = [
@@ -37,28 +37,7 @@ class CourseRecord:
         raw_code = course_code.strip().upper()
         # Remove all spaces from course code (e.g., 'CSE 215 ' -> 'CSE215')
         self.course_code = re.sub(r'\s+', '', raw_code)
-        
-        # 2. Alias Mapping (Curriculum Traps)
-        # Handle exact match legacy codes (like MGT210 -> MGT212)
-        if self.course_code in LEGACY_COURSE_MAP:
-            self.course_code = LEGACY_COURSE_MAP[self.course_code]
-        else:
-            # Handle dynamic prefix changes (e.g., CSC225 -> CSE225)
-            # CSE Department Legacy
-            self.course_code = re.sub(r'^CSC(\d+[A-Z]*)$', r'CSE\1', self.course_code)
-            self.course_code = re.sub(r'^ICE(\d+[A-Z]*)$', r'ETE\1', self.course_code)
-            self.course_code = re.sub(r'^CEN(\d+[A-Z]*)$', r'CEE\1', self.course_code)
-            # BBA & Economics Legacy
-            self.course_code = re.sub(r'^ECN(\d+[A-Z]*)$', r'ECO\1', self.course_code)
-            self.course_code = re.sub(r'^MSC(\d+[A-Z]*)$', r'MAT\1', self.course_code)
-            self.course_code = re.sub(r'^ACN(\d+[A-Z]*)$', r'ACT\1', self.course_code)
-            # Non-Major Legacy
-            self.course_code = re.sub(r'^DEV(\d+[A-Z]*)$', r'ECO\1', self.course_code) # Could also be SOC, mapping to ECO is safer for BBA
-            self.course_code = re.sub(r'^HEA(\d+[A-Z]*)$', r'PBH\1', self.course_code)
-            
-            # Note regarding MGT->BUS and MIS->BUS112: These are context-dependent and better fully managed 
-            # if we see specific failures. We'll map the exact ones in LEGACY_COURSE_MAP if needed.
-
+        # 2. String Sanitization
         self.course_name = course_name.strip()
         
         # 3. Format Semester Strings

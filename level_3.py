@@ -260,7 +260,7 @@ Examples:
     records, credits_attempted, credits_earned = process_transcript(args.transcript)
 
     from engine.course_db import ALL_COURSES
-    unrecognized = set(r.course_code for r in records if r.course_code not in ALL_COURSES and r.grade not in ("W", "I"))
+    unrecognized = set(r.course_code for r in records if r.course_code not in ALL_COURSES)
     if unrecognized:
         print(header_bar(f"LEVEL 3 — AUDIT REPORT ({program})"))
         print(f"  Transcript File  : {os.path.basename(args.transcript)}")

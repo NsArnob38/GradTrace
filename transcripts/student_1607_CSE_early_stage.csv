@@ -1,14 +1,14 @@
 course_code,course_name,credits,grade,semester
-MAT120,Calculus I,3,C,Spring2021
-CSE115,Programming Language I,3,W,Spring2021
-PHY108,Physics II,3,F,Spring2021
-CSE115,Programming Language I,3,D+,Summer2021
-CSE115L,Programming Language I Lab,1,A,Summer2021
-MAT130,Calculus II,3,C-,Summer2021
-EEE141,Electrical Circuits I,3,F,Summer2021
-EEE111L,Analog Electronics I Lab,1,C,Summer2021
-CSE173,Discrete Mathematics,3,D,Fall2021
-MAT250,Calculus III,3,C,Fall2021
-CSE299,Junior Design Project,1,B,Fall2021
-PHY107L,Physics I Lab,1,C,Fall2021
-EEE141,Electrical Circuits I,3,A-,Fall2021
+MAT112,College Algebra,0,T,Spring2019
+ENG102,Introduction to Composition,3,T,Spring2019
+MAT116,Pre-Calculus,3,C,Spring2020
+ANT101,Anthropology,3,B+,Spring2020
+CSE115,Programming Language I,3,A,Spring2020
+CSE115L,Programming Language I Lab,1,B,Spring2020
+CSE311L,Database Management Systems Lab,1,B+,Spring2020
+MAT120,Calculus I,3,B,Summer2020
+POL101,Intro to Political Science,3,C,Summer2020
+CHE101,Chemistry I,3,C,Summer2020
+CHE101L,Chemistry I Lab,1,B,Summer2020
+CSE173,Discrete Mathematics,3,D+,Summer2020
+CSE299,Junior Design Project,1,B-,Summer2020

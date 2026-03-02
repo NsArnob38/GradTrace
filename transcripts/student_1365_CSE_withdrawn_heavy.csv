@@ -1,42 +1,32 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,C+,Spring2019
-MAT116,Pre-Calculus,3,F,Spring2019
-CSE173,Discrete Mathematics,3,A,Summer2019
-MAT116,Pre-Calculus,3,W,Summer2019
-SOC101,Intro to Sociology,3,F,Summer2019
-CSE215,Programming Language II,3,C+,Fall2019
-MAT116,Pre-Calculus,3,W,Fall2019
-CSE331,Microprocessor Interfacing,3,C+,Fall2019
-CSE331L,Microprocessor Interfacing Lab,1,W,Fall2019
-CSE225,Data Structures & Algorithms,3,F,Spring2020
-MAT116,Pre-Calculus,3,C+,Spring2020
-CSE331L,Microprocessor Interfacing Lab,1,C,Spring2020
-PHY108L,Physics II Lab,1,W,Spring2020
-CSE225,Data Structures & Algorithms,3,F,Summer2020
-MAT120,Calculus I,3,W,Summer2020
-ENV203,Environmental Studies,3,B+,Summer2020
-CSE215L,Programming Language II Lab,1,W,Summer2020
-CSE225,Data Structures & Algorithms,3,B,Fall2020
-CSE225L,Data Structures & Algorithms Lab,1,C,Fall2020
+CSE115,Programming Language I,3,B+,Fall2019
+CSE115L,Programming Language I Lab,1,W,Fall2019
+MAT116,Pre-Calculus,3,W,Spring2020
+CSE173,Discrete Mathematics,3,C+,Spring2020
+MAT116,Pre-Calculus,3,B,Summer2020
+CSE215,Programming Language II,3,F,Summer2020
+CEE110,Engineering Drawing,1,W,Summer2020
+EEE111,Analog Electronics I,3,W,Fall2020
 MAT120,Calculus I,3,W,Fall2020
-MAT120,Calculus I,3,B+,Spring2021
-CSE231,Digital Logic Design,3,W,Spring2021
-CSE231,Digital Logic Design,3,W,Summer2021
-MAT130,Calculus II,3,F,Summer2021
-EEE141,Electrical Circuits I,3,W,Summer2021
-CSE299,Junior Design Project,1,W,Summer2021
-CSE231,Digital Logic Design,3,W,Fall2021
+CSE215,Programming Language II,3,W,Fall2020
+MAT120,Calculus I,3,C,Spring2021
+CSE215L,Programming Language II Lab,1,B+,Summer2021
+CSE226,Fundamentals of Vibe Coding,3,W,Summer2021
+CSE215,Programming Language II,3,B+,Summer2021
+MAT130,Calculus II,3,W,Summer2021
+CHE101,Chemistry I,3,W,Fall2021
 MAT130,Calculus II,3,W,Fall2021
-CSE231L,Digital Logic Design Lab,1,F,Fall2021
-ENG111,Public Speaking,3,D,Fall2021
-CSE231,Digital Logic Design,3,B+,Spring2022
-CSE231L,Digital Logic Design Lab,1,C,Spring2022
+CSE225L,Data Structures & Algorithms Lab,1,D,Fall2021
+CSE225,Data Structures & Algorithms,3,C,Fall2021
 MAT130,Calculus II,3,C,Spring2022
-CSE332,Computer Organization & Architecture,3,W,Summer2022
-MAT250,Calculus III,3,C+,Summer2022
-POL104,Political Science,3,C,Summer2022
-ENG103,Intermediate Composition,3,W,Summer2022
-CSE332,Computer Organization & Architecture,3,B+,Fall2022
-CSE215L,Programming Language II Lab,1,W,Fall2022
-HIS102,World Civilization,3,W,Fall2022
-ENG103,Intermediate Composition,3,B,Fall2022
+CSE231L,Digital Logic Design Lab,1,A,Spring2022
+CSE231,Digital Logic Design,3,B,Spring2022
+MAT250,Calculus III,3,W,Summer2022
+CSE332,Computer Organization & Architecture,3,B,Summer2022
+MAT250,Calculus III,3,W,Fall2022
+MAT250,Calculus III,3,W,Spring2023
+CSE299,Junior Design Project,1,W,Summer2023
+MAT250,Calculus III,3,B,Summer2023
+CSE299,Junior Design Project,1,C,Fall2023
+CSE311,Database Management Systems,3,C,Fall2023
+CSE311L,Database Management Systems Lab,1,C+,Fall2023

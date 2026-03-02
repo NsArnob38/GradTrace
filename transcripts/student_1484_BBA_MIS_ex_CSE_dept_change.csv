@@ -1,0 +1,42 @@
+course_code,course_name,credits,grade,semester
+BIO103L,Biology I Lab,1,C+,Spring2021
+BIO103,Biology I,3,A-,Spring2021
+PHI104,Introduction to Ethics,3,A-,Spring2021
+CSE101,Introduction to Python Programming,3,B+,Spring2021
+EEE141,Electrical Circuits I,3,B,Summer2021
+MAT125,Linear Algebra,3,C,Summer2021
+EEE141L,Electrical Circuits I Lab,1,B,Summer2021
+HIS101,Bangladesh History,3,A-,Summer2021
+CEE110,Engineering Drawing,1,B+,Summer2021
+ENG111,Public Speaking,3,B+,Fall2021
+ENG105,Advanced Composition,3,C+,Fall2021
+EEE111,Analog Electronics I,3,A-,Fall2021
+EEE111L,Analog Electronics I Lab,1,B-,Fall2021
+PHY108L,Physics II Lab,1,B,Fall2021
+CSE299,Junior Design Project,1,C+,Fall2021
+MKT202,Introduction to Marketing,3,B,Spring2022
+MIS320,IT for Managers,3,A,Spring2022
+MIS207,Management Information Systems,3,C-,Spring2022
+BUS251,Business Communication,3,B,Summer2022
+MIS410,Systems Design,3,B+,Summer2022
+MIS450,IS Security,3,C-,Summer2022
+LAW200,Legal Environment of Business,3,D+,Summer2022
+MIS210,Computer Programming,3,A,Fall2022
+ECO101,Intro to Microeconomics,3,C+,Fall2022
+MIS107,Introduction to Computers,3,C+,Fall2022
+PHI401,Ethics / Philosophy,3,A,Spring2023
+MIS499,Special Topics in MIS,3,D+,Spring2023
+MGT490,Project Management,3,B-,Spring2023
+ECO104,Intro to Macroeconomics,3,D+,Summer2023
+INB372,International Business,3,D+,Summer2023
+MIS310,Systems Analysis,3,W,Summer2023
+MIS330,Database Systems,3,A-,Summer2023
+MIS310,Systems Analysis,3,D,Fall2023
+MGT212,Principles of Management,3,D,Fall2023
+ACT201,Intro to Financial Accounting,3,B+,Fall2023
+MGT351,Human Resource Management,3,A,Spring2024
+ACT202,Intro to Managerial Accounting,3,W,Spring2024
+MGT314,Production Management,3,D+,Spring2024
+MIS470,IT Project Management,3,C-,Summer2024
+ACT202,Intro to Managerial Accounting,3,B-,Summer2024
+MGT368,Entrepreneurship,3,W,Summer2024

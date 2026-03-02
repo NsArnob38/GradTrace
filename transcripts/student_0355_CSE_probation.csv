@@ -1,23 +1,56 @@
 course_code,course_name,credits,grade,semester
-MAT120,Calculus I,3,D+,Fall2019
-CSE115,Programming Language I,3,D+,Fall2019
-CSE115L,Programming Language I Lab,1,D+,Fall2019
-CSE101,Introduction to Python Programming,3,D,Fall2019
-CSE173,Discrete Mathematics,3,C-,Spring2020
-MAT130,Calculus II,3,D,Spring2020
-CSE215,Programming Language II,3,C-,Summer2020
-CSE215L,Programming Language II Lab,1,C-,Summer2020
-MAT250,Calculus III,3,D+,Summer2020
-MAT125,Linear Algebra,3,D+,Summer2020
-EEE111L,Analog Electronics I Lab,1,D+,Summer2020
-CSE225,Data Structures & Algorithms,3,I,Fall2020
-CSE225L,Data Structures & Algorithms Lab,1,D,Fall2020
-ENG111,Public Speaking,3,C-,Fall2020
-CSE225,Data Structures & Algorithms,3,D+,Spring2021
-CSE231L,Digital Logic Design Lab,1,D,Spring2021
-BIO103L,Biology I Lab,1,D+,Spring2021
-HIS101,Bangladesh History,3,F,Spring2021
-CSE231,Digital Logic Design,3,D,Summer2021
-CSE299,Junior Design Project,1,D,Summer2021
-CSE425,Concepts of Programming Languages,3,I,Summer2021
-GEO205,Geography,3,I,Summer2021
+MAT112,College Algebra,0,T,Spring2019
+CSE115L,Programming Language I Lab,1,C,Fall2020
+CSE101,Introduction to Python Programming,3,C,Fall2020
+CSE115,Programming Language I,3,C+,Fall2020
+MAT116,Pre-Calculus,3,D,Fall2020
+CSE173,Discrete Mathematics,3,I,Spring2021
+EEE111,Analog Electronics I,3,I,Spring2021
+CSE226,Fundamentals of Vibe Coding,3,D,Spring2021
+MAT120,Calculus I,3,D+,Spring2021
+CSE173,Discrete Mathematics,3,D+,Summer2021
+CSE331,Microprocessor Interfacing,3,F,Summer2021
+MAT130,Calculus II,3,F,Summer2021
+CSE215,Programming Language II,3,C+,Fall2021
+CSE331L,Microprocessor Interfacing Lab,1,C-,Fall2021
+CEE110,Engineering Drawing,1,C-,Fall2021
+CSE215L,Programming Language II Lab,1,C-,Fall2021
+MAT130,Calculus II,3,I,Fall2021
+SOC101,Intro to Sociology,3,D,Fall2021
+MAT130,Calculus II,3,D,Spring2022
+CSE225,Data Structures & Algorithms,3,C,Spring2022
+EEE141L,Electrical Circuits I Lab,1,B-,Spring2022
+CSE225L,Data Structures & Algorithms Lab,1,C+,Spring2022
+CSE327,Software Engineering,3,D+,Summer2022
+CSE231,Digital Logic Design,3,D+,Summer2022
+POL101,Intro to Political Science,3,C,Summer2022
+CSE231L,Digital Logic Design Lab,1,D,Summer2022
+MAT250,Calculus III,3,C-,Summer2022
+CSE332,Computer Organization & Architecture,3,C-,Fall2022
+CSE299,Junior Design Project,1,I,Fall2022
+PHY107L,Physics I Lab,1,C+,Fall2022
+CSE145,Introduction to Artificial Intelligence,3,C,Fall2022
+MAT350,Complex Variables,3,C+,Fall2022
+CSE331,Microprocessor Interfacing,3,D+,Spring2023
+BIO103,Biology I,3,F,Spring2023
+CSE299,Junior Design Project,1,F,Spring2023
+CSE311,Database Management Systems,3,F,Spring2023
+CSE373,Design & Analysis of Algorithms,3,I,Summer2023
+CSE311,Database Management Systems,3,B-,Summer2023
+CSE299,Junior Design Project,1,B,Summer2023
+CSE311L,Database Management Systems Lab,1,F,Summer2023
+CSE461,Robotics,3,B-,Summer2023
+CSE421,Machine Learning,3,B,Fall2023
+CSE311L,Database Management Systems Lab,1,F,Fall2023
+BIO103,Biology I,3,F,Fall2023
+CSE323,Operating Systems Design,3,B-,Fall2023
+PHY108L,Physics II Lab,1,F,Fall2023
+CSE311L,Database Management Systems Lab,1,B,Spring2024
+CSE373,Design & Analysis of Algorithms,3,F,Spring2024
+DEV101,Development Studies,3,B,Spring2024
+ECO101,Intro to Microeconomics,3,I,Spring2024
+HIS201,Modern History,3,F,Summer2024
+ENG111,Public Speaking,3,I,Summer2024
+CSE471,Compiler Design,3,F,Summer2024
+CSE425,Concepts of Programming Languages,3,B-,Summer2024
+CSE373,Design & Analysis of Algorithms,3,F,Summer2024

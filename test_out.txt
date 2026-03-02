@@ -1,0 +1,93 @@
+﻿
+==================================================
+  LEVEL 3 ΓÇö AUDIT REPORT (CSE)
+==================================================
+  Transcript File  : student_0025_CSE_top_student.csv
+  Program          : CSE
+  Credits Earned   : 111 / 127
+  CGPA             : 1.74 / 4.00
+  Major Core CGPA  : 2.32 / 4.00
+  Major Elec CGPA  : 0.00 / 4.00
+  Academic Standing: DISMISSAL
+  Graduation Eligible: NO
+    X Credits earned (111) < 127 required
+    X Overall CGPA (1.74) < 2.00
+    X 13 required course(s) still missing
+==================================================
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  MISSING COURSES / REQUIREMENTS
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  [CSE Major Core] ΓÇö 1 course(s), 3 credits
+    Γùï EEE141 (3 credits)
+
+  [Capstone] ΓÇö 3 course(s), 7 credits
+    Γùï CSE499A (2 credits)
+    Γùï CSE499B (2 credits)
+    Γùï EEE452 (3 credits)
+
+  [SEPS Core] ΓÇö 5 course(s), 11 credits
+    Γùï MAT361 (3 credits)
+    Γùï CHE101 (3 credits)
+    Γùï CHE101L (1 credits)
+    Γùï BIO103 (3 credits)
+    Γùï BIO103L (1 credits)
+
+  [GED Required] ΓÇö 3 course(s), 9 credits
+    Γùï ENG103 (3 credits)
+    Γùï ENG111 (3 credits)
+    Γùï HIS102 (3 credits)
+
+  [CSE Electives (400-level)] ΓÇö 1 course(s), 9 credits
+    Γùï Any CSE 4xx (3 needed) (9 credits)
+
+  Total Missing: 13 course(s), 39 credits
+==================================================
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  PATH TO GRADUATION
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  Summary:
+    Credits still needed  : 16
+    Courses to complete   : 13
+    Estimated semesters   : ~3 (at 15 credits/semester)
+
+  Action Items:
+
+    1. [HIGH] CREDITS
+       Earn 16 more credits to reach the 127-credit requirement
+       Currently at 111/127 credits.
+
+    2. [CRITICAL] CGPA
+       Raise overall CGPA from 1.74 to at least 2.00
+       CAUTION: You have exceeded the probation limit. You are at dismissal stage. Contact Academic Advising immediately.
+
+    3. [HIGH] CSE MAJOR CORE
+       Complete 1 course(s) (3 credits)
+       EEE141 (3cr)
+
+    4. [HIGH] CAPSTONE
+       Complete 3 course(s) (7 credits)
+       CSE499A (2cr), CSE499B (2cr), EEE452 (3cr)
+
+    5. [HIGH] SEPS CORE
+       Complete 5 course(s) (11 credits)
+       MAT361 (3cr), CHE101 (3cr), CHE101L (1cr), BIO103 (3cr), BIO103L (1cr)
+
+    6. [HIGH] GED REQUIRED
+       Complete 3 course(s) (9 credits)
+       ENG103 (3cr), ENG111 (3cr), HIS102 (3cr)
+
+    7. [MEDIUM] CSE ELECTIVES (400-LEVEL)
+       Complete 9 credits of electives
+       Any CSE 4xx (3 needed) (9cr)
+
+    8. [RECOMMENDED] RETAKE SUGGESTIONS
+       Consider retaking 5 course(s) to boost GPA
+       CSE145 (current: D+, 3cr), CSE323 (current: D, 3cr)
+       CSE327 (current: D, 3cr), CSE332 (current: C-, 3cr)
+       ENG105 (current: C-, 3cr)
+
+==================================================

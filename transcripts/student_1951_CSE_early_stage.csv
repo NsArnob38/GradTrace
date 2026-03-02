@@ -1,16 +1,11 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,B-,Spring2020
-CSE115L,Programming Language I Lab,1,A,Spring2020
-MAT116,Pre-Calculus,3,A,Spring2020
-EEE141L,Electrical Circuits I Lab,1,C,Spring2020
-ECO101,Intro to Microeconomics,3,B-,Spring2020
-CSE173,Discrete Mathematics,3,F,Summer2020
-MAT120,Calculus I,3,B,Summer2020
-CHE101,Chemistry I,3,B,Summer2020
-CHE101L,Chemistry I Lab,1,B-,Summer2020
-CSE101,Introduction to Python Programming,3,D+,Summer2020
-CSE173,Discrete Mathematics,3,A,Fall2020
-MAT130,Calculus II,3,C-,Fall2020
-EEE452,Engineering Economics,3,C-,Fall2020
-BIO103,Biology I,3,C+,Fall2020
-BIO103L,Biology I Lab,1,F,Fall2020
+CSE115,Programming Language I,3,B,Fall2019
+CSE115L,Programming Language I Lab,1,B-,Fall2019
+MAT116,Pre-Calculus,3,C,Fall2019
+PHY107L,Physics I Lab,1,C+,Fall2019
+CSE145,Introduction to Artificial Intelligence,3,D+,Fall2019
+ECO101,Intro to Microeconomics,3,C+,Fall2019
+ENG103,Intermediate Composition,3,A-,Spring2020
+MAT120,Calculus I,3,D+,Spring2020
+CSE226,Fundamentals of Vibe Coding,3,A,Spring2020
+CSE173,Discrete Mathematics,3,C+,Spring2020

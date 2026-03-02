@@ -1,0 +1,43 @@
+course_code,course_name,credits,grade,semester
+CSE331L,Microprocessor Interfacing Lab,1,B-,Fall2020
+CSE331,Microprocessor Interfacing,3,C,Fall2020
+EEE111,Analog Electronics I,3,A,Fall2020
+EEE111L,Analog Electronics I Lab,1,C-,Fall2020
+PHY108L,Physics II Lab,1,A-,Spring2021
+CSE101,Introduction to Python Programming,3,B-,Spring2021
+CSE115,Programming Language I,3,B,Spring2021
+CSE115L,Programming Language I Lab,1,A-,Spring2021
+CEE110,Engineering Drawing,1,C-,Summer2021
+CSE145,Introduction to Artificial Intelligence,3,B,Summer2021
+CHE101,Chemistry I,3,C-,Summer2021
+HIS101,Bangladesh History,3,B+,Summer2021
+ENG105,Advanced Composition,3,C,Summer2021
+CHE101L,Chemistry I Lab,1,A,Summer2021
+HIS102,World Civilization,3,B+,Fall2021
+CSE215L,Programming Language II Lab,1,C+,Fall2021
+MAT125,Linear Algebra,3,B+,Fall2021
+EEE141,Electrical Circuits I,3,B,Fall2021
+EEE141L,Electrical Circuits I Lab,1,A,Fall2021
+MKT202,Introduction to Marketing,3,C+,Spring2022
+MKT475,Marketing Analytics,3,A-,Spring2022
+INB372,International Business,3,B,Spring2022
+MKT412,Services Marketing,3,B,Spring2022
+MKT465,Brand Management,3,B+,Summer2022
+MKT450,Marketing Channels,3,C,Summer2022
+MIS107,Introduction to Computers,3,C-,Summer2022
+MGT212,Principles of Management,3,A-,Fall2022
+BUS251,Business Communication,3,C,Fall2022
+ACT201,Intro to Financial Accounting,3,C+,Fall2022
+MGT368,Entrepreneurship,3,B+,Spring2023
+MKT330,Retail Management,3,D,Spring2023
+LAW200,Legal Environment of Business,3,D+,Spring2023
+MKT382,International Marketing,3,D+,Summer2023
+PHI401,Ethics / Philosophy,3,C-,Summer2023
+MKT355,Agricultural Marketing,3,B-,Summer2023
+MKT445,Sales Management,3,C+,Summer2023
+MKT344,Consumer Behaviour,3,C,Fall2023
+ECO101,Intro to Microeconomics,3,C+,Fall2023
+ACT202,Intro to Managerial Accounting,3,D+,Fall2023
+MGT314,Production Management,3,D,Spring2024
+MIS207,Management Information Systems,3,F,Spring2024
+MKT337,Promotional Management,3,D+,Spring2024

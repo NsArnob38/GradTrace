@@ -1,0 +1,33 @@
+course_code,course_name,credits,grade,semester
+MAT116,Pre-Calculus,0,T,Spring2019
+ENG102,Introduction to Composition,3,T,Spring2019
+MAT112,College Algebra,0,T,Spring2019
+CSE115,Programming Language I,3,A-,Summer2019
+CSE115L,Programming Language I Lab,1,B,Summer2019
+MAT120,Calculus I,3,A-,Summer2019
+ECO104,Intro to Macroeconomics,3,A-,Summer2019
+MAT130,Calculus II,3,F,Fall2019
+CSE226,Fundamentals of Vibe Coding,3,D,Fall2019
+CSE173,Discrete Mathematics,3,F,Fall2019
+PHY108L,Physics II Lab,1,D+,Fall2019
+POL101,Intro to Political Science,3,C+,Spring2020
+CSE173,Discrete Mathematics,3,A,Spring2020
+CSE327,Software Engineering,3,C+,Spring2020
+MAT130,Calculus II,3,C+,Spring2020
+BIO103L,Biology I Lab,1,C-,Spring2020
+PHY107,Physics I,3,B,Summer2020
+CSE215L,Programming Language II Lab,1,C-,Summer2020
+CSE215,Programming Language II,3,A,Summer2020
+MAT250,Calculus III,3,D+,Summer2020
+CSE101,Introduction to Python Programming,3,C,Fall2020
+CSE225,Data Structures & Algorithms,3,B+,Fall2020
+CSE331,Microprocessor Interfacing,3,B,Fall2020
+EEE141,Electrical Circuits I,3,B,Fall2020
+CSE331L,Microprocessor Interfacing Lab,1,C+,Fall2020
+EEE141L,Electrical Circuits I Lab,1,A,Fall2020
+CSE225L,Data Structures & Algorithms Lab,1,C-,Fall2020
+CSE231,Digital Logic Design,3,C+,Spring2021
+MAT125,Linear Algebra,3,C-,Spring2021
+CSE231L,Digital Logic Design Lab,1,B-,Spring2021
+ENG111,Public Speaking,3,D+,Spring2021
+CSE145,Introduction to Artificial Intelligence,3,C,Spring2021

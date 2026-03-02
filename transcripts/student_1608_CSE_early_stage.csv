@@ -1,7 +1,8 @@
 course_code,course_name,credits,grade,semester
-MAT120,Calculus I,3,B,Spring2024
-CSE115,Programming Language I,3,B,Spring2024
-CSE115L,Programming Language I Lab,1,W,Spring2024
-POL101,Intro to Political Science,3,F,Spring2024
-CSE173,Discrete Mathematics,3,B,Summer2024
-MAT130,Calculus II,3,C+,Summer2024
+MAT116,Pre-Calculus,0,T,Spring2019
+MAT112,College Algebra,0,T,Spring2019
+POL101,Intro to Political Science,3,C,Fall2019
+MAT120,Calculus I,3,D,Fall2019
+CSE115,Programming Language I,3,B-,Fall2019
+CSE173,Discrete Mathematics,3,A,Spring2020
+MAT130,Calculus II,3,A,Spring2020

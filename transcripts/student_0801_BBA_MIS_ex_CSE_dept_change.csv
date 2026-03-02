@@ -1,0 +1,41 @@
+course_code,course_name,credits,grade,semester
+PHY108,Physics II,3,B,Fall2019
+BIO103L,Biology I Lab,1,C-,Fall2019
+HIS101,Bangladesh History,3,C+,Fall2019
+CSE226,Fundamentals of Vibe Coding,3,B+,Fall2019
+PHY108L,Physics II Lab,1,B+,Fall2019
+CSE327,Software Engineering,3,B,Fall2019
+EEE111,Analog Electronics I,3,C,Spring2020
+EEE111L,Analog Electronics I Lab,1,A,Spring2020
+PHY107L,Physics I Lab,1,B+,Spring2020
+CSE101,Introduction to Python Programming,3,A-,Spring2020
+ENG103,Intermediate Composition,3,B+,Summer2020
+CSE115L,Programming Language I Lab,1,B-,Summer2020
+CSE115,Programming Language I,3,C-,Summer2020
+ENG111,Public Speaking,3,C+,Summer2020
+CSE145,Introduction to Artificial Intelligence,3,B+,Summer2020
+PHI104,Introduction to Ethics,3,C-,Fall2020
+CEE110,Engineering Drawing,1,C,Fall2020
+CSE331L,Microprocessor Interfacing Lab,1,B,Fall2020
+CSE331,Microprocessor Interfacing,3,A-,Fall2020
+CHE101,Chemistry I,3,B,Fall2020
+CHE101L,Chemistry I Lab,1,A-,Fall2020
+MIS210,Computer Programming,3,F,Spring2021
+MKT202,Introduction to Marketing,3,B,Spring2021
+MIS410,Systems Design,3,W,Spring2021
+MGT212,Principles of Management,3,B-,Summer2021
+MIS470,IT Project Management,3,A,Summer2021
+MIS107,Introduction to Computers,3,A,Summer2021
+LAW200,Legal Environment of Business,3,B-,Summer2021
+MGT490,Project Management,3,D,Summer2021
+ENG105,Advanced Composition,3,D,Fall2021
+MIS499,Special Topics in MIS,3,F,Fall2021
+MGT314,Production Management,3,D+,Fall2021
+MIS207,Management Information Systems,3,A-,Spring2022
+MIS450,IS Security,3,C+,Spring2022
+ACT201,Intro to Financial Accounting,3,D,Spring2022
+INB372,International Business,3,D,Spring2022
+MGT351,Human Resource Management,3,F,Summer2022
+MIS330,Database Systems,3,C-,Summer2022
+MIS210,Computer Programming,3,C-,Summer2022
+MGT368,Entrepreneurship,3,D,Summer2022

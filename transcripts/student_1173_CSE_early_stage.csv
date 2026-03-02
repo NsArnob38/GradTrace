@@ -1,15 +1,12 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,C+,Summer2019
-CSE115L,Programming Language I Lab,1,C+,Summer2019
-MAT116,Pre-Calculus,3,B+,Summer2019
-ANT101,Anthropology,3,C+,Summer2019
-CSE173,Discrete Mathematics,3,A,Fall2019
-MAT120,Calculus I,3,D,Fall2019
-CSE231L,Digital Logic Design Lab,1,C-,Fall2019
-CSE215,Programming Language II,3,B+,Spring2020
-CSE215L,Programming Language II Lab,1,D+,Spring2020
-MAT130,Calculus II,3,D,Spring2020
-ECO101,Intro to Microeconomics,3,A,Spring2020
-CSE327,Software Engineering,3,B,Spring2020
-PHY108,Physics II,3,B,Spring2020
-PHY108L,Physics II Lab,1,A,Spring2020
+MAT116,Pre-Calculus,3,A,Spring2019
+ENG102,Introduction to Composition,3,T,Spring2019
+CSE115L,Programming Language I Lab,1,W,Spring2019
+EEE452,Engineering Economics,3,B-,Spring2019
+CSE115,Programming Language I,3,B+,Spring2019
+CSE331L,Microprocessor Interfacing Lab,1,B+,Spring2019
+CSE425,Concepts of Programming Languages,3,B-,Summer2019
+CSE115L,Programming Language I Lab,1,A,Summer2019
+MAT120,Calculus I,3,C,Summer2019
+PHY108L,Physics II Lab,1,B-,Summer2019
+CSE173,Discrete Mathematics,3,D+,Summer2019

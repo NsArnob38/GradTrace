@@ -1,0 +1,21 @@
+course_code,course_name,credits,grade,semester
+ENG102,Introduction to Composition,3,T,Spring2019
+CSE311L,Database Management Systems Lab,1,C+,Summer2021
+MAT116,Pre-Calculus,3,D,Summer2021
+CSE115,Programming Language I,3,B+,Summer2021
+CSE115L,Programming Language I Lab,1,C+,Summer2021
+ECO104,Intro to Macroeconomics,3,C,Summer2021
+CSE299,Junior Design Project,1,B+,Fall2021
+MAT120,Calculus I,3,C+,Fall2021
+CSE173,Discrete Mathematics,3,A-,Fall2021
+CSE215L,Programming Language II Lab,1,A-,Spring2022
+EEE452,Engineering Economics,3,A-,Spring2022
+ENG103,Intermediate Composition,3,F,Spring2022
+CSE215,Programming Language II,3,D,Spring2022
+MAT130,Calculus II,3,B-,Spring2022
+MAT125,Linear Algebra,3,C-,Summer2022
+CSE225L,Data Structures & Algorithms Lab,1,B,Summer2022
+PHY107L,Physics I Lab,1,B,Summer2022
+MAT250,Calculus III,3,D,Summer2022
+EEE111,Analog Electronics I,3,B,Summer2022
+CSE225,Data Structures & Algorithms,3,A,Summer2022

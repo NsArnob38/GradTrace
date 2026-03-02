@@ -1,0 +1,34 @@
+course_code,course_name,credits,grade,semester
+BUS112,Intro to Business Mathematics,3,T,Spring2019
+ACT201,Intro to Financial Accounting,3,A,Summer2019
+MGT212,Principles of Management,3,B,Summer2019
+ECO101,Intro to Microeconomics,3,A-,Summer2019
+MKT202,Introduction to Marketing,3,B+,Summer2019
+BUS251,Business Communication,3,B+,Fall2019
+ACT202,Intro to Managerial Accounting,3,A,Fall2019
+MIS107,Introduction to Computers,3,B-,Fall2019
+INB372,International Business,3,B-,Spring2020
+BUS135,Business Mathematics,3,A-,Spring2020
+ECO104,Intro to Macroeconomics,3,B,Spring2020
+MIS207,Management Information Systems,3,A-,Spring2020
+MGT314,Production Management,3,B-,Spring2020
+PHI401,Ethics / Philosophy,3,B+,Summer2020
+BUS172,Introduction to Statistics,3,C-,Summer2020
+LAW200,Legal Environment of Business,3,A-,Summer2020
+ENG115,English Literature,3,B,Fall2020
+BUS173,Applied Statistics,3,C+,Fall2020
+MGT368,Entrepreneurship,3,C-,Fall2020
+FIN254,Intro to Financial Management,3,B,Fall2020
+POL101,Intro to Political Science,3,C,Spring2021
+GEO205,Geography,3,B,Spring2021
+PAD201,Public Administration,3,A,Spring2021
+MGT351,Human Resource Management,3,A-,Spring2021
+SOC101,Intro to Sociology,3,C,Spring2021
+BIO103L,Biology I Lab,1,A,Summer2021
+PSY101,Intro to Psychology,3,B+,Summer2021
+ENV107,Environmental Science,3,C+,Summer2021
+BIO103,Biology I,3,B-,Summer2021
+HIS101,Bangladesh History,3,A,Summer2021
+ENV107L,Environmental Science Lab,1,B+,Summer2021
+PSY101L,Psychology Lab,1,C+,Summer2021
+CHE101,Chemistry I,3,B-,Summer2021

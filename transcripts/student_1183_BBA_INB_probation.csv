@@ -1,0 +1,47 @@
+course_code,course_name,credits,grade,semester
+ENG102,Introduction to Composition,3,T,Spring2019
+BUS112,Intro to Business Mathematics,3,T,Spring2019
+ACT201,Intro to Financial Accounting,3,F,Fall2019
+ECO101,Intro to Microeconomics,3,F,Fall2019
+MGT212,Principles of Management,3,C,Fall2019
+MIS107,Introduction to Computers,3,C+,Spring2020
+ACT201,Intro to Financial Accounting,3,F,Spring2020
+BUS135,Business Mathematics,3,C,Spring2020
+ENG103,Intermediate Composition,3,F,Spring2020
+MKT202,Introduction to Marketing,3,D,Summer2020
+ACT201,Intro to Financial Accounting,3,C-,Summer2020
+ENG103,Intermediate Composition,3,C-,Summer2020
+LAW200,Legal Environment of Business,3,C-,Summer2020
+BUS172,Introduction to Statistics,3,C-,Summer2020
+FIN254,Intro to Financial Management,3,D,Fall2020
+BUS173,Applied Statistics,3,C-,Fall2020
+MIS207,Management Information Systems,3,F,Fall2020
+BUS251,Business Communication,3,D+,Fall2020
+INB372,International Business,3,F,Fall2020
+MGT351,Human Resource Management,3,F,Spring2021
+ACT202,Intro to Managerial Accounting,3,I,Spring2021
+INB372,International Business,3,B,Spring2021
+MGT351,Human Resource Management,3,C,Summer2021
+ECO101,Intro to Microeconomics,3,B-,Summer2021
+MGT368,Entrepreneurship,3,D+,Summer2021
+MIS207,Management Information Systems,3,I,Summer2021
+ACT202,Intro to Managerial Accounting,3,C,Fall2021
+MIS207,Management Information Systems,3,C,Fall2021
+ENG105,Advanced Composition,3,B,Fall2021
+BEN205,Bengali Literature,3,D+,Spring2022
+CHN101,Chinese Language,3,F,Spring2022
+ENG115,English Literature,3,F,Spring2022
+MGT314,Production Management,3,C+,Spring2022
+POL101,Intro to Political Science,3,D,Summer2022
+SOC101,Intro to Sociology,3,D+,Summer2022
+PAD201,Public Administration,3,C+,Summer2022
+ECO104,Intro to Macroeconomics,3,B-,Summer2022
+CHE101,Chemistry I,3,D,Fall2022
+PBH101L,Public Health Lab,1,I,Fall2022
+ENV107L,Environmental Science Lab,1,F,Fall2022
+BIO103,Biology I,3,F,Fall2022
+PBH101,Public Health,3,D,Fall2022
+CHE101L,Chemistry I Lab,1,I,Fall2022
+ENV107,Environmental Science,3,B,Fall2022
+PHY107L,Physics I Lab,1,B-,Fall2022
+PHY107,Physics I,3,D+,Fall2022

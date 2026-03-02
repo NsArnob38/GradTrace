@@ -1,10 +1,15 @@
 course_code,course_name,credits,grade,semester
-MAT120,Calculus I,3,B+,Spring2023
-CSE115,Programming Language I,3,A,Spring2023
-CSE115L,Programming Language I Lab,1,B,Spring2023
-POL104,Political Science,3,B-,Spring2023
-EEE111L,Analog Electronics I Lab,1,A,Spring2023
-CSE173,Discrete Mathematics,3,C+,Summer2023
-MAT130,Calculus II,3,C-,Summer2023
-ANT101,Anthropology,3,A-,Summer2023
-PHI104,Introduction to Ethics,3,C+,Summer2023
+CSE115L,Programming Language I Lab,1,D+,Summer2020
+CSE115,Programming Language I,3,C+,Summer2020
+MAT116,Pre-Calculus,3,A,Summer2020
+PHY108L,Physics II Lab,1,D,Fall2020
+MAT120,Calculus I,3,B,Fall2020
+CSE173,Discrete Mathematics,3,A-,Fall2020
+PHY108,Physics II,3,C+,Fall2020
+MAT130,Calculus II,3,B+,Spring2021
+CSE215,Programming Language II,3,B+,Spring2021
+CSE215L,Programming Language II Lab,1,B,Spring2021
+POL101,Intro to Political Science,3,B,Spring2021
+MAT125,Linear Algebra,3,B+,Summer2021
+MAT250,Calculus III,3,A-,Summer2021
+CSE225,Data Structures & Algorithms,3,W,Summer2021

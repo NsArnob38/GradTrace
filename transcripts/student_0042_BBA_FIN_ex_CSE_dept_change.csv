@@ -1,0 +1,36 @@
+course_code,course_name,credits,grade,semester
+CSE425,Concepts of Programming Languages,3,C,Summer2022
+EEE141L,Electrical Circuits I Lab,1,B+,Summer2022
+CSE115L,Programming Language I Lab,1,B+,Summer2022
+EEE141,Electrical Circuits I,3,C+,Summer2022
+CSE115,Programming Language I,3,B,Fall2022
+MAT116,Pre-Calculus,3,B,Fall2022
+MAT125,Linear Algebra,3,B,Fall2022
+EEE111L,Analog Electronics I Lab,1,A,Fall2022
+PHY108,Physics II,3,B+,Fall2022
+PHY108L,Physics II Lab,1,C+,Fall2022
+CEE110,Engineering Drawing,1,B+,Spring2023
+PHY107L,Physics I Lab,1,B-,Spring2023
+ENG103,Intermediate Composition,3,A,Spring2023
+HIS102,World Civilization,3,B+,Spring2023
+BUS251,Business Communication,3,C,Summer2023
+ACT201,Intro to Financial Accounting,3,B,Summer2023
+LAW200,Legal Environment of Business,3,A-,Summer2023
+FIN435,Investment Theory,3,C,Summer2023
+FIN455,Financial Modelling Using Excel,3,B,Summer2023
+PHI401,Ethics / Philosophy,3,C+,Fall2023
+FIN480,Behavioural Finance,3,D+,Fall2023
+MIS107,Introduction to Computers,3,C-,Fall2023
+MKT202,Introduction to Marketing,3,D+,Fall2023
+INB372,International Business,3,C-,Fall2023
+FIN470,Insurance and Risk Management,3,F,Spring2024
+FIN433,Financial Markets and Institutions,3,A,Spring2024
+MIS207,Management Information Systems,3,B-,Spring2024
+FIN410,Financial Statement Analysis,3,W,Summer2024
+FIN444,International Financial Management,3,B-,Summer2024
+ECO101,Intro to Microeconomics,3,D,Summer2024
+FIN440,Corporate Finance,3,C,Summer2024
+ACT202,Intro to Managerial Accounting,3,F,Summer2024
+ECO104,Intro to Macroeconomics,3,F,Fall2024
+FIN464,Derivatives,3,W,Fall2024
+FIN470,Insurance and Risk Management,3,D+,Fall2024

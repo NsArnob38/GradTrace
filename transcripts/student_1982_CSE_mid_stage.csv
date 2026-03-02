@@ -1,14 +1,34 @@
 course_code,course_name,credits,grade,semester
-CSE115,Programming Language I,3,F,Spring2019
-MAT116,Pre-Calculus,3,D+,Spring2019
-CHE101L,Chemistry I Lab,1,W,Spring2019
-CSE327,Software Engineering,3,B,Spring2019
-MAT120,Calculus I,3,B,Summer2019
-CSE115,Programming Language I,3,A-,Summer2019
-CSE115L,Programming Language I Lab,1,D,Summer2019
-ENV203,Environmental Studies,3,A,Summer2019
-CSE226,Fundamentals of Vibe Coding,3,C,Summer2019
-CSE173,Discrete Mathematics,3,F,Fall2019
-MAT130,Calculus II,3,D+,Fall2019
-EEE141L,Electrical Circuits I Lab,1,B-,Fall2019
-CSE331L,Microprocessor Interfacing Lab,1,B,Fall2019
+MAT116,Pre-Calculus,3,B+,Summer2019
+CSE331L,Microprocessor Interfacing Lab,1,B-,Summer2019
+CSE115L,Programming Language I Lab,1,W,Summer2019
+CSE115,Programming Language I,3,B,Summer2019
+EEE452,Engineering Economics,3,W,Fall2019
+PHY108L,Physics II Lab,1,B,Fall2019
+CSE173,Discrete Mathematics,3,C,Fall2019
+EEE141,Electrical Circuits I,3,D,Fall2019
+MAT120,Calculus I,3,B,Fall2019
+EEE141L,Electrical Circuits I Lab,1,D+,Fall2019
+ANT101,Anthropology,3,B,Spring2020
+MAT130,Calculus II,3,D+,Spring2020
+CSE215,Programming Language II,3,B-,Spring2020
+CSE215L,Programming Language II Lab,1,B,Spring2020
+CSE299,Junior Design Project,1,D+,Spring2020
+MAT125,Linear Algebra,3,C+,Spring2020
+ENG111,Public Speaking,3,C,Summer2020
+CSE225,Data Structures & Algorithms,3,C-,Summer2020
+MAT250,Calculus III,3,A,Summer2020
+PHY108,Physics II,3,D,Summer2020
+PHI104,Introduction to Ethics,3,A,Fall2020
+CSE231,Digital Logic Design,3,D,Fall2020
+HIS102,World Civilization,3,A,Fall2020
+CSE231L,Digital Logic Design Lab,1,A-,Fall2020
+CSE225L,Data Structures & Algorithms Lab,1,C+,Fall2020
+CSE332,Computer Organization & Architecture,3,A-,Spring2021
+CSE311,Database Management Systems,3,B-,Spring2021
+MAT361,Discrete Mathematics II,3,C,Spring2021
+CSE311L,Database Management Systems Lab,1,A-,Spring2021
+ENG103,Intermediate Composition,3,C,Spring2021
+CSE327,Software Engineering,3,W,Summer2021
+CSE323,Operating Systems Design,3,A,Summer2021
+ECO104,Intro to Macroeconomics,3,C-,Summer2021
