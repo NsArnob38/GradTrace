@@ -1,6 +1,6 @@
 course_code,course_name,credits,grade,semester
-MAT116,Pre-Calculus,0,T,Spring2019
-MAT112,College Algebra,0,T,Spring2019
+MAT116,Pre-Calculus,0,A,Spring2023
+MAT112,College Algebra,0,T,Spring2023
 ENG105,Advanced Composition,3,A-,Spring2023
 MAT120,Calculus I,3,D,Spring2023
 CHE101L,Chemistry I Lab,1,C,Spring2023
@@ -20,3 +20,4 @@ HIS102,World Civilization,3,B-,Fall2023
 SOC101,Intro to Sociology,3,B+,Spring2024
 CSE225L,Data Structures & Algorithms Lab,1,B+,Spring2024
 CSE225,Data Structures & Algorithms,3,A-,Spring2024
+ENG102,Introduction to Composition,3,T,waiver
