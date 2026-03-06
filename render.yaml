@@ -1,0 +1,44 @@
+services:
+  # Next.js Frontend
+  - type: web
+    name: gradetrace-web
+    env: node
+    region: ohio
+    plan: free
+    rootDir: .
+    buildCommand: npm install -g pnpm && pnpm install && pnpm run build:web
+    startCommand: pnpm run start:web
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: gradetrace-api
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # FastAPI Backend
+  - type: web
+    name: gradetrace-api
+    env: python
+    region: ohio
+    plan: free
+    rootDir: .
+    buildCommand: pip install -r packages/api/requirements.txt -r packages/core/requirements.txt
+    startCommand: python -m uvicorn packages.api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: ALLOWED_EMAIL_DOMAIN
+        value: northsouth.edu
+      - key: CORS_ORIGINS
+        fromService:
+          type: web
+          name: gradetrace-web
+          envVarKey: RENDER_EXTERNAL_URL

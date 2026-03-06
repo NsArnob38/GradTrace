@@ -20,3 +20,6 @@ test_transcripts/BBA_probation_P2.csv
 level_1_output.txt
 level_2_output.txt
 level_3_output.txt
+.env
+.env.*
+!.env.example
