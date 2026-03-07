@@ -40,10 +40,19 @@ export const api = {
     uploadTranscript: async (file: File) => {
         const form = new FormData();
         form.append("file", file);
+
+        const { supabase } = await import("./supabase");
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+
         const res = await fetch(`${API_URL}/transcripts/upload`, {
             method: "POST",
+            headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
             body: form,
         });
+
         if (!res.ok) {
             const err = await res.json().catch(() => ({ detail: "Upload failed" }));
             return { success: false, data: null, error: err.detail };
