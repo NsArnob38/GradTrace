@@ -10,7 +10,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from packages.api.config import get_settings
 from packages.api.routes import auth, transcripts, audit, admin
 
+import os
 settings = get_settings()
+print("DEBUG CORS_ORIGINS env:", os.environ.get("CORS_ORIGINS"))
+print("DEBUG settings.cors_origins:", settings.cors_origins)
 
 app = FastAPI(
     title="GradeTrace API",
