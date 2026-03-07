@@ -12,7 +12,8 @@ router = APIRouter(prefix="/transcripts", tags=["transcripts"])
 
 @router.post("/upload")
 async def upload_transcript(
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    user: dict = Depends(get_current_user)
 ):
     """Upload a CSV transcript, parse it, and store in Supabase."""
     if not file.filename.endswith(".csv"):
@@ -44,17 +45,9 @@ async def upload_transcript(
 
     # Store in Supabase
     db = get_supabase_admin()
-    
-    # Since this endpoint is now publicly accessible, we need a fallback user_id
-    # for the database constraint (user_id NOT NULL). We'll grab the first available user.
-    user_result = db.table("profiles").select("id").limit(1).execute()
-    fallback_user_id = user_result.data[0]["id"] if user_result.data else None
-    
-    if not fallback_user_id:
-        raise HTTPException(status_code=500, detail="Cannot upload public transcript: No users found in database to attach it to.")
 
     result = db.table("transcripts").insert({
-        "user_id": fallback_user_id,
+        "user_id": user["id"],
         "file_name": file.filename,
         "raw_data": rows,
     }).execute()
