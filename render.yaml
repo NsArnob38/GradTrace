@@ -38,7 +38,4 @@ services:
       - key: ALLOWED_EMAIL_DOMAIN
         value: northsouth.edu
       - key: CORS_ORIGINS
-        fromService:
-          type: web
-          name: gradetrace-web
-          envVarKey: RENDER_EXTERNAL_URL
+        value: https://grad-trace.vercel.app
