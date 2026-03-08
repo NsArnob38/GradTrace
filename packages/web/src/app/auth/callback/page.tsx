@@ -11,8 +11,13 @@ export default function AuthCallbackPage() {
         // Supabase processes the OAuth tokens from the URL hash automatically
         // We just need to wait for the session to be established
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (event, session) => {
+            async (event, session) => {
                 if (event === "SIGNED_IN" && session) {
+                    if (session.user && !session.user.email?.endsWith("@northsouth.edu")) {
+                        await supabase.auth.signOut();
+                        router.replace("/auth/login?error=only_nsu_emails_allowed");
+                        return;
+                    }
                     router.replace("/dashboard");
                 } else if (event === "SIGNED_OUT" || event === "TOKEN_REFRESHED") {
                     // ignore
@@ -24,6 +29,11 @@ export default function AuthCallbackPage() {
         const checkSession = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
+                if (session.user && !session.user.email?.endsWith("@northsouth.edu")) {
+                    await supabase.auth.signOut();
+                    router.replace("/auth/login?error=only_nsu_emails_allowed");
+                    return;
+                }
                 router.replace("/dashboard");
             }
         };

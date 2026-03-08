@@ -4,7 +4,13 @@ import { supabase } from "@/lib/supabase";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function LoginPage() {
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+function LoginContent() {
+    const searchParams = useSearchParams();
+    const error = searchParams.get("error");
+
     const handleGoogleLogin = async () => {
         await supabase.auth.signInWithOAuth({
             provider: "google",
@@ -31,6 +37,12 @@ export default function LoginPage() {
                     Sign in with your NSU Google account
                 </p>
 
+                {error === "only_nsu_emails_allowed" && (
+                    <p className="text-red-500 text-sm mb-4">
+                        Only @northsouth.edu accounts are allowed.
+                    </p>
+                )}
+
                 <button
                     onClick={handleGoogleLogin}
                     className="w-full flex items-center justify-center gap-3 bg-white border border-border rounded-xl px-6 py-3.5 text-sm font-medium hover:bg-gray-50 hover:shadow-sm transition-all"
@@ -49,5 +61,17 @@ export default function LoginPage() {
                 </p>
             </motion.div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-bg">
+                <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
+            </div>
+        }>
+            <LoginContent />
+        </Suspense>
     );
 }
