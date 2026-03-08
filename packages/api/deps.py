@@ -107,8 +107,8 @@ async def get_current_admin(authorization: str = Header(...)) -> dict:
         if payload.get("role") != "admin":
             raise HTTPException(status_code=403, detail="Not an admin")
         return payload
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid admin token")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
 
 
 async def require_admin(user: dict = Depends(get_current_user)) -> dict:
