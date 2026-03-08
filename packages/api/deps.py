@@ -62,12 +62,18 @@ async def get_current_user(authorization: str = Header(...)) -> dict:
     settings = get_settings()
 
     from jose import jwt, JWTError
+    import httpx
 
     try:
+        # Fetch Supabase's public JWKS to verify ES256 tokens
+        jwks_url = f"{settings.supabase_url}/auth/v1/jwks"
+        jwks_response = httpx.get(jwks_url)
+        jwks = jwks_response.json()
+        
         payload = jwt.decode(
             token,
-            settings.supabase_jwt_secret,
-            algorithms=["HS256"],
+            jwks,
+            algorithms=["ES256"],
             options={"verify_aud": False},
         )
     except JWTError as e:
