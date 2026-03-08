@@ -61,29 +61,29 @@ async def get_current_user(authorization: str = Header(...)) -> dict:
     token = authorization.replace("Bearer ", "")
     settings = get_settings()
 
+    import jwt as pyjwt
     import requests as req
-    from jose import jwt, JWTError
 
-    global _jwks_cache
-    if '_jwks_cache' not in globals():
-        _jwks_cache = None
+    global _jwks_client
+    if '_jwks_client' not in globals():
+        _jwks_client = None
 
-    def get_jwks(supabase_url: str):
-        global _jwks_cache
-        if _jwks_cache is None:
-            response = req.get(f"{supabase_url}/auth/v1/jwks")
-            _jwks_cache = response.json()
-        return _jwks_cache
+    def get_jwks_client(supabase_url: str):
+        global _jwks_client
+        if _jwks_client is None:
+            _jwks_client = pyjwt.PyJWKClient(f"{supabase_url}/auth/v1/jwks")
+        return _jwks_client
 
     try:
-        jwks = get_jwks(settings.supabase_url)
-        payload = jwt.decode(
+        jwks_client = get_jwks_client(settings.supabase_url)
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+        payload = pyjwt.decode(
             token,
-            jwks,
+            signing_key.key,
             algorithms=["ES256"],
             options={"verify_aud": False},
         )
-    except JWTError as e:
+    except Exception as e:
         raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
 
     user_id = payload.get("sub")
