@@ -61,16 +61,16 @@ async def get_current_user(authorization: str = Header(...)) -> dict:
     token = authorization.replace("Bearer ", "")
     settings = get_settings()
 
+    from jose import jwt, JWTError
+
     try:
-        import jwt as pyjwt
-        print("DEBUG token alg:", pyjwt.get_unverified_header(token))
-        payload = pyjwt.decode(
+        payload = jwt.decode(
             token,
             settings.supabase_jwt_secret,
             algorithms=["HS256"],
             options={"verify_aud": False},
         )
-    except Exception as e:
+    except JWTError as e:
         raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
 
     user_id = payload.get("sub")
