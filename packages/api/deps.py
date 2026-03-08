@@ -61,15 +61,22 @@ async def get_current_user(authorization: str = Header(...)) -> dict:
     token = authorization.replace("Bearer ", "")
     settings = get_settings()
 
+    import requests as req
     from jose import jwt, JWTError
-    import httpx
+
+    global _jwks_cache
+    if '_jwks_cache' not in globals():
+        _jwks_cache = None
+
+    def get_jwks(supabase_url: str):
+        global _jwks_cache
+        if _jwks_cache is None:
+            response = req.get(f"{supabase_url}/auth/v1/jwks")
+            _jwks_cache = response.json()
+        return _jwks_cache
 
     try:
-        # Fetch Supabase's public JWKS to verify ES256 tokens
-        jwks_url = f"{settings.supabase_url}/auth/v1/jwks"
-        jwks_response = httpx.get(jwks_url)
-        jwks = jwks_response.json()
-        
+        jwks = get_jwks(settings.supabase_url)
         payload = jwt.decode(
             token,
             jwks,
