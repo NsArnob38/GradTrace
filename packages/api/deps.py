@@ -63,7 +63,7 @@ async def get_current_user(authorization: str = Header(...)) -> dict:
 
     try:
         import jwt as pyjwt
-        print("DEBUG: Token header is:", pyjwt.get_unverified_header(token))
+        print("DEBUG token alg:", pyjwt.get_unverified_header(token))
         payload = pyjwt.decode(
             token,
             settings.supabase_jwt_secret,
