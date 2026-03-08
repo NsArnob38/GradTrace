@@ -39,7 +39,7 @@ async def admin_login(body: AdminLoginRequest):
 async def get_stats(admin=Depends(get_current_admin)):
     db = get_supabase_admin()
     
-    p_res = db.table("profiles").select("id", count="exact").eq("role", "student").execute()
+    p_res = db.table("profiles").select("id", count="exact").execute()
     total_students = p_res.count if p_res.count else 0
     
     a_res = db.table("audit_results").select("id", count="exact").execute()
@@ -49,10 +49,10 @@ async def get_stats(admin=Depends(get_current_admin)):
     t_res = db.table("audit_results").select("id", count="exact").gte("generated_at", today).execute()
     audits_today = t_res.count if t_res.count else 0
     
-    l_res = db.table("audit_results").select("student_id, generated_at").order("generated_at", desc=True).limit(1).execute()
+    l_res = db.table("audit_results").select("user_id, generated_at").order("generated_at", desc=True).limit(1).execute()
     latest_audit = None
     if l_res.data:
-        sid = l_res.data[0].get("student_id")
+        sid = l_res.data[0].get("user_id")
         email = "Unknown"
         if sid:
             prof = db.table("profiles").select("email").eq("id", sid).execute()
@@ -75,11 +75,11 @@ async def get_stats(admin=Depends(get_current_admin)):
 @router.get("/students")  
 async def get_students(admin=Depends(get_current_admin)):
     db = get_supabase_admin()
-    profiles = db.table("profiles").select("id, email, created_at").eq("role", "student").order("created_at", desc=True).execute()
+    profiles = db.table("profiles").select("id, email, created_at").order("created_at", desc=True).execute()
     students = profiles.data or []
     
     for s in students:
-        hist = db.table("scan_history").select("id", count="exact").eq("user_id", s["id"]).execute()
+        hist = db.table("audit_results").select("id", count="exact").eq("user_id", s["id"]).execute()
         s["total_audits"] = hist.count if hist.count else 0
         
     return students
@@ -92,7 +92,7 @@ async def get_audits(admin=Depends(get_current_admin)):
     results = audits.data or []
     
     for r in results:
-        sid = r.get("student_id")
+        sid = r.get("user_id")
         if sid:
             prof = db.table("profiles").select("email").eq("id", sid).execute()
             r["email"] = prof.data[0].get("email") if prof.data else "Unknown"
