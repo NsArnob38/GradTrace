@@ -73,7 +73,7 @@ async def get_current_user(authorization: str = Header(...)) -> dict:
         if _jwks_client is None:
             settings = get_settings()
             _jwks_client = pyjwt.PyJWKClient(
-                f"{supabase_url}/auth/v1/jwks",
+                f"{supabase_url}/auth/v1/.well-known/jwks.json",
                 headers={"apikey": settings.supabase_anon_key}
             )
         return _jwks_client
