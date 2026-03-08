@@ -37,15 +37,19 @@ export default function AdminDashboard() {
     }, [router]);
 
     useEffect(() => {
-        if (!token) return;
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, activeTab]);
+    }, [activeTab]);
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const headers = { Authorization: `Bearer ${token}` };
+            const currentToken = localStorage.getItem("admin_token");
+            if (!currentToken) {
+                router.replace("/admin/login");
+                return;
+            }
+            const headers = { Authorization: `Bearer ${currentToken}` };
 
             if (activeTab === "overview") {
                 const res = await fetch(`${API_URL}/admin/stats`, { headers });
@@ -116,8 +120,8 @@ export default function AdminDashboard() {
         <button
             onClick={() => setActiveTab(tab)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === tab
-                    ? "bg-neutral-900 text-white shadow-md"
-                    : "text-gray-500 hover:bg-gray-100 hover:text-neutral-900"
+                ? "bg-neutral-900 text-white shadow-md"
+                : "text-gray-500 hover:bg-gray-100 hover:text-neutral-900"
                 }`}
         >
             <Icon className="w-5 h-5" />
@@ -292,8 +296,8 @@ export default function AdminDashboard() {
                                                     <td className="px-6 py-4 text-sm text-gray-500">{a.credits_earned}</td>
                                                     <td className="px-6 py-4">
                                                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${a.is_eligible
-                                                                ? "bg-green-100 text-green-700"
-                                                                : "bg-red-100 text-red-700"
+                                                            ? "bg-green-100 text-green-700"
+                                                            : "bg-red-100 text-red-700"
                                                             }`}>
                                                             {a.is_eligible ? "Eligible" : "Ineligible"}
                                                         </span>

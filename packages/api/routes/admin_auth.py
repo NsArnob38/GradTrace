@@ -75,7 +75,7 @@ async def get_stats(admin=Depends(get_current_admin)):
 @router.get("/students")  
 async def get_students(admin=Depends(get_current_admin)):
     db = get_supabase_admin()
-    profiles = db.table("profiles").select("id, email, created_at").order("created_at", desc=True).execute()
+    profiles = db.table("profiles").select("id, email, created_at, role, full_name").order("created_at", desc=True).execute()
     students = profiles.data or []
     
     for s in students:
