@@ -41,3 +41,11 @@ app.include_router(admin.router)
 @app.get("/health")
 async def health():
     return {"status": "ok", "service": "gradetrace-api"}
+
+
+@app.get("/debug-cors")
+async def debug_cors():
+    return {
+        "cors_origins_env": os.environ.get("CORS_ORIGINS"),
+        "cors_origins_settings": settings.cors_origins,
+    }
