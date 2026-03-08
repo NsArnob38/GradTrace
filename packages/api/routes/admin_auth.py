@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from packages.api.config import get_settings
+from packages.api.deps import get_current_admin, get_supabase_admin
 import jwt as pyjwt
 import datetime
+import os
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -31,3 +33,124 @@ async def admin_login(body: AdminLoginRequest):
     }, settings.admin_jwt_secret, algorithm="HS256")
     
     return {"token": token, "admin_id": body.admin_id}
+
+
+@router.get("/stats")
+async def get_stats(admin=Depends(get_current_admin)):
+    db = get_supabase_admin()
+    
+    p_res = db.table("profiles").select("id", count="exact").eq("role", "student").execute()
+    total_students = p_res.count if p_res.count else 0
+    
+    a_res = db.table("audit_results").select("id", count="exact").execute()
+    total_audits = a_res.count if a_res.count else 0
+    
+    today = datetime.datetime.utcnow().date().isoformat()
+    t_res = db.table("audit_results").select("id", count="exact").gte("created_at", today).execute()
+    audits_today = t_res.count if t_res.count else 0
+    
+    l_res = db.table("audit_results").select("student_id, created_at").order("created_at", desc=True).limit(1).execute()
+    latest_audit = None
+    if l_res.data:
+        sid = l_res.data[0].get("student_id")
+        email = "Unknown"
+        if sid:
+            prof = db.table("profiles").select("email").eq("id", sid).execute()
+            if prof.data:
+                email = prof.data[0].get("email")
+        
+        latest_audit = {
+            "email": email,
+            "created_at": l_res.data[0].get("created_at")
+        }
+    
+    return {
+        "total_students": total_students,
+        "total_audits": total_audits,
+        "audits_today": audits_today,
+        "latest_audit": latest_audit,
+    }
+
+
+@router.get("/students")  
+async def get_students(admin=Depends(get_current_admin)):
+    db = get_supabase_admin()
+    profiles = db.table("profiles").select("id, email, created_at").eq("role", "student").order("created_at", desc=True).execute()
+    students = profiles.data or []
+    
+    for s in students:
+        hist = db.table("scan_history").select("id", count="exact").eq("user_id", s["id"]).execute()
+        s["total_audits"] = hist.count if hist.count else 0
+        
+    return students
+
+
+@router.get("/audits")
+async def get_audits(admin=Depends(get_current_admin)):
+    db = get_supabase_admin()
+    audits = db.table("audit_results").select("*").order("created_at", desc=True).limit(100).execute()
+    results = audits.data or []
+    
+    for r in results:
+        sid = r.get("student_id")
+        if sid:
+            prof = db.table("profiles").select("email").eq("id", sid).execute()
+            r["email"] = prof.data[0].get("email") if prof.data else "Unknown"
+        else:
+            r["email"] = "Unknown"
+            
+    return results
+
+
+@router.get("/admins")
+async def list_admins(admin=Depends(get_current_admin)):
+    settings = get_settings()
+    admins = []
+    if settings.admin_credentials:
+        for entry in settings.admin_credentials.split(","):
+            if ":" in entry:
+                aid, _ = entry.strip().split(":", 1)
+                admins.append(aid)
+    return admins
+
+
+class AddAdminRequest(BaseModel):
+    admin_id: str
+    password: str
+
+@router.post("/admins")
+async def add_admin(body: AddAdminRequest, admin=Depends(get_current_admin)):
+    settings = get_settings()
+    admins = {}
+    if settings.admin_credentials:
+        for entry in settings.admin_credentials.split(","):
+            if ":" in entry:
+                aid, pwd = entry.strip().split(":", 1)
+                admins[aid] = pwd
+                
+    if body.admin_id in admins:
+        raise HTTPException(status_code=400, detail="Admin ID already exists")
+    
+    new_entry = f"{body.admin_id}:{body.password}"
+    if settings.admin_credentials:
+        new_creds = settings.admin_credentials + "," + new_entry
+    else:
+        new_creds = new_entry
+        
+    os.environ["ADMIN_CREDENTIALS"] = new_creds
+    return {"success": True}
+
+
+@router.delete("/admins/{admin_id}")
+async def remove_admin(admin_id: str, admin=Depends(get_current_admin)):
+    settings = get_settings()
+    admins = []
+    if settings.admin_credentials:
+        for entry in settings.admin_credentials.split(","):
+            if ":" in entry:
+                aid, pwd = entry.strip().split(":", 1)
+                if aid != admin_id:
+                    admins.append(entry.strip())
+                
+    os.environ["ADMIN_CREDENTIALS"] = ",".join(admins)
+    return {"success": True}
