@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     # Domain restriction
     allowed_email_domain: str = "northsouth.edu"
 
+    # Admin Auth
+    admin_credentials: str = ""  # format: "id1:pass1,id2:pass2"
+    admin_jwt_secret: str = "change-this-secret"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

@@ -96,6 +96,20 @@ async def get_current_user(authorization: str = Header(...)) -> dict:
 
     return {"id": user_id, "email": payload.get("email", ""), "role": payload.get("role", "authenticated")}
 
+async def get_current_admin(authorization: str = Header(...)) -> dict:
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid header")
+    token = authorization.replace("Bearer ", "")
+    settings = get_settings()
+    try:
+        import jwt as pyjwt
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not an admin")
+        return payload
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid admin token")
+
 
 async def require_admin(user: dict = Depends(get_current_user)) -> dict:
     """Require admin role."""
