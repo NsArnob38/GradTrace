@@ -46,10 +46,10 @@ async def get_stats(admin=Depends(get_current_admin)):
     total_audits = a_res.count if a_res.count else 0
     
     today = datetime.datetime.utcnow().date().isoformat()
-    t_res = db.table("audit_results").select("id", count="exact").gte("created_at", today).execute()
+    t_res = db.table("audit_results").select("id", count="exact").gte("generated_at", today).execute()
     audits_today = t_res.count if t_res.count else 0
     
-    l_res = db.table("audit_results").select("student_id, created_at").order("created_at", desc=True).limit(1).execute()
+    l_res = db.table("audit_results").select("student_id, generated_at").order("generated_at", desc=True).limit(1).execute()
     latest_audit = None
     if l_res.data:
         sid = l_res.data[0].get("student_id")
@@ -61,7 +61,7 @@ async def get_stats(admin=Depends(get_current_admin)):
         
         latest_audit = {
             "email": email,
-            "created_at": l_res.data[0].get("created_at")
+            "created_at": l_res.data[0].get("generated_at")
         }
     
     return {
@@ -88,7 +88,7 @@ async def get_students(admin=Depends(get_current_admin)):
 @router.get("/audits")
 async def get_audits(admin=Depends(get_current_admin)):
     db = get_supabase_admin()
-    audits = db.table("audit_results").select("*").order("created_at", desc=True).limit(100).execute()
+    audits = db.table("audit_results").select("*").order("generated_at", desc=True).limit(100).execute()
     results = audits.data or []
     
     for r in results:
