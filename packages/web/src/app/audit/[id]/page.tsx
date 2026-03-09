@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -41,12 +42,15 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-bg">
-                <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-border">
+            <div className="min-h-screen bg-bg dark:bg-gray-950 text-primary dark:text-gray-100">
+                <nav className="flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-border dark:border-gray-800 sticky top-0 z-50">
                     <Link href="/dashboard" className="flex items-center gap-2">
                         <Star className="w-6 h-6 text-accent fill-accent" />
-                        <span className="text-lg font-semibold">GradeTrace</span>
+                        <span className="text-lg font-semibold text-primary dark:text-gray-100">GradeTrace</span>
                     </Link>
+                    <div className="flex items-center gap-4">
+                        <ThemeToggle />
+                    </div>
                 </nav>
                 <div className="max-w-4xl mx-auto px-6 py-8">
                     <Skeleton className="h-4 w-32 mb-6" />
@@ -61,8 +65,8 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
     if (!data || error) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-bg">
-                <p className="text-muted">{error || "No audit result found."}</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-bg dark:bg-gray-950 text-primary dark:text-gray-100">
+                <p className="text-muted dark:text-gray-400">{error || "No audit result found."}</p>
                 <Link href="/upload" className="text-accent mt-4">Upload a transcript →</Link>
             </div>
         );
@@ -86,31 +90,34 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     const estimatedSemesters = roadmap.estimated_semesters ?? 0;
 
     const SectionHeader = ({ id: sId, icon: Icon, title, badge }: { id: string; icon: any; title: string; badge?: any }) => (
-        <button onClick={() => toggle(sId)} className="w-full flex items-center justify-between p-5 hover:bg-bg/50 transition-colors">
+        <button onClick={() => toggle(sId)} className="w-full flex items-center justify-between p-5 hover:bg-bg/50 dark:hover:bg-gray-800/50 transition-colors">
             <div className="flex items-center gap-3">
                 <Icon className="w-5 h-5 text-accent" />
-                <h2 className="text-lg font-semibold">{title}</h2>
+                <h2 className="text-lg font-semibold text-primary dark:text-gray-100">{title}</h2>
                 {badge}
             </div>
-            {openSections.has(sId) ? <ChevronUp className="w-5 h-5 text-muted" /> : <ChevronDown className="w-5 h-5 text-muted" />}
+            {openSections.has(sId) ? <ChevronUp className="w-5 h-5 text-muted dark:text-gray-400" /> : <ChevronDown className="w-5 h-5 text-muted dark:text-gray-400" />}
         </button>
     );
 
     return (
-        <div className="min-h-screen bg-bg">
-            <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-border">
+        <div className="min-h-screen bg-bg dark:bg-gray-950 text-primary dark:text-gray-100">
+            <nav className="flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-border dark:border-gray-800 sticky top-0 z-50">
                 <Link href="/dashboard" className="flex items-center gap-2">
                     <Star className="w-6 h-6 text-accent fill-accent" />
-                    <span className="text-lg font-semibold">GradeTrace</span>
+                    <span className="text-lg font-semibold text-primary dark:text-gray-100">GradeTrace</span>
                 </Link>
+                <div className="flex items-center gap-4">
+                    <ThemeToggle />
+                </div>
             </nav>
 
             <div className="max-w-4xl mx-auto px-6 py-8">
                 <div className="flex items-center justify-between mb-6 print-hidden">
-                    <Link href="/dashboard" className="text-muted text-sm flex items-center gap-1 hover:text-primary">
+                    <Link href="/dashboard" className="text-muted dark:text-gray-400 text-sm flex items-center gap-1 hover:text-primary dark:hover:text-gray-100">
                         <ArrowLeft className="w-4 h-4" /> Back to Dashboard
                     </Link>
-                    <button onClick={() => window.print()} className="text-muted text-sm flex items-center gap-1 hover:text-primary bg-bg px-3 py-1.5 rounded-lg border border-border">
+                    <button onClick={() => window.print()} className="text-muted dark:text-gray-400 text-sm flex items-center gap-1 hover:text-primary dark:hover:text-gray-100 bg-bg dark:bg-gray-900 px-3 py-1.5 rounded-lg border border-border dark:border-gray-800">
                         <Printer className="w-4 h-4" /> Export PDF
                     </button>
                 </div>
@@ -148,23 +155,23 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
                 {/* Level 1 — Credits */}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                    className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden"
+                    className="bg-white dark:bg-gray-900 border border-transparent dark:border-gray-800 rounded-xl shadow-sm mb-4 overflow-hidden"
                 >
                     <SectionHeader id="level1" icon={BookOpen} title="Level 1 — Credit Tally" />
                     {openSections.has("level1") && (
                         <div className="px-5 pb-5">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                <div className="bg-bg rounded-lg p-4">
-                                    <p className="text-xs text-muted mb-1">Attempted</p>
+                                <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
+                                    <p className="text-xs text-muted dark:text-gray-400 mb-1">Attempted</p>
                                     <p className="text-xl font-bold">{creditsAttempted}</p>
                                 </div>
-                                <div className="bg-bg rounded-lg p-4">
-                                    <p className="text-xs text-muted mb-1">Earned</p>
+                                <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
+                                    <p className="text-xs text-muted dark:text-gray-400 mb-1">Earned</p>
                                     <p className="text-xl font-bold text-success">{creditsEarned}</p>
                                 </div>
                             </div>
                             <div className="mt-2">
-                                <div className="flex justify-between text-xs text-muted mb-1">
+                                <div className="flex justify-between text-xs text-muted dark:text-gray-400 mb-1">
                                     <span>Progress</span>
                                     <span>{creditsEarned} / {totalRequired} credits</span>
                                 </div>
@@ -183,7 +190,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
                 {/* Level 2 — CGPA & Standing */}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                    className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden"
+                    className="bg-white dark:bg-gray-900 border border-transparent dark:border-gray-800 rounded-xl shadow-sm mb-4 overflow-hidden"
                 >
                     <SectionHeader id="level2" icon={TrendingUp} title="Level 2 — CGPA & Standing"
                         badge={standing !== "NORMAL" && standing !== "UNKNOWN" && (
@@ -193,16 +200,16 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                     {openSections.has("level2") && (
                         <div className="px-5 pb-5">
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                                <div className="bg-bg rounded-lg p-4">
-                                    <p className="text-xs text-muted mb-1">Overall CGPA</p>
+                                <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
+                                    <p className="text-xs text-muted dark:text-gray-400 mb-1">Overall CGPA</p>
                                     <p className={`text-xl font-bold ${cgpa >= 2.0 ? "text-success" : "text-danger"}`}>{cgpa.toFixed(2)}</p>
                                 </div>
-                                <div className="bg-bg rounded-lg p-4">
-                                    <p className="text-xs text-muted mb-1">Quality Points</p>
+                                <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
+                                    <p className="text-xs text-muted dark:text-gray-400 mb-1">Quality Points</p>
                                     <p className="text-xl font-bold">{l2.quality_points ?? "—"}</p>
                                 </div>
-                                <div className="bg-bg rounded-lg p-4">
-                                    <p className="text-xs text-muted mb-1">GPA Credits</p>
+                                <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
+                                    <p className="text-xs text-muted dark:text-gray-400 mb-1">GPA Credits</p>
                                     <p className="text-xl font-bold">{l2.gpa_credits ?? "—"}</p>
                                 </div>
                             </div>
@@ -223,7 +230,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
                 {/* Level 3 — Graduation Eligibility */}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                    className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden"
+                    className="bg-white dark:bg-gray-900 border border-transparent dark:border-gray-800 rounded-xl shadow-sm mb-4 overflow-hidden"
                 >
                     <SectionHeader id="level3" icon={GraduationCap} title="Level 3 — Graduation Audit"
                         badge={
@@ -236,7 +243,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                         <div className="px-5 pb-5">
                             {reasons.length > 0 && (
                                 <div className="mb-4">
-                                    <p className="text-xs text-muted uppercase tracking-wider font-medium mb-2">Issues</p>
+                                    <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium mb-2">Issues</p>
                                     {reasons.map((r: string, i: number) => (
                                         <div key={i} className="flex items-start gap-2 text-sm mb-1.5">
                                             <XCircle className="w-4 h-4 text-danger mt-0.5 shrink-0" />
@@ -247,14 +254,14 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                             )}
                             {Object.keys(remaining).length > 0 && (
                                 <div>
-                                    <p className="text-xs text-muted uppercase tracking-wider font-medium mb-2">Missing Courses</p>
+                                    <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium mb-2">Missing Courses</p>
                                     {Object.entries(remaining).map(([category, courses]: [string, any]) => (
                                         <div key={category} className="mb-3">
-                                            <p className="text-sm font-medium text-primary mb-1">{category}</p>
+                                            <p className="text-sm font-medium text-primary dark:text-gray-100 mb-1">{category}</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {Object.entries(courses).map(([code, cr]: [string, any]) => (
-                                                    <span key={code} className="text-xs bg-bg px-2.5 py-1 rounded-md font-mono">
-                                                        {code} <span className="text-muted">({cr}cr)</span>
+                                                    <span key={code} className="text-xs bg-bg dark:bg-gray-800 px-2.5 py-1 rounded-md font-mono">
+                                                        {code} <span className="text-muted dark:text-gray-400">({cr}cr)</span>
                                                     </span>
                                                 ))}
                                             </div>
@@ -285,7 +292,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
                 {/* Roadmap */}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                    className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden"
+                    className="bg-white dark:bg-gray-900 border border-transparent dark:border-gray-800 rounded-xl shadow-sm mb-4 overflow-hidden"
                 >
                     <SectionHeader id="roadmap" icon={MapPin} title="Graduation Roadmap"
                         badge={estimatedSemesters > 0 && (
@@ -318,12 +325,12 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                             <span className="text-xs uppercase tracking-wider font-medium">{step.category}</span>
                                             <span className="text-xs font-medium">{step.priority}</span>
                                         </div>
-                                        <p className="text-sm font-medium text-primary">{step.action}</p>
+                                        <p className="text-sm font-medium text-primary dark:text-gray-100">{step.action}</p>
                                         {step.detail && <p className="text-xs mt-1 opacity-80">{step.detail}</p>}
                                     </motion.div>
                                 );
                             }) : (
-                                <p className="text-sm text-muted">No roadmap steps available.</p>
+                                <p className="text-sm text-muted dark:text-gray-400">No roadmap steps available.</p>
                             )}
                         </div>
                     )}

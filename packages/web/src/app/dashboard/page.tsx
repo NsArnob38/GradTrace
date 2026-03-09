@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface HistoryItem {
     id: string;
@@ -122,13 +123,14 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-bg">
-                <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-border sticky top-0 z-50">
+            <div className="min-h-screen bg-bg dark:bg-gray-950">
+                <nav className="flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-border dark:border-gray-800 sticky top-0 z-50">
                     <div className="flex items-center gap-2">
                         <Star className="w-6 h-6 text-accent fill-accent" />
-                        <span className="text-lg font-semibold">GradeTrace</span>
+                        <span className="text-lg font-semibold text-primary dark:text-gray-100">GradeTrace</span>
                     </div>
                     <div className="flex items-center gap-4">
+                        <ThemeToggle />
                         <Skeleton className="w-24 h-4" />
                         <Skeleton className="w-5 h-5 rounded-full" />
                         <Skeleton className="w-5 h-5 rounded-full" />
@@ -144,7 +146,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
                         {[1, 2, 3, 4].map(i => (
-                            <div key={i} className="bg-white rounded-xl p-5 shadow-sm border border-border">
+                            <div key={i} className="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-border dark:border-gray-800">
                                 <div className="flex items-center gap-2 mb-3">
                                     <Skeleton className="w-5 h-5 rounded-full" />
                                     <Skeleton className="w-24 h-3" />
@@ -154,9 +156,9 @@ export default function DashboardPage() {
                         ))}
                     </div>
                     <Skeleton className="h-6 w-32 mb-4" />
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-border">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden border border-border dark:border-gray-800">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="px-6 py-4 border-b border-border last:border-0 flex justify-between">
+                            <div key={i} className="px-6 py-4 border-b border-border dark:border-gray-800 last:border-0 flex justify-between">
                                 <div className="flex gap-4">
                                     <Skeleton className="w-10 h-10 rounded-lg" />
                                     <div>
@@ -174,19 +176,20 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-bg">
+        <div className="min-h-screen bg-bg dark:bg-gray-950 text-primary dark:text-gray-100">
             {/* Top Bar */}
-            <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-border sticky top-0 z-50">
+            <nav className="flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-border dark:border-gray-800 sticky top-0 z-50">
                 <div className="flex items-center gap-2">
                     <Star className="w-6 h-6 text-accent fill-accent" />
-                    <span className="text-lg font-semibold">GradeTrace</span>
+                    <span className="text-lg font-semibold text-primary dark:text-gray-100">GradeTrace</span>
                 </div>
                 <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted">{(user?.email as string) || "Guest"}</span>
-                    <Link href="/settings" className="text-muted hover:text-primary transition-colors" title="Settings">
+                    <ThemeToggle />
+                    <span className="text-sm text-muted dark:text-gray-400">{(user?.email as string) || "Guest"}</span>
+                    <Link href="/settings" className="text-muted dark:text-gray-400 hover:text-primary dark:hover:text-gray-100 transition-colors" title="Settings">
                         <Settings className="w-5 h-5" />
                     </Link>
-                    <button onClick={handleLogout} className="text-muted hover:text-danger transition-colors" title="Sign out">
+                    <button onClick={handleLogout} className="text-muted dark:text-gray-400 hover:text-danger dark:hover:text-red-400 transition-colors" title="Sign out">
                         <LogOut className="w-5 h-5" />
                     </button>
                 </div>
@@ -199,13 +202,13 @@ export default function DashboardPage() {
                         <h1 className="text-2xl font-bold">
                             Welcome{user?.full_name ? `, ${user.full_name}` : ""}
                         </h1>
-                        <p className="text-muted text-sm mt-1">
+                        <p className="text-muted dark:text-gray-400 text-sm mt-1">
                             {user?.program ? `${user.program} Program` : "Set your program in settings"}
                         </p>
                     </div>
                     <Link
                         href="/upload"
-                        className="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-all flex items-center gap-2"
+                        className="bg-primary dark:bg-gray-100 text-white dark:text-gray-950 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 dark:hover:bg-gray-200 transition-all flex items-center gap-2 shadow-sm shadow-primary/20"
                     >
                         <Upload className="w-4 h-4" /> Upload Transcript
                     </Link>
@@ -225,7 +228,7 @@ export default function DashboardPage() {
                                 icon: GraduationCap,
                                 label: "Credits Earned",
                                 value: latest.earned_credits?.toString() || "—",
-                                color: "text-primary",
+                                color: "text-primary dark:text-gray-100",
                             },
                             {
                                 icon: latest.probation_phase === "NORMAL" ? CheckCircle2 : AlertTriangle,
@@ -245,21 +248,21 @@ export default function DashboardPage() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+                                className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
                             >
                                 <div className="flex items-center gap-2 mb-3">
                                     <card.icon className={`w-5 h-5 ${card.color}`} />
-                                    <span className="text-xs text-muted uppercase tracking-wider font-medium">{card.label}</span>
+                                    <span className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">{card.label}</span>
                                 </div>
                                 <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
                             </motion.div>
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-white rounded-xl p-10 text-center shadow-sm mb-10">
-                        <FileText className="w-12 h-12 text-muted mx-auto mb-4" />
+                    <div className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl p-10 text-center shadow-sm mb-10">
+                        <FileText className="w-12 h-12 text-muted dark:text-gray-500 mx-auto mb-4" />
                         <h3 className="font-semibold mb-2">No audits yet</h3>
-                        <p className="text-muted text-sm mb-4">Upload a transcript to get your first audit report</p>
+                        <p className="text-muted dark:text-gray-400 text-sm mb-4">Upload a transcript to get your first audit report</p>
                         <Link href="/upload" className="text-accent font-medium text-sm hover:underline">
                             Upload now →
                         </Link>
@@ -270,14 +273,14 @@ export default function DashboardPage() {
                 {history.length > 0 && (
                     <div>
                         <h2 className="text-lg font-semibold mb-4">Audit History</h2>
-                        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl shadow-sm overflow-hidden">
                             {history.map((item, i) => (
                                 <motion.div
                                     key={item.id}
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}
-                                    className="flex items-center justify-between px-6 py-4 border-b border-border last:border-0 hover:bg-bg/50 transition-colors"
+                                    className="flex items-center justify-between px-6 py-4 border-b border-border dark:border-gray-800 last:border-0 hover:bg-bg/50 dark:hover:bg-gray-800/50 transition-colors"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
@@ -285,12 +288,12 @@ export default function DashboardPage() {
                                         </div>
                                         <div>
                                             <p className="font-medium text-sm">{item.file_name}</p>
-                                            <p className="text-xs text-muted">
+                                            <p className="text-xs text-muted dark:text-gray-400">
                                                 {new Date(item.scanned_at).toLocaleDateString("en-US", {
                                                     month: "short", day: "numeric", year: "numeric",
                                                     hour: "2-digit", minute: "2-digit",
                                                 })}
-                                                <span className="ml-2 px-1.5 py-0.5 bg-bg rounded text-xs uppercase">
+                                                <span className="ml-2 px-1.5 py-0.5 bg-bg dark:bg-gray-800 rounded text-xs uppercase">
                                                     {item.input_type}
                                                 </span>
                                             </p>

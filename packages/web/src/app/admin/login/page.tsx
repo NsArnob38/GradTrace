@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -41,25 +42,28 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-            <div className="bg-white rounded-2xl shadow-xl p-10 w-full max-w-md text-center">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 relative">
+            <div className="absolute top-6 right-8">
+                <ThemeToggle />
+            </div>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-10 w-full max-w-md text-center border border-transparent dark:border-gray-800">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                    <Lock className="w-8 h-8 text-neutral-800" />
-                    <span className="text-2xl font-bold tracking-tight">Admin Portal</span>
+                    <Lock className="w-8 h-8 text-neutral-800 dark:text-gray-100" />
+                    <span className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-gray-100">Admin Portal</span>
                 </div>
-                <p className="text-gray-500 text-sm mb-10">
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-10">
                     Sign in with your secret admin credentials
                 </p>
 
                 {error && (
-                    <div className="mb-6 p-3 bg-red-50 text-red-600 rounded-lg text-sm text-left">
+                    <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm text-left">
                         {error}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="text-left">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Admin ID
                         </label>
                         <input
@@ -67,13 +71,13 @@ export default function AdminLogin() {
                             value={adminId}
                             onChange={(e) => setAdminId(e.target.value)}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neutral-800 focus:border-neutral-800 outline-none transition-all"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-neutral-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-neutral-800 dark:focus:ring-gray-100 focus:border-neutral-800 dark:focus:border-gray-100 outline-none transition-all"
                             placeholder="e.g. admin1"
                         />
                     </div>
 
                     <div className="text-left">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Password
                         </label>
                         <input
@@ -81,7 +85,7 @@ export default function AdminLogin() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-neutral-800 focus:border-neutral-800 outline-none transition-all"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-neutral-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-neutral-800 dark:focus:ring-gray-100 focus:border-neutral-800 dark:focus:border-gray-100 outline-none transition-all"
                             placeholder="••••••••"
                         />
                     </div>
@@ -89,7 +93,7 @@ export default function AdminLogin() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-neutral-900 text-white rounded-xl px-6 py-3 text-sm font-medium hover:bg-neutral-800 transition-all disabled:opacity-50 mt-6"
+                        className="w-full bg-neutral-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl px-6 py-3 text-sm font-medium hover:bg-neutral-800 dark:hover:bg-gray-200 transition-all disabled:opacity-50 mt-6"
                     >
                         {loading ? "Authenticating..." : "Login"}
                     </button>

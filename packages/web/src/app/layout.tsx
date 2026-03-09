@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-bg text-primary antialiased">
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className="min-h-screen bg-bg dark:bg-gray-950 text-primary dark:text-gray-100 antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

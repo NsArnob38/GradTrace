@@ -7,6 +7,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { Star, Upload, FileText, ArrowRight, X, Check, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/toast";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface ParsedRow {
     course_code: string;
@@ -90,27 +91,30 @@ export default function UploadPage() {
     };
 
     return (
-        <div className="min-h-screen bg-bg">
+        <div className="min-h-screen bg-bg dark:bg-gray-950 text-primary dark:text-gray-100">
             {/* Nav */}
-            <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-border">
+            <nav className="flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-border dark:border-gray-800 sticky top-0 z-50">
                 <Link href="/dashboard" className="flex items-center gap-2">
                     <Star className="w-6 h-6 text-accent fill-accent" />
-                    <span className="text-lg font-semibold">GradeTrace</span>
+                    <span className="text-lg font-semibold text-primary dark:text-gray-100">GradeTrace</span>
                 </Link>
+                <div className="flex items-center gap-4">
+                    <ThemeToggle />
+                </div>
             </nav>
 
             <div className="max-w-4xl mx-auto px-6 py-10">
                 <h1 className="text-2xl font-bold mb-2">Upload Transcript</h1>
-                <p className="text-muted text-sm mb-8">Upload your NSU transcript CSV to get a full audit report</p>
+                <p className="text-muted dark:text-gray-400 text-sm mb-8">Upload your NSU transcript CSV to get a full audit report</p>
 
                 {/* Program selector */}
                 <div className="flex gap-4 mb-6">
                     <div>
-                        <label className="text-xs text-muted uppercase tracking-wider font-medium block mb-1.5">Program</label>
+                        <label className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium block mb-1.5">Program</label>
                         <select
                             value={program}
                             onChange={e => setProgram(e.target.value)}
-                            className="border border-border rounded-lg px-4 py-2.5 text-sm bg-white"
+                            className="border border-border dark:border-gray-800 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-900"
                         >
                             <option value="CSE">CSE</option>
                             <option value="BBA">BBA</option>
@@ -118,11 +122,11 @@ export default function UploadPage() {
                     </div>
                     {program === "BBA" && (
                         <div>
-                            <label className="text-xs text-muted uppercase tracking-wider font-medium block mb-1.5">Concentration</label>
+                            <label className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium block mb-1.5">Concentration</label>
                             <select
                                 value={concentration}
                                 onChange={e => setConcentration(e.target.value)}
-                                className="border border-border rounded-lg px-4 py-2.5 text-sm bg-white"
+                                className="border border-border dark:border-gray-800 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-900"
                             >
                                 <option value="">Auto-detect</option>
                                 {["ACT", "FIN", "MKT", "MGT", "HRM", "MIS", "SCM", "ECO", "INB"].map(c => (
@@ -146,12 +150,12 @@ export default function UploadPage() {
                             if (f) handleFile(f);
                         }}
                         onClick={() => fileRef.current?.click()}
-                        className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${dragOver ? "border-accent bg-accent/5" : "border-border hover:border-accent/50 hover:bg-white"
+                        className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${dragOver ? "border-accent bg-accent/5 dark:bg-accent/10" : "border-border dark:border-gray-800 hover:border-accent/50 hover:bg-white dark:hover:bg-gray-900"
                             }`}
                     >
-                        <Upload className="w-10 h-10 text-muted mx-auto mb-4" />
+                        <Upload className="w-10 h-10 text-muted dark:text-gray-500 mx-auto mb-4" />
                         <p className="font-medium mb-1">Drop your transcript CSV here</p>
-                        <p className="text-muted text-sm">or click to browse files</p>
+                        <p className="text-muted dark:text-gray-400 text-sm">or click to browse files</p>
                         <input
                             ref={fileRef}
                             type="file"
@@ -166,36 +170,36 @@ export default function UploadPage() {
                 ) : (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                         {/* File info */}
-                        <div className="flex items-center justify-between bg-white rounded-xl px-5 py-3 shadow-sm mb-6">
+                        <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl px-5 py-3 shadow-sm mb-6">
                             <div className="flex items-center gap-3">
                                 <FileText className="w-5 h-5 text-accent" />
                                 <div>
                                     <p className="font-medium text-sm">{file.name}</p>
-                                    <p className="text-xs text-muted">{preview.length} courses found</p>
+                                    <p className="text-xs text-muted dark:text-gray-400">{preview.length} courses found</p>
                                 </div>
                             </div>
                             <button
                                 onClick={() => { setFile(null); setPreview([]); }}
-                                className="text-muted hover:text-danger transition-colors"
+                                className="text-muted dark:text-gray-400 hover:text-danger dark:hover:text-red-400 transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
                         {/* Preview table */}
-                        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                        <div className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl shadow-sm overflow-hidden mb-6">
                             <div className="overflow-x-auto max-h-80 overflow-y-auto">
                                 <table className="w-full text-sm">
-                                    <thead className="bg-bg sticky top-0">
+                                    <thead className="bg-bg dark:bg-gray-950 sticky top-0">
                                         <tr>
                                             {["Code", "Course Name", "Cr", "Grade", "Semester"].map(h => (
-                                                <th key={h} className="text-left px-4 py-3 text-xs text-muted uppercase tracking-wider font-medium">{h}</th>
+                                                <th key={h} className="text-left px-4 py-3 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">{h}</th>
                                             ))}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {preview.map((r, i) => (
-                                            <tr key={i} className="border-t border-border">
+                                            <tr key={i} className="border-t border-border dark:border-gray-800">
                                                 <td className="px-4 py-2.5 font-mono font-medium">{r.course_code}</td>
                                                 <td className="px-4 py-2.5">{r.course_name}</td>
                                                 <td className="px-4 py-2.5">{r.credits}</td>
@@ -204,7 +208,7 @@ export default function UploadPage() {
                                                         ["F", "I"].includes(r.grade) ? "text-danger" : "text-warning"
                                                         }`}>{r.grade}</span>
                                                 </td>
-                                                <td className="px-4 py-2.5 text-muted">{r.semester}</td>
+                                                <td className="px-4 py-2.5 text-muted dark:text-gray-400">{r.semester}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -223,7 +227,7 @@ export default function UploadPage() {
                         <button
                             onClick={handleUploadAndAudit}
                             disabled={uploading}
-                            className="w-full bg-primary text-white py-3.5 rounded-xl font-medium hover:bg-primary/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="w-full bg-primary dark:bg-gray-100 text-white dark:text-gray-950 py-3.5 rounded-xl font-medium hover:bg-primary/90 dark:hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                             {uploading ? (
                                 <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
