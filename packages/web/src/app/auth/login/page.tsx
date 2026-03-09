@@ -37,12 +37,6 @@ function LoginContent() {
                     Sign in with your NSU Google account
                 </p>
 
-                {error === "only_nsu_emails_allowed" && (
-                    <p className="text-red-500 text-sm mb-4">
-                        Only @northsouth.edu accounts are allowed.
-                    </p>
-                )}
-
                 <button
                     onClick={handleGoogleLogin}
                     className="w-full flex items-center justify-center gap-3 bg-white border border-border rounded-xl px-6 py-3.5 text-sm font-medium hover:bg-gray-50 hover:shadow-sm transition-all"
@@ -56,9 +50,15 @@ function LoginContent() {
                     Continue with Google
                 </button>
 
-                <p className="text-xs text-muted mt-6">
+                <p className="text-xs text-muted mt-6 mb-4">
                     Only <span className="font-medium">@northsouth.edu</span> accounts are allowed
                 </p>
+
+                {error === "only_nsu_emails_allowed" && (
+                    <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm font-medium border border-red-200 dark:border-red-900/50 mt-4">
+                        Only @northsouth.edu email addresses are allowed.
+                    </div>
+                )}
             </motion.div>
         </div>
     );
