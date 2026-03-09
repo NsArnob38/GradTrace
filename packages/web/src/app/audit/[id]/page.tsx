@@ -214,10 +214,10 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                 </div>
                             </div>
                             {l2.waivers && Object.keys(l2.waivers).length > 0 && (
-                                <div className="text-sm">
-                                    <p className="text-muted mb-1">Waivers:</p>
+                                <div className="text-sm bg-bg dark:bg-gray-800 rounded-lg p-4">
+                                    <p className="text-muted dark:text-gray-400 mb-2 font-medium">Waivable Courses:</p>
                                     {Object.entries(l2.waivers).map(([code, waived]) => (
-                                        <span key={code} className={`inline-flex items-center gap-1 mr-3 ${waived ? "text-success" : "text-muted"}`}>
+                                        <span key={code} className={`inline-flex items-center gap-1.5 mr-4 ${waived ? "text-success dark:text-green-400" : "text-muted dark:text-gray-500"}`}>
                                             {waived ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
                                             {code}
                                         </span>
@@ -305,12 +305,12 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                         <div className="px-5 pb-5">
                             {roadmapSteps.length > 0 ? roadmapSteps.map((step: any, i: number) => {
                                 const prioColors: Record<string, string> = {
-                                    CRITICAL: "bg-danger/10 text-danger border-danger/20",
-                                    HIGH: "bg-warning/10 text-warning border-warning/20",
-                                    MEDIUM: "bg-accent/10 text-accent border-accent/20",
-                                    LOW: "bg-bg text-muted border-border",
-                                    RECOMMENDED: "bg-blue-50 text-blue-600 border-blue-200",
-                                    DONE: "bg-success/10 text-success border-success/20",
+                                    CRITICAL: "bg-danger/10 dark:bg-gray-800 text-danger dark:text-red-400 border-danger/20 dark:border-gray-700",
+                                    HIGH: "bg-warning/10 dark:bg-gray-800 text-warning dark:text-yellow-400 border-warning/20 dark:border-gray-700",
+                                    MEDIUM: "bg-accent/10 dark:bg-gray-800 text-accent dark:text-accent border-accent/20 dark:border-gray-700",
+                                    LOW: "bg-bg dark:bg-gray-800 text-muted dark:text-gray-400 border-border dark:border-gray-700",
+                                    RECOMMENDED: "bg-blue-50 dark:bg-gray-800 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-gray-700",
+                                    DONE: "bg-success/10 dark:bg-gray-800 text-success dark:text-green-400 border-success/20 dark:border-gray-700",
                                 };
                                 const color = prioColors[step.priority] || prioColors.MEDIUM;
                                 return (
