@@ -276,35 +276,42 @@ export default function AdminDashboard() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-100">
-                                            {audits.map((a) => (
-                                                <tr
-                                                    key={a.id}
-                                                    className="hover:bg-gray-50 transition-colors cursor-pointer group"
-                                                    onClick={() => setExpandedAudit(expandedAudit === a.id ? null : a.id)}
-                                                >
-                                                    <td className="px-6 py-4 text-sm font-medium text-neutral-900">
-                                                        <div className="flex items-center gap-2">
-                                                            {a.email}
-                                                            {expandedAudit === a.id ?
-                                                                <ChevronUp className="w-4 h-4 text-gray-400" /> :
-                                                                <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
-                                                            }
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500">{a.program}</td>
-                                                    <td className="px-6 py-4 text-sm font-semibold text-neutral-900">{typeof a.cgpa === "number" ? a.cgpa.toFixed(2) : a.cgpa}</td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500">{a.credits_earned}</td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${a.is_eligible
-                                                            ? "bg-green-100 text-green-700"
-                                                            : "bg-red-100 text-red-700"
-                                                            }`}>
-                                                            {a.is_eligible ? "Eligible" : "Ineligible"}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500">{new Date(a.created_at).toLocaleDateString()}</td>
-                                                </tr>
-                                            ))}
+                                            {audits.map((a) => {
+                                                const cgpa = a.level_2?.cgpa ?? "—";
+                                                const credits = a.level_2?.credits_earned ?? a.level_1?.total_earned ?? "—";
+                                                const program = a.level_1?.program ?? "—";
+                                                const isEligible = a.level_3?.is_eligible ?? false;
+
+                                                return (
+                                                    <tr
+                                                        key={a.id}
+                                                        className="hover:bg-gray-50 transition-colors cursor-pointer group"
+                                                        onClick={() => setExpandedAudit(expandedAudit === a.id ? null : a.id)}
+                                                    >
+                                                        <td className="px-6 py-4 text-sm font-medium text-neutral-900">
+                                                            <div className="flex items-center gap-2">
+                                                                {a.email}
+                                                                {expandedAudit === a.id ?
+                                                                    <ChevronUp className="w-4 h-4 text-gray-400" /> :
+                                                                    <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm text-gray-500">{program}</td>
+                                                        <td className="px-6 py-4 text-sm font-semibold text-neutral-900">{typeof cgpa === "number" ? cgpa.toFixed(2) : cgpa}</td>
+                                                        <td className="px-6 py-4 text-sm text-gray-500">{credits}</td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${isEligible
+                                                                ? "bg-green-100 text-green-700"
+                                                                : "bg-red-100 text-red-700"
+                                                                }`}>
+                                                                {isEligible ? "Eligible" : "Ineligible"}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm text-gray-500">{new Date(a.generated_at).toLocaleDateString()}</td>
+                                                    </tr>
+                                                )
+                                            })}
                                             {audits.length === 0 && (
                                                 <tr>
                                                     <td colSpan={6} className="px-6 py-8 text-center text-gray-400">No audits found.</td>
