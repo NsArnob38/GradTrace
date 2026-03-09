@@ -1,13 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
+        const error = searchParams.get('error');
+        const errorDescription = searchParams.get('error_description');
+
+        if (error) {
+            const message = errorDescription?.includes('Database error')
+                ? 'only_nsu_emails_allowed'
+                : 'auth_error';
+            router.replace(`/auth/login?error=${message}`);
+            return;
+        }
         // Supabase processes the OAuth tokens from the URL hash automatically
         // We just need to wait for the session to be established
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -42,7 +53,7 @@ export default function AuthCallbackPage() {
         setTimeout(checkSession, 1000);
 
         return () => subscription.unsubscribe();
-    }, [router]);
+    }, [router, searchParams]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-bg">
@@ -51,5 +62,20 @@ export default function AuthCallbackPage() {
                 <p className="text-muted text-sm">Signing you in...</p>
             </div>
         </div>
+    );
+}
+
+export default function AuthCallbackPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-bg">
+                <div className="text-center">
+                    <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full mx-auto mb-4" />
+                    <p className="text-muted text-sm">Signing you in...</p>
+                </div>
+            </div>
+        }>
+            <AuthCallbackContent />
+        </Suspense>
     );
 }
