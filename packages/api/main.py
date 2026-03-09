@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from packages.api.config import get_settings
-from packages.api.routes import auth, transcripts, audit, admin, admin_auth
+from packages.api.routes import auth, transcripts, audit, admin_auth
 
 import os
 settings = get_settings()
@@ -35,7 +35,6 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(transcripts.router)
 app.include_router(audit.router)
-app.include_router(admin.router)
 app.include_router(admin_auth.router)
 
 
