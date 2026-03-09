@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from packages.api.config import get_settings
-from packages.api.deps import get_current_admin, get_supabase_admin
+from packages.api.deps import get_supabase_admin
 import jwt as pyjwt
 import datetime
 import os
@@ -51,7 +51,18 @@ async def debug_token(authorization: str = Header(...)):
 
 
 @router.get("/stats")
-async def get_stats(admin=Depends(get_current_admin)):
+async def get_stats(authorization: str = Header(...)):
+    import jwt as pyjwt
+    from packages.api.config import get_settings
+    settings = get_settings()
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not an admin")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+        
     db = get_supabase_admin()
     
     p_res = db.table("profiles").select("id", count="exact").execute()
@@ -88,7 +99,18 @@ async def get_stats(admin=Depends(get_current_admin)):
 
 
 @router.get("/students")  
-async def get_students(admin=Depends(get_current_admin)):
+async def get_students(authorization: str = Header(...)):
+    import jwt as pyjwt
+    from packages.api.config import get_settings
+    settings = get_settings()
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not an admin")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+        
     db = get_supabase_admin()
     profiles = db.table("profiles").select("id, email, created_at, role, full_name").order("created_at", desc=True).execute()
     students = profiles.data or []
@@ -101,7 +123,18 @@ async def get_students(admin=Depends(get_current_admin)):
 
 
 @router.get("/audits")
-async def get_audits(admin=Depends(get_current_admin)):
+async def get_audits(authorization: str = Header(...)):
+    import jwt as pyjwt
+    from packages.api.config import get_settings
+    settings = get_settings()
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not an admin")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+        
     db = get_supabase_admin()
     audits = db.table("audit_results").select("*").order("generated_at", desc=True).limit(100).execute()
     results = audits.data or []
@@ -118,8 +151,18 @@ async def get_audits(admin=Depends(get_current_admin)):
 
 
 @router.get("/admins")
-async def list_admins(admin=Depends(get_current_admin)):
+async def list_admins(authorization: str = Header(...)):
+    import jwt as pyjwt
+    from packages.api.config import get_settings
     settings = get_settings()
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not an admin")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+        
     admins = []
     if settings.admin_credentials:
         for entry in settings.admin_credentials.split(","):
@@ -134,8 +177,18 @@ class AddAdminRequest(BaseModel):
     password: str
 
 @router.post("/admins")
-async def add_admin(body: AddAdminRequest, admin=Depends(get_current_admin)):
+async def add_admin(body: AddAdminRequest, authorization: str = Header(...)):
+    import jwt as pyjwt
+    from packages.api.config import get_settings
     settings = get_settings()
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not an admin")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+        
     admins = {}
     if settings.admin_credentials:
         for entry in settings.admin_credentials.split(","):
@@ -157,8 +210,18 @@ async def add_admin(body: AddAdminRequest, admin=Depends(get_current_admin)):
 
 
 @router.delete("/admins/{admin_id}")
-async def remove_admin(admin_id: str, admin=Depends(get_current_admin)):
+async def remove_admin(admin_id: str, authorization: str = Header(...)):
+    import jwt as pyjwt
+    from packages.api.config import get_settings
     settings = get_settings()
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not an admin")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+        
     admins = []
     if settings.admin_credentials:
         for entry in settings.admin_credentials.split(","):
