@@ -25,7 +25,7 @@ const features = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Nav */}
       <nav className="flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-border dark:border-gray-800 sticky top-0 z-50">
         <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ export default function LandingPage() {
               <Star className="w-4 h-4 fill-accent" />
               Built for NSU Students
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-6 text-gray-900 dark:text-gray-100">
               Know exactly where you
               <span className="text-accent relative inline-block">
                 <span className="relative z-10"> stand.</span>
@@ -74,14 +74,14 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
               <Link
                 href="/auth/login"
-                className="group w-full sm:w-auto bg-primary dark:bg-gray-100 text-white dark:text-gray-950 px-8 py-3.5 rounded-xl text-base font-medium hover:bg-primary/90 dark:hover:bg-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                className="group w-full sm:w-auto bg-primary dark:bg-gray-800 text-white dark:text-white px-8 py-3.5 rounded-xl text-base font-medium hover:bg-primary/90 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 dark:shadow-none"
               >
                 Get Started
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="#features"
-                className="w-full sm:w-auto text-muted dark:text-gray-400 hover:text-primary dark:hover:text-gray-100 px-6 py-3.5 rounded-xl text-base font-medium hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm transition-all border border-border dark:border-gray-800 flex items-center justify-center"
+                className="w-full sm:w-auto text-muted dark:text-gray-400 hover:text-primary dark:hover:text-gray-100 px-6 py-3.5 rounded-xl text-base font-medium hover:bg-white dark:hover:bg-gray-800 transition-all border border-border dark:border-gray-800 flex items-center justify-center"
               >
                 Learn More
               </Link>
