@@ -31,23 +31,7 @@ async def admin_login(body: AdminLoginRequest):
         "role": "admin",
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=12)
     }, settings.admin_jwt_secret, algorithm="HS256")
-    
     return {"token": token, "admin_id": body.admin_id}
-
-
-from fastapi import Header
-@router.get("/debug-token")
-async def debug_token(authorization: str = Header(...)):
-    import jwt as pyjwt
-    from packages.api.config import get_settings
-    settings = get_settings()
-    token = authorization.replace("Bearer ", "")
-    secret = settings.admin_jwt_secret
-    try:
-        payload = pyjwt.decode(token, secret, algorithms=["HS256"])
-        return {"success": True, "payload": payload, "secret_prefix": secret[:6]}
-    except Exception as e:
-        return {"success": False, "error": str(e), "secret_prefix": secret[:6]}
 
 
 @router.get("/stats")

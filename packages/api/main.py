@@ -12,8 +12,6 @@ from packages.api.routes import auth, transcripts, audit, admin_auth
 
 import os
 settings = get_settings()
-print("DEBUG CORS_ORIGINS env:", os.environ.get("CORS_ORIGINS"))
-print("DEBUG settings.cors_origins:", settings.cors_origins)
 
 app = FastAPI(
     title="GradeTrace API",
@@ -41,11 +39,3 @@ app.include_router(admin_auth.router)
 @app.get("/health")
 async def health():
     return {"status": "ok", "service": "gradetrace-api"}
-
-
-@app.get("/debug-cors")
-async def debug_cors():
-    return {
-        "cors_origins_env": os.environ.get("CORS_ORIGINS"),
-        "cors_origins_settings": settings.cors_origins,
-    }

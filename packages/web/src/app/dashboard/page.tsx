@@ -200,7 +200,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">
-                            Welcome{user?.full_name ? `, ${user.full_name}` : ""}
+                            Welcome{user?.full_name ? `, ${(user.full_name as string).replace(/\s*\d+$/, "")}` : ""}
                         </h1>
                         <p className="text-muted dark:text-gray-400 text-sm mt-1">
                             {user?.program ? `${user.program} Program` : "Set your program in settings"}

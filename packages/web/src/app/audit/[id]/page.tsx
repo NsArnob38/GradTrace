@@ -175,7 +175,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                     <span>Progress</span>
                                     <span>{creditsEarned} / {totalRequired} credits</span>
                                 </div>
-                                <div className="h-3 bg-bg rounded-full overflow-hidden">
+                                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${Math.min(100, (creditsEarned / totalRequired) * 100)}%` }}

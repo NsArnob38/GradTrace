@@ -143,7 +143,6 @@ export default function AdminDashboard() {
                         <Shield className="w-8 h-8 text-neutral-900 dark:text-gray-100" />
                         <span className="text-xl font-bold tracking-tight text-neutral-900 dark:text-gray-100">Admin</span>
                     </div>
-                    <ThemeToggle />
                 </div>
 
                 <nav className="flex-1 space-y-2">
@@ -163,7 +162,10 @@ export default function AdminDashboard() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-10 max-h-screen overflow-y-auto">
+            <main className="flex-1 p-10 max-h-screen overflow-y-auto relative">
+                <div className="absolute top-8 right-10">
+                    <ThemeToggle />
+                </div>
                 {isLoading ? (
                     <div className="flex h-full items-center justify-center">
                         <div className="animate-spin w-8 h-8 border-2 border-neutral-900 dark:border-gray-100 border-t-transparent rounded-full" />
