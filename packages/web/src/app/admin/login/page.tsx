@@ -93,7 +93,7 @@ export default function AdminLogin() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-neutral-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl px-6 py-3 text-sm font-medium hover:bg-neutral-800 dark:hover:bg-gray-200 transition-all disabled:opacity-50 mt-6"
+                        className="w-full bg-neutral-900 dark:bg-amber-500 text-white dark:text-black rounded-xl px-6 py-3 text-sm font-medium hover:bg-neutral-800 dark:hover:bg-amber-600 transition-all disabled:opacity-50 mt-6"
                     >
                         {loading ? "Authenticating..." : "Login"}
                     </button>

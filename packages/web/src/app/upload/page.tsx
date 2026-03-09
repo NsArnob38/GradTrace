@@ -103,144 +103,146 @@ export default function UploadPage() {
                 </div>
             </nav>
 
-            <div className="max-w-4xl mx-auto px-6 py-10">
-                <h1 className="text-2xl font-bold mb-2">Upload Transcript</h1>
-                <p className="text-muted dark:text-gray-400 text-sm mb-8">Upload your NSU transcript CSV to get a full audit report</p>
+            <div className="flex items-center justify-center min-h-[80vh] w-full">
+                <div className="w-full max-w-4xl mx-auto px-6 py-10">
+                    <h1 className="text-2xl font-bold mb-2">Upload Transcript</h1>
+                    <p className="text-muted dark:text-gray-400 text-sm mb-8">Upload your NSU transcript CSV to get a full audit report</p>
 
-                {/* Program selector */}
-                <div className="flex gap-4 mb-6">
-                    <div>
-                        <label className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium block mb-1.5">Program</label>
-                        <select
-                            value={program}
-                            onChange={e => setProgram(e.target.value)}
-                            className="border border-border dark:border-gray-800 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-900"
-                        >
-                            <option value="CSE">CSE</option>
-                            <option value="BBA">BBA</option>
-                        </select>
-                    </div>
-                    {program === "BBA" && (
+                    {/* Program selector */}
+                    <div className="flex gap-4 mb-6">
                         <div>
-                            <label className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium block mb-1.5">Concentration</label>
+                            <label className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium block mb-1.5">Program</label>
                             <select
-                                value={concentration}
-                                onChange={e => setConcentration(e.target.value)}
+                                value={program}
+                                onChange={e => setProgram(e.target.value)}
                                 className="border border-border dark:border-gray-800 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-900"
                             >
-                                <option value="">Auto-detect</option>
-                                {["ACT", "FIN", "MKT", "MGT", "HRM", "MIS", "SCM", "ECO", "INB"].map(c => (
-                                    <option key={c} value={c}>{c}</option>
-                                ))}
+                                <option value="CSE">CSE</option>
+                                <option value="BBA">BBA</option>
                             </select>
                         </div>
-                    )}
-                </div>
-
-                {/* Drop zone */}
-                {!file ? (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                        onDragLeave={() => setDragOver(false)}
-                        onDrop={(e) => {
-                            e.preventDefault(); setDragOver(false);
-                            const f = e.dataTransfer.files[0];
-                            if (f) handleFile(f);
-                        }}
-                        onClick={() => fileRef.current?.click()}
-                        className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${dragOver ? "border-accent bg-accent/5 dark:bg-accent/10" : "border-border dark:border-gray-800 hover:border-accent/50 hover:bg-white dark:hover:bg-gray-900"
-                            }`}
-                    >
-                        <Upload className="w-10 h-10 text-muted dark:text-gray-500 mx-auto mb-4" />
-                        <p className="font-medium mb-1">Drop your transcript CSV here</p>
-                        <p className="text-muted dark:text-gray-400 text-sm">or click to browse files</p>
-                        <input
-                            ref={fileRef}
-                            type="file"
-                            accept=".csv"
-                            className="hidden"
-                            onChange={(e) => {
-                                const f = e.target.files?.[0];
-                                if (f) handleFile(f);
-                            }}
-                        />
-                    </motion.div>
-                ) : (
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                        {/* File info */}
-                        <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl px-5 py-3 shadow-sm mb-6">
-                            <div className="flex items-center gap-3">
-                                <FileText className="w-5 h-5 text-accent" />
-                                <div>
-                                    <p className="font-medium text-sm">{file.name}</p>
-                                    <p className="text-xs text-muted dark:text-gray-400">{preview.length} courses found</p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { setFile(null); setPreview([]); }}
-                                className="text-muted dark:text-gray-400 hover:text-danger dark:hover:text-red-400 transition-colors"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        {/* Preview table */}
-                        <div className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl shadow-sm overflow-hidden mb-6">
-                            <div className="overflow-x-auto max-h-80 overflow-y-auto">
-                                <table className="w-full text-sm">
-                                    <thead className="bg-bg dark:bg-gray-950 sticky top-0">
-                                        <tr>
-                                            {["Code", "Course Name", "Cr", "Grade", "Semester"].map(h => (
-                                                <th key={h} className="text-left px-4 py-3 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">{h}</th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {preview.map((r, i) => (
-                                            <tr key={i} className="border-t border-border dark:border-gray-800">
-                                                <td className="px-4 py-2.5 font-mono font-medium">{r.course_code}</td>
-                                                <td className="px-4 py-2.5">{r.course_name}</td>
-                                                <td className="px-4 py-2.5">{r.credits}</td>
-                                                <td className="px-4 py-2.5">
-                                                    <span className={`font-medium ${["A", "A-", "B+", "B", "B-"].includes(r.grade) ? "text-success" :
-                                                        ["F", "I"].includes(r.grade) ? "text-danger" : "text-warning"
-                                                        }`}>{r.grade}</span>
-                                                </td>
-                                                <td className="px-4 py-2.5 text-muted dark:text-gray-400">{r.semester}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        {/* Error */}
-                        {error && (
-                            <div className="flex items-center gap-2 text-danger text-sm bg-danger/5 px-4 py-3 rounded-lg mb-4">
-                                <AlertCircle className="w-4 h-4" /> {error}
+                        {program === "BBA" && (
+                            <div>
+                                <label className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium block mb-1.5">Concentration</label>
+                                <select
+                                    value={concentration}
+                                    onChange={e => setConcentration(e.target.value)}
+                                    className="border border-border dark:border-gray-800 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-900"
+                                >
+                                    <option value="">Auto-detect</option>
+                                    {["ACT", "FIN", "MKT", "MGT", "HRM", "MIS", "SCM", "ECO", "INB"].map(c => (
+                                        <option key={c} value={c}>{c}</option>
+                                    ))}
+                                </select>
                             </div>
                         )}
+                    </div>
 
-                        {/* Submit */}
-                        <button
-                            onClick={handleUploadAndAudit}
-                            disabled={uploading}
-                            className="w-full bg-primary dark:bg-gray-100 text-white dark:text-gray-950 py-3.5 rounded-xl font-medium hover:bg-primary/90 dark:hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    {/* Drop zone */}
+                    {!file ? (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                            onDragLeave={() => setDragOver(false)}
+                            onDrop={(e) => {
+                                e.preventDefault(); setDragOver(false);
+                                const f = e.dataTransfer.files[0];
+                                if (f) handleFile(f);
+                            }}
+                            onClick={() => fileRef.current?.click()}
+                            className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${dragOver ? "border-accent bg-accent/5 dark:bg-accent/10" : "border-border dark:border-gray-800 hover:border-accent/50 hover:bg-white dark:hover:bg-gray-900"
+                                }`}
                         >
-                            {uploading ? (
-                                <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
-                            ) : (
-                                <>
-                                    <Check className="w-5 h-5" />
-                                    Upload & Run Audit
-                                    <ArrowRight className="w-4 h-4" />
-                                </>
+                            <Upload className="w-10 h-10 text-muted dark:text-gray-500 mx-auto mb-4" />
+                            <p className="font-medium mb-1">Drop your transcript CSV here</p>
+                            <p className="text-muted dark:text-gray-400 text-sm">or click to browse files</p>
+                            <input
+                                ref={fileRef}
+                                type="file"
+                                accept=".csv"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const f = e.target.files?.[0];
+                                    if (f) handleFile(f);
+                                }}
+                            />
+                        </motion.div>
+                    ) : (
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                            {/* File info */}
+                            <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl px-5 py-3 shadow-sm mb-6">
+                                <div className="flex items-center gap-3">
+                                    <FileText className="w-5 h-5 text-accent" />
+                                    <div>
+                                        <p className="font-medium text-sm">{file.name}</p>
+                                        <p className="text-xs text-muted dark:text-gray-400">{preview.length} courses found</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => { setFile(null); setPreview([]); }}
+                                    className="text-muted dark:text-gray-400 hover:text-danger dark:hover:text-red-400 transition-colors"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            {/* Preview table */}
+                            <div className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl shadow-sm overflow-hidden mb-6">
+                                <div className="overflow-x-auto max-h-80 overflow-y-auto">
+                                    <table className="w-full text-sm">
+                                        <thead className="bg-bg dark:bg-gray-950 sticky top-0">
+                                            <tr>
+                                                {["Code", "Course Name", "Cr", "Grade", "Semester"].map(h => (
+                                                    <th key={h} className="text-left px-4 py-3 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">{h}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {preview.map((r, i) => (
+                                                <tr key={i} className="border-t border-border dark:border-gray-800">
+                                                    <td className="px-4 py-2.5 font-mono font-medium">{r.course_code}</td>
+                                                    <td className="px-4 py-2.5">{r.course_name}</td>
+                                                    <td className="px-4 py-2.5">{r.credits}</td>
+                                                    <td className="px-4 py-2.5">
+                                                        <span className={`font-medium ${["A", "A-", "B+", "B", "B-"].includes(r.grade) ? "text-success" :
+                                                            ["F", "I"].includes(r.grade) ? "text-danger" : "text-warning"
+                                                            }`}>{r.grade}</span>
+                                                    </td>
+                                                    <td className="px-4 py-2.5 text-muted dark:text-gray-400">{r.semester}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Error */}
+                            {error && (
+                                <div className="flex items-center gap-2 text-danger text-sm bg-danger/5 px-4 py-3 rounded-lg mb-4">
+                                    <AlertCircle className="w-4 h-4" /> {error}
+                                </div>
                             )}
-                        </button>
-                    </motion.div>
-                )}
+
+                            {/* Submit */}
+                            <button
+                                onClick={handleUploadAndAudit}
+                                disabled={uploading}
+                                className="w-full bg-primary dark:bg-gray-100 text-white dark:text-gray-950 py-3.5 rounded-xl font-medium hover:bg-primary/90 dark:hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                            >
+                                {uploading ? (
+                                    <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+                                ) : (
+                                    <>
+                                        <Check className="w-5 h-5" />
+                                        Upload & Run Audit
+                                        <ArrowRight className="w-4 h-4" />
+                                    </>
+                                )}
+                            </button>
+                        </motion.div>
+                    )}
+                </div>
             </div>
         </div>
     );
