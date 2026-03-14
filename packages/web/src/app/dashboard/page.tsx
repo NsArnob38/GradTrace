@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { api } from "@/lib/api";
 import {
     Star, Upload, LogOut, GraduationCap, TrendingUp,
-    AlertTriangle, CheckCircle2, Clock, FileText, Settings, Trash2, RefreshCw,
+    AlertTriangle, CheckCircle2, Clock, FileText, FileX, Settings, Trash2, RefreshCw,
 } from "lucide-react";
 import { useToast } from "@/components/toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -225,24 +225,28 @@ export default function DashboardPage() {
                                 label: "CGPA",
                                 value: latest.cgpa?.toFixed(2) || "—",
                                 color: (latest.cgpa || 0) >= 2.0 ? "text-success" : "text-danger",
+                                border: "border-l-4 border-amber-500",
                             },
                             {
                                 icon: GraduationCap,
                                 label: "Credits Earned",
                                 value: latest.earned_credits?.toString() || "—",
                                 color: "text-primary dark:text-gray-100",
+                                border: "border-l-4 border-blue-500",
                             },
                             {
                                 icon: latest.probation_phase === "NORMAL" ? CheckCircle2 : AlertTriangle,
                                 label: "Standing",
                                 value: latest.probation_phase || "—",
                                 color: latest.probation_phase === "NORMAL" ? "text-success" : "text-warning",
+                                border: "border-l-4 border-green-500",
                             },
                             {
                                 icon: latest.graduation_eligible ? CheckCircle2 : Clock,
                                 label: "Graduation",
                                 value: latest.graduation_eligible ? "Eligible" : "Not Yet",
                                 color: latest.graduation_eligible ? "text-success" : "text-warning",
+                                border: "border-l-4 border-orange-500",
                             },
                         ].map((card, i) => (
                             <motion.div
@@ -250,7 +254,7 @@ export default function DashboardPage() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+                                className={`bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow ${card.border}`}
                             >
                                 <div className="flex items-center gap-2 mb-3">
                                     <card.icon className={`w-5 h-5 ${card.color}`} />
@@ -261,12 +265,15 @@ export default function DashboardPage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl p-10 text-center shadow-sm mb-10">
-                        <FileText className="w-12 h-12 text-muted dark:text-gray-500 mx-auto mb-4" />
-                        <h3 className="font-semibold mb-2">No audits yet</h3>
-                        <p className="text-muted dark:text-gray-400 text-sm mb-4">Upload a transcript to get your first audit report</p>
-                        <Link href="/upload" className="text-accent font-medium text-sm hover:underline">
-                            Upload now →
+                    <div className="bg-white dark:bg-gray-900 border border-border dark:border-gray-800 rounded-xl p-14 text-center shadow-sm mb-10">
+                        <FileX className="w-14 h-14 text-muted dark:text-gray-600 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">No audits yet</h3>
+                        <p className="text-muted dark:text-gray-400 text-sm mb-5">Upload your transcript to get started</p>
+                        <Link
+                            href="/upload"
+                            className="inline-flex items-center gap-2 bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+                        >
+                            <Upload className="w-4 h-4" /> Upload Transcript
                         </Link>
                     </div>
                 )}
@@ -302,9 +309,20 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6">
-                                        <span className="text-sm font-medium">
-                                            CGPA: {item.summary.cgpa?.toFixed(2)}
-                                        </span>
+                                        <div className="flex flex-col items-end gap-1">
+                                            <span className="text-sm font-medium">
+                                                CGPA: {item.summary.cgpa?.toFixed(2)}
+                                            </span>
+                                            {item.summary.graduation_eligible !== undefined && (
+                                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                                    item.summary.graduation_eligible
+                                                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                                                        : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                                                }`}>
+                                                    {item.summary.graduation_eligible ? "Eligible" : "Ineligible"}
+                                                </span>
+                                            )}
+                                        </div>
                                         <div className="flex items-center gap-3">
                                             <Link
                                                 href={`/audit/${item.transcript_id}`}

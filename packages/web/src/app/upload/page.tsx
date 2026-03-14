@@ -140,34 +140,51 @@ export default function UploadPage() {
 
                     {/* Drop zone */}
                     {!file ? (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                            onDragLeave={() => setDragOver(false)}
-                            onDrop={(e) => {
-                                e.preventDefault(); setDragOver(false);
-                                const f = e.dataTransfer.files[0];
-                                if (f) handleFile(f);
-                            }}
-                            onClick={() => fileRef.current?.click()}
-                            className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${dragOver ? "border-accent bg-accent/5 dark:bg-accent/10" : "border-border dark:border-gray-800 hover:border-accent/50 hover:bg-white dark:hover:bg-gray-900"
-                                }`}
-                        >
-                            <Upload className="w-10 h-10 text-muted dark:text-gray-500 mx-auto mb-4" />
-                            <p className="font-medium mb-1">Drop your transcript CSV here</p>
-                            <p className="text-muted dark:text-gray-400 text-sm">or click to browse files</p>
-                            <input
-                                ref={fileRef}
-                                type="file"
-                                accept=".csv"
-                                className="hidden"
-                                onChange={(e) => {
-                                    const f = e.target.files?.[0];
+                        <>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                                onDragLeave={() => setDragOver(false)}
+                                onDrop={(e) => {
+                                    e.preventDefault(); setDragOver(false);
+                                    const f = e.dataTransfer.files[0];
                                     if (f) handleFile(f);
                                 }}
-                            />
-                        </motion.div>
+                                onClick={() => fileRef.current?.click()}
+                                className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${dragOver ? "border-accent bg-accent/5 dark:bg-accent/10" : "border-border dark:border-gray-800 hover:border-accent/50 hover:bg-white dark:hover:bg-gray-900"
+                                    }`}
+                            >
+                                <Upload className="w-10 h-10 text-muted dark:text-gray-500 mx-auto mb-4" />
+                                <p className="font-medium mb-1">Drop your transcript CSV here</p>
+                                <p className="text-muted dark:text-gray-400 text-sm">or click to browse files</p>
+                                <input
+                                    ref={fileRef}
+                                    type="file"
+                                    accept=".csv"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const f = e.target.files?.[0];
+                                        if (f) handleFile(f);
+                                    }}
+                                />
+                            </motion.div>
+
+                            {/* How it works */}
+                            <div className="grid grid-cols-3 gap-4 mt-6">
+                                {[
+                                    { step: "1", title: "Download CSV", desc: "Export your transcript from the NSU portal" },
+                                    { step: "2", title: "Upload Here", desc: "Drag and drop your CSV file" },
+                                    { step: "3", title: "Get Your Audit", desc: "Instant analysis of credits, CGPA, and graduation status" },
+                                ].map(({ step, title, desc }) => (
+                                    <div key={step} className="flex flex-col items-center text-center p-4 bg-white dark:bg-gray-900 rounded-xl border border-border dark:border-gray-800">
+                                        <div className="w-8 h-8 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center mb-3">{step}</div>
+                                        <p className="text-sm font-semibold mb-1">{title}</p>
+                                        <p className="text-xs text-muted dark:text-gray-400 leading-relaxed">{desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     ) : (
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                             {/* File info */}

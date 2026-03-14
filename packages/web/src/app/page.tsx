@@ -156,12 +156,37 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="px-6 py-20 bg-white dark:bg-gray-950 border-y border-border dark:border-gray-800">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Complete your audit in 3 simple steps</h2>
+            <p className="text-muted dark:text-gray-400">The fastest way to track your academic progress at North South University</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              { step: "01", title: "Export your transcript", desc: "Download the CSV from the NSU student portal" },
+              { step: "02", title: "Upload to GradeTrace", desc: "Drop your file and select your program" },
+              { step: "03", title: "Get instant results", desc: "See your full audit: credits, CGPA, missing courses, and graduation roadmap" },
+            ].map((s) => (
+              <div key={s.step} className="relative">
+                <div className="text-6xl font-black text-accent/10 dark:text-accent/5 absolute -top-8 -left-4 -z-10">{s.step}</div>
+                <div className="text-2xl font-bold text-accent mb-4">{s.step}</div>
+                <h3 className="text-xl font-bold mb-3">{s.title}</h3>
+                <p className="text-muted dark:text-gray-400 leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
-      <section id="features" className="px-6 py-20 bg-white dark:bg-gray-950">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-14">
-            Three levels of audit, one click.
-          </h2>
+      <section id="features" className="px-6 py-24 bg-gray-50/50 dark:bg-gray-950">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Comprehensive Audit Analysis</h2>
+            <p className="text-muted dark:text-gray-400">Everything you need to stay on top of your degree requirements</p>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {features.map((f, i) => (
               <motion.div
@@ -170,13 +195,13 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.5 }}
-                className="bg-bg dark:bg-gray-900 rounded-2xl p-7 hover:shadow-md transition-shadow dark:border dark:border-gray-800"
+                className="bg-white dark:bg-gray-900 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all border border-border dark:border-gray-800 flex flex-col min-h-[280px]"
               >
-                <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-4">
-                  <f.icon className="w-6 h-6 text-accent" />
+                <div className="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
+                  <f.icon className="w-7 h-7 text-accent" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-primary dark:text-gray-100">{f.title}</h3>
-                <p className="text-muted dark:text-gray-400 text-sm leading-relaxed">{f.description}</p>
+                <h3 className="text-xl font-bold mb-4 text-primary dark:text-gray-100">{f.title}</h3>
+                <p className="text-muted dark:text-gray-400 leading-relaxed">{f.description}</p>
               </motion.div>
             ))}
           </div>
