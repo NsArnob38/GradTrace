@@ -58,12 +58,10 @@ class CourseCatalog:
         "ENG103": 3,
         "ENG105": 3,
         "ENG111": 3,
+        "PHI101": 3,
         "PHI104": 3,
         "HIS101": 3,
         "HIS102": 3,
-        "CSE101": 3,
-        "CSE145": 3,
-        "CSE226": 3,
     }
 
     CSE_GED_CHOICE_1 = {"ECO101": 3, "ECO104": 3}
@@ -304,6 +302,7 @@ class CourseCatalog:
         "ENG103": ("Intermediate Composition", 3),
         "ENG105": ("Advanced Writing Skills", 3),
         "ENG111": ("Public Speaking", 3),
+        "PHI101": ("Introduction to Philosophy", 3),
         "PHI104": ("Introduction to Ethics", 3),
         "HIS101": ("Bangladesh History & Culture", 3),
         "HIS102": ("World Civilization", 3),
