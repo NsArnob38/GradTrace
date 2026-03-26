@@ -12,22 +12,18 @@ router = APIRouter(prefix="/audit", tags=["audit"])
 async def run_audit(
     transcript_id: str,
     program: str = Body(default="CSE"),
-    concentration: str | None = Body(default=None)
+    concentration: str | None = Body(default=None),
+    user: dict = Depends(get_current_user),
 ):
     """Run the audit engine on a transcript and store the result."""
     db = get_supabase_admin()
+    user_id = user["id"]
 
-    user_result = db.table("profiles").select("id").limit(1).execute()
-    fallback_user_id = user_result.data[0]["id"] if user_result.data else None
-    
-    if not fallback_user_id:
-        raise HTTPException(status_code=500, detail="Cannot run public audit: No users found in database.")
-
-    # Fetch transcript
+    # Fetch transcript (owned by this user)
     transcript = db.table("transcripts") \
         .select("*") \
         .eq("id", transcript_id) \
-        .eq("user_id", fallback_user_id) \
+        .eq("user_id", user_id) \
         .single() \
         .execute()
 
@@ -51,7 +47,7 @@ async def run_audit(
     # Store audit result
     audit_record = db.table("audit_results").insert({
         "transcript_id": transcript_id,
-        "user_id": fallback_user_id,
+        "user_id": user_id,
         "level_1": result["level_1"],
         "level_2": result["level_2"],
         "level_3": result["level_3"],
@@ -69,7 +65,7 @@ async def run_audit(
     }
 
     db.table("scan_history").insert({
-        "user_id": fallback_user_id,
+        "user_id": user_id,
         "transcript_id": transcript_id,
         "audit_result_id": audit_data.get("id"),
         "input_type": "csv",
@@ -85,18 +81,16 @@ async def run_audit(
 
 @router.get("/{transcript_id}")
 async def get_audit_result(
-    transcript_id: str
+    transcript_id: str,
+    user: dict = Depends(get_current_user),
 ):
     """Get cached audit result for a transcript."""
     db = get_supabase_admin()
-    
-    user_result = db.table("profiles").select("id").limit(1).execute()
-    fallback_user_id = user_result.data[0]["id"] if user_result.data else None
-    
+
     result = db.table("audit_results") \
         .select("*") \
         .eq("transcript_id", transcript_id) \
-        .eq("user_id", fallback_user_id) \
+        .eq("user_id", user["id"]) \
         .order("generated_at", desc=True) \
         .limit(1) \
         .execute()
@@ -120,16 +114,16 @@ async def list_scan_history(user: dict = Depends(get_current_user)):
 
 
 @router.delete("/{transcript_id}")
-async def delete_audit(transcript_id: str):
+async def delete_audit(
+    transcript_id: str,
+    user: dict = Depends(get_current_user),
+):
     """Delete an audit result, its history, and the transcript."""
     db = get_supabase_admin()
-    
-    user_result = db.table("profiles").select("id").limit(1).execute()
-    fallback_user_id = user_result.data[0]["id"] if user_result.data else None
-    
-    # Delete cascade manually just in case
-    db.table("scan_history").delete().eq("transcript_id", transcript_id).eq("user_id", fallback_user_id).execute()
-    db.table("audit_results").delete().eq("transcript_id", transcript_id).eq("user_id", fallback_user_id).execute()
-    db.table("transcripts").delete().eq("id", transcript_id).eq("user_id", fallback_user_id).execute()
-    
+    user_id = user["id"]
+
+    db.table("scan_history").delete().eq("transcript_id", transcript_id).eq("user_id", user_id).execute()
+    db.table("audit_results").delete().eq("transcript_id", transcript_id).eq("user_id", user_id).execute()
+    db.table("transcripts").delete().eq("id", transcript_id).eq("user_id", user_id).execute()
+
     return success_response({"deleted": True})
