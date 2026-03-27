@@ -11,6 +11,21 @@ from rich.text import Text
 from packages.cli.ui import console, AMBER, GRAY, RED, GREEN, BLUE, ORANGE, CYAN, BOLD, DIM, section
 
 
+# ── Course name lookup ──
+_COURSE_NAMES: dict | None = None
+
+def _get_course_name(code: str) -> str:
+    """Look up a course name from the catalog."""
+    global _COURSE_NAMES
+    if _COURSE_NAMES is None:
+        try:
+            from packages.core.course_catalog import ALL_COURSES
+            _COURSE_NAMES = {k: v[0] for k, v in ALL_COURSES.items()}
+        except Exception:
+            _COURSE_NAMES = {}
+    return _COURSE_NAMES.get(code, "")
+
+
 def format_full_audit(result: dict):
     """Format a complete audit result (all levels + roadmap)."""
     meta = result.get("meta", {})
@@ -109,7 +124,6 @@ def _print_credit_summary(l1: dict):
 
     records = l1.get("records", [])
     if records:
-        # Count by status
         statuses = {}
         for r in records:
             s = r.get("status", "UNKNOWN")
@@ -189,16 +203,24 @@ def _print_graduation_status(l3: dict, program: str):
     if remaining:
         console.print(f"\n    [{AMBER}]Missing Courses:[/]")
         table = Table(show_header=True, header_style="bold", box=None, padding=(0, 2))
-        table.add_column("Category", style=GRAY)
-        table.add_column("Course", style="bold")
-        table.add_column("Name")
-        table.add_column("Cr", justify="right")
+        table.add_column("Category", style=GRAY, max_width=30)
+        table.add_column("Course", style="bold", width=10)
+        table.add_column("Name", min_width=20)
+        table.add_column("Cr", justify="right", width=4)
 
         for category, courses in remaining.items():
             if isinstance(courses, dict):
                 for code, info in courses.items():
-                    name = info.get("name", "") if isinstance(info, dict) else str(info)
-                    cr = info.get("credits", "?") if isinstance(info, dict) else "?"
+                    if isinstance(info, dict):
+                        name = info.get("name", _get_course_name(code))
+                        cr = info.get("credits", "?")
+                    elif isinstance(info, (int, float)):
+                        # remaining maps code → credits (int)
+                        name = _get_course_name(code)
+                        cr = info
+                    else:
+                        name = str(info)
+                        cr = "?"
                     table.add_row(category, code, name, str(cr))
             elif isinstance(courses, list):
                 for item in courses:
@@ -212,7 +234,13 @@ def _print_graduation_status(l3: dict, program: str):
     if prereq_violations:
         console.print(f"\n    [{RED}]Prerequisite Violations:[/]")
         for v in prereq_violations:
-            console.print(f"      [{RED}]• {v}[/]")
+            if isinstance(v, dict):
+                course = v.get("course", "?")
+                sem = v.get("semester", "?")
+                missing = ", ".join(v.get("missing", []))
+                console.print(f"      [{RED}]• {course} ({sem}) — missing: {missing}[/]")
+            else:
+                console.print(f"      [{RED}]• {v}[/]")
 
 
 def _print_roadmap_dict(roadmap: dict):
@@ -250,7 +278,6 @@ def _print_roadmap_dict(roadmap: dict):
             continue
 
         priority = step.get("priority", "MEDIUM")
-        category = step.get("category", "")
         action = step.get("action", "")
         detail = step.get("detail", "")
 

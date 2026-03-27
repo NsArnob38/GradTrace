@@ -80,7 +80,7 @@ async def register(
     full_name: str = Body(default=""),
     student_id: str = Body(default=""),
 ):
-    """Register a new user via email + password."""
+    """Register a new user OR set a password for an existing Google OAuth user."""
     settings = get_settings()
 
     # Domain restriction
@@ -91,6 +91,26 @@ async def register(
                 detail=f"Only @{settings.allowed_email_domain} emails are allowed",
             )
 
+    admin_db = get_supabase_admin()
+
+    # Check if user already exists in profiles
+    profile_res = admin_db.table("profiles").select("id").eq("email", email).execute()
+    
+    if profile_res.data:
+        # User exists (likely via Google OAuth). Just set their password!
+        user_id = profile_res.data[0]["id"]
+        try:
+            admin_db.auth.admin.update_user_by_id(user_id, {"password": password})
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to set password: {str(e)}")
+            
+        return success_response({
+            "user_id": user_id,
+            "email": email,
+            "message": "Password linked to your existing account. You can now log in.",
+        })
+
+    # User does not exist, create a new account
     from supabase import create_client
     client = create_client(settings.supabase_url, settings.supabase_anon_key)
 
@@ -114,7 +134,7 @@ async def register(
     return success_response({
         "user_id": result.user.id,
         "email": result.user.email,
-        "message": "Account created. Check your email for verification if required.",
+        "message": "Account created. You can now log in.",
     })
 
 
@@ -139,4 +159,60 @@ async def refresh_token(
         "access_token": result.session.access_token,
         "refresh_token": result.session.refresh_token,
         "expires_in": result.session.expires_in,
+    })
+
+
+@router.post("/auth/otp/send")
+async def send_otp(email: str = Body(...)):
+    """Send a 6-digit OTP code to the user's email."""
+    settings = get_settings()
+
+    if settings.allowed_email_domain and not email.endswith(f"@{settings.allowed_email_domain}"):
+        raise HTTPException(status_code=403, detail="Invalid email domain")
+
+    from supabase import create_client
+    client = create_client(settings.supabase_url, settings.supabase_anon_key)
+
+    try:
+        # Request a 6-digit OTP instead of a magic link
+        client.auth.sign_in_with_otp({
+            "email": email,
+            "options": {"should_create_user": False}
+        })
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to send code: {str(e)}")
+
+    return success_response({"message": "OTP sent successfully"})
+
+
+@router.post("/auth/otp/verify")
+async def verify_otp(
+    email: str = Body(...),
+    token: str = Body(...)
+):
+    """Verify the 6-digit OTP and return a session."""
+    settings = get_settings()
+    from supabase import create_client
+    client = create_client(settings.supabase_url, settings.supabase_anon_key)
+
+    try:
+        result = client.auth.verify_otp({
+            "email": email,
+            "token": token,
+            "type": "magiclink"
+        })
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Verification failed: {str(e)}")
+
+    if not result.session:
+        raise HTTPException(status_code=401, detail="Invalid or expired code")
+
+    return success_response({
+        "access_token": result.session.access_token,
+        "refresh_token": result.session.refresh_token,
+        "expires_in": result.session.expires_in,
+        "user": {
+            "id": result.user.id,
+            "email": result.user.email,
+        },
     })

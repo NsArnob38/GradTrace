@@ -81,42 +81,90 @@ def get_token(api_url: str) -> str | None:
 
 
 def login_interactive(api_url: str) -> dict | None:
-    """Interactive login prompt. Returns session data or None."""
-    from packages.cli.ui import console, AMBER, GRAY, RED, BOLD
+    """Interactive login/signup menu. Returns session data or None."""
+    from packages.cli.ui import console, AMBER, GRAY, RED, GREEN, BOLD
 
-    console.print(f"\n  [{AMBER}]🔐 GradeTrace Login[/]")
-    console.print(f"  [{GRAY}]Use your @northsouth.edu credentials[/]\n")
+    console.print(f"\n  [{AMBER}]🔐 GradeTrace Account[/]")
+    console.print(f"  [{GRAY}]Choose an option:[/]\n")
+    console.print(f"    [{GREEN}]1[/]  Log in with Email & Password")
+    console.print(f"    [{GREEN}]2[/]  Create Account / Set Password (for existing Google users)")
+    console.print(f"    [{GREEN}]0[/]  Cancel\n")
 
-    email = console.input(f"  [{BOLD}]Email:[/] ")
-    if not email.strip():
-        return None
+    choice = console.input(f"  [{BOLD}]Choice (0-2):[/] ").strip()
+    
+    if choice == "1":
+        return _login_password(api_url)
+    elif choice == "2":
+        return _register(api_url)
+    
+    return None
 
-    from rich.prompt import Prompt
-    password = Prompt.ask(f"  [{BOLD}]Password[/]", password=True, console=console)
-
-    console.print()
-
+def _login_password(api_url: str) -> dict | None:
+    from packages.cli.ui import console, AMBER, RED, BOLD, GRAY
+    console.print(f"\n  [{GRAY}]--- Password Login ---[/]")
+    email = console.input(f"  [{BOLD}]Email:[/] ").strip()
+    if not email: return None
+    password = console.input(f"  [{BOLD}]Password:[/] ")
+    
+    import requests
     try:
-        import requests
         with console.status(f"[{AMBER}]Authenticating...[/]", spinner="dots"):
             resp = requests.post(
                 f"{api_url}/auth/login",
-                json={"email": email.strip(), "password": password},
+                json={"email": email, "password": password},
                 timeout=15,
             )
-
         if resp.status_code == 200:
             data = resp.json().get("data", {})
             save_session(data)
             return data
-        else:
-            detail = resp.json().get("detail", "Login failed")
-            console.print(f"  [{RED}]✗ {detail}[/]\n")
-            return None
-    except requests.ConnectionError:
-        console.print(f"  [{RED}]✗ Cannot connect to API at {api_url}[/]")
-        console.print(f"  [{GRAY}]  Is the server running?[/]\n")
-        return None
+        console.print(f"  [{RED}]✗ {resp.json().get('detail', 'Login failed')}[/]\n")
     except Exception as e:
         console.print(f"  [{RED}]✗ Error: {e}[/]\n")
+    return None
+
+def _register(api_url: str) -> dict | None:
+    from packages.cli.ui import console, AMBER, RED, GREEN, BOLD, GRAY
+    console.print(f"\n  [{GRAY}]--- Register / Set Password ---[/]")
+    console.print(f"  [{GRAY}](Must be a @northsouth.edu email)[/]\n")
+    
+    email = console.input(f"  [{BOLD}]Email:[/] ").strip()
+    if not email: return None
+    
+    password = console.input(f"  [{BOLD}]Create Password:[/] ")
+    if not password or len(password) < 6:
+        console.print(f"  [{RED}]✗ Password must be at least 6 characters[/]\n")
         return None
+        
+    full_name = console.input(f"  [{BOLD}]Full Name (optional):[/] ").strip()
+    student_id = console.input(f"  [{BOLD}]Student ID (optional):[/] ").strip()
+    
+    import requests
+    try:
+        with console.status(f"[{AMBER}]Creating account...[/]", spinner="dots"):
+            resp = requests.post(
+                f"{api_url}/auth/register",
+                json={
+                    "email": email,
+                    "password": password,
+                    "full_name": full_name,
+                    "student_id": student_id
+                },
+                timeout=15,
+            )
+            
+        if resp.status_code == 200:
+            console.print(f"\n  [{GREEN}]🎉 Account created successfully![/]")
+            
+            # Auto-login after registration
+            with console.status(f"[{AMBER}]Logging in...[/]", spinner="dots"):
+                login_resp = requests.post(f"{api_url}/auth/login", json={"email": email, "password": password}, timeout=10)
+                if login_resp.status_code == 200:
+                    data = login_resp.json().get("data", {})
+                    save_session(data)
+                    return data
+            return None
+        console.print(f"  [{RED}]✗ {resp.json().get('detail', 'Registration failed')}[/]\n")
+    except Exception as e:
+        console.print(f"  [{RED}]✗ Error: {e}[/]\n")
+    return None
