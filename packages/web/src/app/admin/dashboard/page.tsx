@@ -307,9 +307,9 @@ export default function AdminDashboard() {
                                                         <td className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-gray-100">{typeof cgpa === "number" ? cgpa.toFixed(2) : cgpa}</td>
                                                         <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{credits}</td>
                                                         <td className="px-6 py-4">
-                                                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${isEligible
-                                                                ? "bg-green-100 text-green-700"
-                                                                : "bg-red-100 text-red-700"
+                                                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide ${isEligible
+                                                                ? "bg-green-100/80 text-green-700 dark:bg-emerald-500/10 dark:text-emerald-400"
+                                                                : "bg-red-100/80 text-red-700 dark:bg-rose-500/10 dark:text-rose-400"
                                                                 }`}>
                                                                 {isEligible ? "Eligible" : "Ineligible"}
                                                             </span>
