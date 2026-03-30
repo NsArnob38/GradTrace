@@ -21,19 +21,30 @@ class PDFParser:
             if not pdf.pages:
                 raise ValueError("Empty PDF transcript")
 
-            # Peek at page 1 text to determine format
-            p1_text = pdf.pages[0].extract_text()
-            if not p1_text:
-                p1_text = ""
-                
-            p1_text_lower = p1_text.lower()
+            # Extract words from page 1 and join to bypass watermark chunking issues
+            words = pdf.pages[0].extract_words()
+            p1_text = " ".join([w['text'] for w in words]) if words else ""
             
-            if "controller of examinations" in p1_text_lower or "official transcript" in p1_text_lower:
+            # Format 2 Detection (Robust)
+            if re.search(r"Official\s*Transcript|Controller\s*of\s*Examinations", p1_text, re.IGNORECASE):
                 return cls._parse_format_2(pdf)
-            elif "grade history" in p1_text_lower or "rds3" in p1_text_lower:
+            if re.search(r"Student\s*ID.*Date\s*of\s*Birth.*Degree\s*Conferred", p1_text, re.IGNORECASE):
+                return cls._parse_format_2(pdf)
+            if re.search(r"(Spring|Summer|Fall)\s*20\d\d.*?[A-Za-z]{2,4}\s*\d{3}", p1_text, re.IGNORECASE):
+                return cls._parse_format_2(pdf)
+                
+            # 4th Fallback: Scan Page 2 for Format 2 semester pattern if Page 1 is heavily watermarked
+            if len(pdf.pages) > 1:
+                p2_words = pdf.pages[1].extract_words()
+                p2_text = " ".join([w['text'] for w in p2_words]) if p2_words else ""
+                if re.search(r"(Spring|Summer|Fall)\s*20\d\d.*?[A-Za-z]{2,4}\s*\d{3}", p2_text, re.IGNORECASE):
+                    return cls._parse_format_2(pdf)
+                
+            # Format 1 Detection
+            if re.search(r"Grade\s*History|rds3", p1_text, re.IGNORECASE):
                 return cls._parse_format_1(pdf)
-            else:
-                raise ValueError("Unrecognized transcript format. Please upload an NSU grade history PDF or official transcript PDF.")
+
+            raise ValueError("Unrecognized transcript format. Please upload an NSU grade history PDF or official transcript PDF.")
 
     @classmethod
     def _parse_format_1(cls, pdf: pdfplumber.PDF) -> list[dict]:
@@ -135,57 +146,81 @@ class PDFParser:
 
     @classmethod
     def _parse_format_2(cls, pdf: pdfplumber.PDF) -> list[dict]:
-        """Format 2: Official Transcript (2-Column text extraction with Regex)"""
+        """Format 2: Official Transcript (Coordinate-based word extraction to bypass watermarks)"""
         records = []
         
-        # Matches: "Spring 2007", "Fall 2008" etc. Handles optional padding.
         sem_pattern = re.compile(r"^\s*(Spring|Summer|Fall)\s+(\d{4})\s*$", re.IGNORECASE)
-        
-        # Matches: COURSE_CODE | Course Title | Cr. | Gr. | CC | CP
-        # Example: ACT201 | Introduction to Financial Accounting | 3.0 | A- | 3.0 | 3.0
-        # Pipes might be present literally or missing/translated as spaces by pdfplumber.
         course_pattern = re.compile(
             r"^\s*([A-Za-z]{3,4}\s*\d{3})\s*(?:\|)?\s+(.+?)\s+(?:\|)?\s+(\d+\.\d+)\s+(?:\|)?\s+([A-Za-z][+-]?|I|W|WV|X)\s+(?:\|)?\s+(\d+\.\d+)\s+(?:\|)?\s+(\d+\.\d+)\s*$"
         )
         
-        # Start scanning from Page 2 (skip the degree certificate on Page 1)
+        # Start scanning from Page 2
         for page in pdf.pages[1:]:
-            # Check if we've hit the details/grading legend page (meaning transcript is over)
-            page_text_raw = page.extract_text() or ""
-            if "grading system" in page_text_raw.lower() or "details" in page_text_raw.lower():
-                # We optionally continue, but officially page 3 is skipped. 
-                # Let's break if it's strictly a legend page, or just keep scanning (regex is safe enough).
-                pass
+            words = page.extract_words()
+            if not words:
+                continue
+                
+            page_text = " ".join([w['text'] for w in words]).lower()
+            if "grading system" in page_text or "grading legend" in page_text or "transcript details" in page_text:
+                continue  # Skip legend pages entirely
             
+            # Split words into Left and Right columns mathematically
             width = page.width
-            height = page.height
+            left_col_words = []
+            right_col_words = []
             
-            # Explicitly crop the page into the left column and right column vertically
-            left_col = page.crop((0, 0, width / 2.0, height))
-            right_col = page.crop((width / 2.0, 0, width, height))
-            
-            left_text = left_col.extract_text() or ""
-            right_text = right_col.extract_text() or ""
-            
-            # Create a sequential array to preserve chronological order (Left Semesters first, then Right Semesters)
-            lines = left_text.split('\n') + right_text.split('\n')
+            for w in words:
+                if w['x0'] < width / 2.0:
+                    left_col_words.append(w)
+                else:
+                    right_col_words.append(w)
+                    
+            def group_words_into_lines(word_list: list, tolerance: float = 5.0) -> list[str]:
+                if not word_list:
+                    return []
+                    
+                # Sort vertically
+                word_list.sort(key=lambda w: w['top'])
+                lines = []
+                current_line = []
+                current_top = word_list[0]['top']
+                
+                for w in word_list:
+                    if abs(w['top'] - current_top) <= tolerance:
+                        current_line.append(w)
+                    else:
+                        # Flush current line, sorted horizontally
+                        current_line.sort(key=lambda x: x['x0'])
+                        lines.append(" ".join([x['text'] for x in current_line]))
+                        current_line = [w]
+                        current_top = w['top']
+                
+                # Flush remainder
+                if current_line:
+                    current_line.sort(key=lambda x: x['x0'])
+                    lines.append(" ".join([x['text'] for x in current_line]))
+                    
+                return lines
+
+            # Parse lines chronologically
+            left_lines = group_words_into_lines(left_col_words)
+            right_lines = group_words_into_lines(right_col_words)
+            all_lines = left_lines + right_lines
             
             current_semester = ""
             current_year = ""
             
-            for line in lines:
+            for line in all_lines:
                 line = line.strip()
                 if not line:
                     continue
                 
-                # Try matching semester header
                 sem_match = sem_pattern.match(line)
                 if sem_match:
                     current_semester = sem_match.group(1).title()
                     current_year = sem_match.group(2)
                     continue
                     
-                # Try matching course record row
                 course_match = course_pattern.match(line)
                 if course_match:
                     code = course_match.group(1).replace(" ", "").upper()
@@ -193,7 +228,6 @@ class PDFParser:
                     credit_str = course_match.group(3).strip()
                     grade = course_match.group(4).strip().upper()
                     
-                    # Normalizing to matching expected Credit format (e.g. 3.0 -> 3)
                     if credit_str.endswith(".0"):
                         credit_str = credit_str[:-2]
                     elif credit_str.endswith(".00"):

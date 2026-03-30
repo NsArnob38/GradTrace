@@ -103,3 +103,63 @@ async def api_full_audit(
         return {"status": "success", "data": result}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/debug-pdf", summary="Debug: Output raw coordinate-text from PDF")
+async def api_debug_pdf(file: UploadFile = File(...)):
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDFs are supported for debug")
+        
+    try:
+        import pdfplumber
+        content = await file.read()
+        debug_pages = []
+        
+        with pdfplumber.open(io.BytesIO(content)) as pdf:
+            for i, page in enumerate(pdf.pages):
+                words = page.extract_words()
+                if not words:
+                    debug_pages.append({"page": i + 1, "text": ""})
+                    continue
+                    
+                width = page.width
+                left_col_words = []
+                right_col_words = []
+                for w in words:
+                    if w['x0'] < width / 2.0:
+                        left_col_words.append(w)
+                    else:
+                        right_col_words.append(w)
+                        
+                def group_words_into_lines(word_list: list, tolerance: float = 5.0) -> list[str]:
+                    if not word_list:
+                        return []
+                    word_list.sort(key=lambda w: w['top'])
+                    lines = []
+                    current_line = []
+                    current_top = word_list[0]['top']
+                    for w in word_list:
+                        if abs(w['top'] - current_top) <= tolerance:
+                            current_line.append(w)
+                        else:
+                            current_line.sort(key=lambda x: x['x0'])
+                            lines.append(" ".join([x['text'] for x in current_line]))
+                            current_line = [w]
+                            current_top = w['top']
+                    if current_line:
+                        current_line.sort(key=lambda x: x['x0'])
+                        lines.append(" ".join([x['text'] for x in current_line]))
+                    return lines
+                
+                left_lines = group_words_into_lines(left_col_words)
+                right_lines = group_words_into_lines(right_col_words)
+                all_lines = left_lines + right_lines
+                
+                debug_pages.append({
+                    "page": i + 1,
+                    "text": "\n".join(all_lines)
+                })
+                
+        return {"status": "success", "pages": debug_pages}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
