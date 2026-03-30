@@ -24,8 +24,10 @@ async def upload_transcript(
 
     if file.filename.lower().endswith(".pdf"):
         from packages.core.pdf_parser import PDFParser
+        from packages.api.config import get_settings
+        settings = get_settings()
         try:
-            rows = PDFParser.parse(content)
+            rows = PDFParser.parse(content, google_creds=settings.google_credentials_json)
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Failed to parse PDF: {str(e)}")
     else:

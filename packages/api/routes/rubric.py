@@ -42,7 +42,9 @@ async def get_dataframe_from_upload(file: UploadFile) -> pd.DataFrame:
     content = await file.read()
     if file.filename.lower().endswith(".pdf"):
         from packages.core.pdf_parser import PDFParser
-        rows = PDFParser.parse(content)
+        from packages.api.config import get_settings
+        settings = get_settings()
+        rows = PDFParser.parse(content, google_creds=settings.google_credentials_json)
         return pd.DataFrame(rows)
     elif file.filename.lower().endswith(".csv"):
         # Use utf-8-sig to handle BOM correctly if present
@@ -112,54 +114,59 @@ async def api_debug_pdf(file: UploadFile = File(...)):
         
     try:
         import pdfplumber
+        from packages.api.config import get_settings
+        from packages.core.pdf_parser import PDFParser
+        
+        settings = get_settings()
         content = await file.read()
         debug_pages = []
         
+        # Check if Google Vision is available
+        has_vision = bool(settings.google_credentials_json)
+        
         with pdfplumber.open(io.BytesIO(content)) as pdf:
             for i, page in enumerate(pdf.pages):
-                words = page.extract_words()
-                if not words:
-                    debug_pages.append({"page": i + 1, "text": ""})
-                    continue
-                    
-                width = page.width
-                left_col_words = []
-                right_col_words = []
-                for w in words:
-                    if w['x0'] < width / 2.0:
-                        left_col_words.append(w)
-                    else:
-                        right_col_words.append(w)
-                        
-                def group_words_into_lines(word_list: list, tolerance: float = 5.0) -> list[str]:
-                    if not word_list:
-                        return []
-                    word_list.sort(key=lambda w: w['top'])
-                    lines = []
-                    current_line = []
-                    current_top = word_list[0]['top']
-                    for w in word_list:
-                        if abs(w['top'] - current_top) <= tolerance:
-                            current_line.append(w)
-                        else:
-                            current_line.sort(key=lambda x: x['x0'])
-                            lines.append(" ".join([x['text'] for x in current_line]))
-                            current_line = [w]
-                            current_top = w['top']
-                    if current_line:
-                        current_line.sort(key=lambda x: x['x0'])
-                        lines.append(" ".join([x['text'] for x in current_line]))
-                    return lines
+                # Diagnostic metadata
+                objects = page.objects
+                char_count = len(objects.get('char', []))
+                image_count = len(objects.get('image', []))
+                rect_count = len(objects.get('rect', []))
                 
-                left_lines = group_words_into_lines(left_col_words)
-                right_lines = group_words_into_lines(right_col_words)
-                all_lines = left_lines + right_lines
+                # Raw extraction
+                raw_extracted = page.extract_text() or ""
                 
                 debug_pages.append({
                     "page": i + 1,
-                    "text": "\n".join(all_lines)
+                    "metadata": {
+                        "chars": char_count,
+                        "images": image_count,
+                        "rects": rect_count,
+                        "width": page.width,
+                        "height": page.height
+                    },
+                    "raw_text": raw_extracted,
+                    "vision_enabled": has_vision,
                 })
+        
+        # If vision is enabled, try an OCR sample
+        if has_vision:
+            try:
+                # We reuse the logic from PDFParser to show what the final extracted text looks like
+                ocr_rows = PDFParser.parse(content, google_creds=settings.google_credentials_json)
+                return {
+                    "status": "success", 
+                    "ocr_engine": "Google Vision AI",
+                    "sample_records": ocr_rows[:5] if ocr_rows else [],
+                    "total_records": len(ocr_rows),
+                    "pages": debug_pages
+                }
+            except Exception as ocr_err:
+                return {
+                    "status": "partial_success",
+                    "ocr_error": str(ocr_err),
+                    "pages": debug_pages
+                }
                 
-        return {"status": "success", "pages": debug_pages}
+        return {"status": "success", "engine": "pdfplumber (Digital Only)", "pages": debug_pages}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
