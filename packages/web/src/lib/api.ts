@@ -20,11 +20,25 @@ async function request<T = unknown>(
 
     try {
         const res = await fetch(`${API_URL}${path}`, { ...options, headers });
+        const json = await res.json().catch(() => ({ detail: res.statusText }));
+        
         if (!res.ok) {
-            const err = await res.json().catch(() => ({ detail: res.statusText }));
-            return { success: false, data: null, error: err.detail || "Request failed" };
+            let errorMsg = "Request failed";
+            if (json.detail) {
+                if (Array.isArray(json.detail)) {
+                    // Flatten FastAPI 422 errors (loc: path.to.field, msg: message)
+                    errorMsg = json.detail.map((e: any) => 
+                        `${e.loc.join(".")}: ${e.msg}`
+                    ).join(", ");
+                } else if (typeof json.detail === "string") {
+                    errorMsg = json.detail;
+                } else {
+                    errorMsg = JSON.stringify(json.detail);
+                }
+            }
+            return { success: false, data: null, error: errorMsg };
         }
-        return await res.json();
+        return json;
     } catch (err: any) {
         return { success: false, data: null, error: err.message || "Network error" };
     }
@@ -45,6 +59,7 @@ export const api = {
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token;
 
+        // Use standard request logic for upload but manually handle multipart
         const res = await fetch(`${API_URL}/transcripts/upload`, {
             method: "POST",
             headers: {
@@ -55,7 +70,13 @@ export const api = {
 
         if (!res.ok) {
             const err = await res.json().catch(() => ({ detail: "Upload failed" }));
-            return { success: false, data: null, error: err.detail };
+            let msg = "Upload failed";
+            if (Array.isArray(err.detail)) {
+                msg = err.detail.map((e: any) => `${e.loc.join(".")}: ${e.msg}`).join(", ");
+            } else if (typeof err.detail === "string") {
+                msg = err.detail;
+            }
+            return { success: false, data: null, error: msg };
         }
         return res.json();
     },
@@ -64,11 +85,10 @@ export const api = {
 
     // Audit
     runAudit: (transcriptId: string, program: string, concentration?: string) =>
-        fetch(`${API_URL}/audit/${transcriptId}`, {
+        request(`/audit/${transcriptId}`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ program, concentration }),
-        }).then(res => res.json()),
+        }),
     getAuditResult: (transcriptId: string) => request(`/audit/${transcriptId}`),
     listHistory: () => request("/audit"),
     deleteHistory: (transcriptId: string) => request(`/audit/${transcriptId}`, { method: "DELETE" }),
