@@ -8,14 +8,21 @@ from packages.api.deps import get_current_user, get_supabase_admin, success_resp
 router = APIRouter(prefix="/audit", tags=["audit"])
 
 
+from pydantic import BaseModel, Field
+
+class AuditRequest(BaseModel):
+    program: str = Field(default="CSE", description="e.g. 'CSE' or 'BBA'")
+    concentration: str | None = Field(default=None, description="Major concentration for BBA")
+
 @router.post("/{transcript_id}")
 async def run_audit(
     transcript_id: str,
-    program: str = Body(default="CSE"),
-    concentration: str | None = Body(default=None),
+    req: AuditRequest,
     user: dict = Depends(get_current_user),
 ):
     """Run the audit engine on a transcript and store the result."""
+    program = req.program
+    concentration = req.concentration
     db = get_supabase_admin()
     user_id = user["id"]
 

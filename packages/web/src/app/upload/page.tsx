@@ -83,7 +83,7 @@ export default function UploadPage() {
                 program === "BBA" && concentration ? concentration : undefined,
             );
             if (!auditRes.success) {
-                const msg = auditRes.error || auditRes.detail || "Audit failed";
+                const msg = String(auditRes.error || "Audit failed");
                 setError(msg);
                 toast(msg, "error");
                 setUploading(false);

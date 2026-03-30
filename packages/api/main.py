@@ -37,16 +37,28 @@ async def startup_event():
             print(f"❌ ERROR: GOOGLE_CREDENTIALS_JSON is set but is NOT valid JSON: {str(e)}")
     print("--- END STARTUP CHECKS ---\n")
 
-# Custom 422 Logging
+# Custom 422 Logging & Sanitization
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    """Log 422 errors to the console so the developer can see exactly what field failed."""
+    """Log 422 errors and SANITIZE them into a string to prevent frontend crashes."""
+    errors = exc.errors()
+    # Flatten the errors into a single readable string
+    # e.g., "body.program: field required, body.concentration: invalid string"
+    error_msgs = []
+    for error in errors:
+        loc = ".".join(str(l) for l in error.get("loc", []))
+        msg = error.get("msg", "Unknown error")
+        error_msgs.append(f"{loc}: {msg}")
+    
+    flattened_error = ", ".join(error_msgs)
+    
     print(f"DEBUG: 422 Validation Error at {request.url}")
     print(f"Entity body: {exc.body}")
-    print(f"Errors: {exc.errors()}")
+    print(f"Flattened Errors: {flattened_error}")
+    
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content={"detail": exc.errors(), "body": exc.body},
+        content={"detail": flattened_error, "body": str(exc.body)},
     )
 
 # CORS

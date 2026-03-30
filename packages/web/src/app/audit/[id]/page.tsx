@@ -24,7 +24,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     useEffect(() => {
         api.getAuditResult(id).then((res) => {
             if (res.data) setData(res.data);
-            else setError(res.error || "No audit result found");
+            else setError(String(res.error || "No audit result found"));
             setLoading(false);
         }).catch(() => {
             setError("Failed to load audit result");

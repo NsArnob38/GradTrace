@@ -114,7 +114,7 @@ export default function DashboardPage() {
             const { data: { session } } = await supabase.auth.getSession();
             loadData(session);
         } else {
-            toast(auditRes.error || auditRes.detail || "Failed to re-run audit", "error");
+            toast(String(auditRes.error || "Failed to re-run audit"), "error");
         }
         setRerunning(null);
     };
