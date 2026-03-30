@@ -65,7 +65,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 # ... (rest of the file as before)
 
 # CORS
-origins = [o.strip() for o in settings.cors_origins.split(",")]
+origins = [
+    "https://grad-trace.vercel.app",
+    "https://www.grad-trace.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
