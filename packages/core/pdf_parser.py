@@ -78,15 +78,15 @@ class PDFParser:
         """Uses Google Vision annotate_image per page to parse scanned PDFs."""
         records = []
         sem_pattern = re.compile(r"^\s*(Spring|Summer|Fall)\s+(\d{4})\s*$", re.IGNORECASE)
+        # Relaxed regex: handles both '3.0' and '3' and allows variable spacing/pipes
         course_pattern = re.compile(
-            r"^\s*([A-Za-z]{2,4}\s*\d{3})\s*[|]?\s*(.+?)\s+[|]?\s*(\d+\.\d+)\s*[|]?\s*([A-Za-z][+-]?|I|W|WV|X)\s*[|]?\s*(\d+\.\d+)\s*[|]?\s*(\d+\.\d+)\s*$"
+            r"^\s*([A-Za-z]{2,4}\s*\d{3})\s*[|]?\s*(.+?)\s+[|]?\s*(\d+(?:\.\d+)?)\s*[|]?\s*([A-Za-z][+-]?|I|W|WV|X)\s*[|]?\s*(\d+(?:\.\d+)?)\s*[|]?\s*(\d+(?:\.\d+)?)\s*$"
         )
 
         with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
             # Skip Page 1 (Certificate)
             for page in pdf.pages[1:]:
-                # Convert PDF page to Image bytes for Google Vision
-                # pdfplumber uses pypdfium2 (standalone) which works on Render
+                # Convert PDF page to Image bytes
                 img = page.to_image(resolution=200).original 
                 img_byte_arr = io.BytesIO()
                 img.save(img_byte_arr, format='PNG')
@@ -99,11 +99,9 @@ class PDFParser:
                 if not annotation:
                     continue
                     
-                # In pixel coordinates, width is annotation.pages[0].width
                 vision_page = annotation.pages[0]
                 width = vision_page.width
                 
-                # Extract words with coordinates
                 words_data = []
                 for block in vision_page.blocks:
                     for paragraph in block.paragraphs:
@@ -119,11 +117,10 @@ class PDFParser:
                 if not words_data:
                     continue
 
-                # 2-Column Logic
                 left_col = [w for w in words_data if w['x0'] < width / 2.0]
                 right_col = [w for w in words_data if w['x0'] >= width / 2.0]
                 
-                def group_words(word_list, tolerance=10.0): # User requested 10px
+                def group_words(word_list, tolerance=10.0):
                     if not word_list: return []
                     word_list.sort(key=lambda w: w['top'])
                     lines, current_line = [], []
@@ -133,11 +130,11 @@ class PDFParser:
                             current_line.append(w)
                         else:
                             current_line.sort(key=lambda x: x['x0'])
-                            lines.append(" ".join([x['text'] for x in current_line]))
+                            lines.append(" ".join([x['text'] for x in current_line]).strip())
                             current_line, current_top = [w], w['top']
                     if current_line:
                         current_line.sort(key=lambda x: x['x0'])
-                        lines.append(" ".join([x['text'] for x in current_line]))
+                        lines.append(" ".join([x['text'] for x in current_line]).strip())
                     return lines
 
                 all_lines = group_words(left_col) + group_words(right_col)
@@ -152,8 +149,10 @@ class PDFParser:
                     if course_match:
                         code = course_match.group(1).replace(" ", "").upper()
                         credit = course_match.group(3).strip()
+                        # Clean credits to match standard format
                         if credit.endswith(".0"): credit = credit[:-2]
                         elif credit.endswith(".00"): credit = credit[:-3]
+                        
                         records.append({
                             "course_code": code,
                             "course_name": course_match.group(2).strip(),

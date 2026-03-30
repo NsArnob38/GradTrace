@@ -26,7 +26,6 @@ async function request<T = unknown>(
             let errorMsg = "Request failed";
             if (json.detail) {
                 if (Array.isArray(json.detail)) {
-                    // Flatten FastAPI 422 errors (loc: path.to.field, msg: message)
                     errorMsg = json.detail.map((e: any) => 
                         `${e.loc.join(".")}: ${e.msg}`
                     ).join(", ");
@@ -36,6 +35,7 @@ async function request<T = unknown>(
                     errorMsg = JSON.stringify(json.detail);
                 }
             }
+            console.error(`API Error [${res.status}]:`, { path, json, errorMsg });
             return { success: false, data: null, error: errorMsg };
         }
         return json;

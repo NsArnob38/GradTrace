@@ -61,9 +61,7 @@ async def run_audit(
         "roadmap": result["roadmap"],
     }).execute()
 
-    audit_data = audit_record.data[0] if audit_record.data else {}
-
-    # Save to scan history
+    # Prepare summary
     summary = {
         "cgpa": float(result["level_2"]["cgpa"]),
         "earned_credits": result["level_1"]["credits_earned"],
@@ -71,14 +69,18 @@ async def run_audit(
         "graduation_eligible": result["level_3"]["eligible"],
     }
 
-    db.table("scan_history").insert({
-        "user_id": user_id,
-        "transcript_id": transcript_id,
-        "audit_result_id": audit_data.get("id"),
-        "input_type": "csv",
-        "file_name": transcript.data.get("file_name", ""),
-        "summary": summary,
-    }).execute()
+    # Save to scan history (Non-critical, wrap in try/except)
+    try:
+        db.table("scan_history").insert({
+            "user_id": user_id,
+            "transcript_id": transcript_id,
+            "audit_result_id": audit_data.get("id"),
+            "input_type": "csv",
+            "file_name": transcript.data.get("file_name", ""),
+            "summary": summary,
+        }).execute()
+    except Exception as e:
+        print(f"DEBUG: Warning: Failed to save scan history: {str(e)}")
 
     return success_response({
         "audit_result_id": audit_data.get("id"),
