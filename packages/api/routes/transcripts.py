@@ -16,32 +16,36 @@ async def upload_transcript(
     user: dict = Depends(get_current_user)
 ):
     """Upload a CSV transcript, parse it, and store in Supabase."""
-    if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Only CSV files are supported currently")
+    if not (file.filename.lower().endswith(".csv") or file.filename.lower().endswith(".pdf")):
+        raise HTTPException(status_code=400, detail="Only CSV and PDF files are supported")
 
     content = await file.read()
-    text = content.decode("utf-8-sig")
-
-    # Parse CSV into list of dicts
-    reader = csv.reader(io.StringIO(text))
     rows = []
-    headers = None
-    for row in reader:
-        if not row or len(row) < 5:
-            continue
-        if row[0].strip().lower() == "course_code":
-            headers = [h.strip().lower() for h in row]
-            continue
-        rows.append({
-            "course_code": row[0].strip(),
-            "course_name": row[1].strip(),
-            "credits": row[2].strip(),
-            "grade": row[3].strip(),
-            "semester": row[4].strip(),
-        })
+
+    if file.filename.lower().endswith(".pdf"):
+        from packages.core.pdf_parser import PDFParser
+        try:
+            rows = PDFParser.parse(content)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to parse PDF: {str(e)}")
+    else:
+        text = content.decode("utf-8-sig")
+        reader = csv.reader(io.StringIO(text))
+        for row in reader:
+            if not row or len(row) < 5:
+                continue
+            if row[0].strip().lower() == "course_code":
+                continue
+            rows.append({
+                "course_code": row[0].strip(),
+                "course_name": row[1].strip(),
+                "credits": row[2].strip(),
+                "grade": row[3].strip(),
+                "semester": row[4].strip(),
+            })
 
     if not rows:
-        raise HTTPException(status_code=400, detail="No valid course data found in CSV")
+        raise HTTPException(status_code=400, detail="No valid course data found in file")
 
     # Store in Supabase
     db = get_supabase_admin()

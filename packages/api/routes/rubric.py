@@ -38,16 +38,28 @@ class FullAuditResponse(BaseModel):
     data: Dict[str, Any]  # Combined metadata
 
 
+async def get_dataframe_from_upload(file: UploadFile) -> pd.DataFrame:
+    content = await file.read()
+    if file.filename.lower().endswith(".pdf"):
+        from packages.core.pdf_parser import PDFParser
+        rows = PDFParser.parse(content)
+        return pd.DataFrame(rows)
+    elif file.filename.lower().endswith(".csv"):
+        # Use utf-8-sig to handle BOM correctly if present
+        return pd.read_csv(io.StringIO(content.decode("utf-8-sig")))
+    else:
+        raise ValueError("Unsupported file extension. Please upload .csv or .pdf")
+
+
 router = APIRouter(prefix="/audit", tags=["rubric_endpoints"])
 
 @router.post("/level1", summary="CSE226 Rubric: Level 1 (Credit Tallying)", response_model=Level1Response)
 async def api_level1(
-    file: UploadFile = File(..., description="The student's transcript CSV file"),
+    file: UploadFile = File(..., description="The student's transcript CSV or PDF file"),
     program: str = Form(..., description="The student's major (e.g., 'CSE' or 'BBA')")
 ):
     try:
-        content = await file.read()
-        df = pd.read_csv(io.StringIO(content.decode("utf-8")))
+        df = await get_dataframe_from_upload(file)
         result = run_level1(df, program)
         return {"status": "success", "data": result}
     except Exception as e:
@@ -60,8 +72,7 @@ async def api_level2(
     program: str = Form(...)
 ):
     try:
-        content = await file.read()
-        df = pd.read_csv(io.StringIO(content.decode("utf-8")))
+        df = await get_dataframe_from_upload(file)
         result = run_level2(df, program)
         return {"status": "success", "data": result}
     except Exception as e:
@@ -74,8 +85,7 @@ async def api_level3(
     program: str = Form(...)
 ):
     try:
-        content = await file.read()
-        df = pd.read_csv(io.StringIO(content.decode("utf-8")))
+        df = await get_dataframe_from_upload(file)
         result = run_level3(df, program)
         return {"status": "success", "data": result}
     except Exception as e:
@@ -88,8 +98,7 @@ async def api_full_audit(
     program: str = Form(...)
 ):
     try:
-        content = await file.read()
-        df = pd.read_csv(io.StringIO(content.decode("utf-8")))
+        df = await get_dataframe_from_upload(file)
         result = run_full_audit(df, program)
         return {"status": "success", "data": result}
     except Exception as e:

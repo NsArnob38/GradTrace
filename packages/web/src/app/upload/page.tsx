@@ -32,6 +32,14 @@ export default function UploadPage() {
     const handleFile = useCallback((f: File) => {
         setFile(f);
         setError("");
+        
+        // If PDF, skip local preview string splitting
+        if (f.name.toLowerCase().endsWith(".pdf")) {
+            setPreview([{ course_code: "", course_name: "PDF Preview Unavailable (Will process server-side)", credits: "—", grade: "—", semester: "—" }]);
+            toast(`Loaded PDF transcript: ${f.name}`, "success");
+            return;
+        }
+
         // Parse CSV preview client-side
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -106,7 +114,7 @@ export default function UploadPage() {
             <div className="flex items-center justify-center min-h-[80vh] w-full">
                 <div className="w-full max-w-4xl mx-auto px-6 py-10">
                     <h1 className="text-2xl font-bold mb-2">Upload Transcript</h1>
-                    <p className="text-muted dark:text-gray-400 text-sm mb-8">Upload your NSU transcript CSV to get a full audit report</p>
+                    <p className="text-muted dark:text-gray-400 text-sm mb-8">Upload your NSU transcript CSV or PDF to get a full audit report</p>
 
                     {/* Program selector */}
                     <div className="flex gap-4 mb-6">
@@ -156,12 +164,12 @@ export default function UploadPage() {
                                     }`}
                             >
                                 <Upload className="w-10 h-10 text-muted dark:text-gray-500 mx-auto mb-4" />
-                                <p className="font-medium mb-1">Drop your transcript CSV here</p>
+                                <p className="font-medium mb-1">Drop your transcript CSV or PDF here</p>
                                 <p className="text-muted dark:text-gray-400 text-sm">or click to browse files</p>
                                 <input
                                     ref={fileRef}
                                     type="file"
-                                    accept=".csv"
+                                    accept=".csv,.pdf"
                                     className="hidden"
                                     onChange={(e) => {
                                         const f = e.target.files?.[0];
@@ -192,8 +200,13 @@ export default function UploadPage() {
                                 <div className="flex items-center gap-3">
                                     <FileText className="w-5 h-5 text-accent" />
                                     <div>
-                                        <p className="font-medium text-sm">{file.name}</p>
-                                        <p className="text-xs text-muted dark:text-gray-400">{preview.length} courses found</p>
+                                        <p className="font-medium text-sm flex items-center gap-2">
+                                            {file.name}
+                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider ${file.name.toLowerCase().endsWith('.pdf') ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400' : 'bg-green-100 text-green-700 dark:bg-emerald-500/20 dark:text-emerald-400'}`}>
+                                                {file.name.toLowerCase().endsWith(".pdf") ? "📄 PDF DETECTED" : "📊 CSV DETECTED"}
+                                            </span>
+                                        </p>
+                                        <p className="text-xs text-muted dark:text-gray-400">{file.name.toLowerCase().endsWith(".pdf") ? "Parsing engine will automatically extract data" : `${preview.length} courses found`}</p>
                                     </div>
                                 </div>
                                 <button
