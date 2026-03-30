@@ -150,8 +150,11 @@ class PDFParser:
         records = []
         
         sem_pattern = re.compile(r"^\s*(Spring|Summer|Fall)\s+(\d{4})\s*$", re.IGNORECASE)
+        # Matches: COURSE_CODE | Course Title | Cr. | Gr. | CC | CP
+        # Example: ACT201 | Introduction to Financial Accounting | 3.0 | A- | 3.0 | 3.0
+        # This regex is flexible with spaces and pipes.
         course_pattern = re.compile(
-            r"^\s*([A-Za-z]{3,4}\s*\d{3})\s*(?:\|)?\s+(.+?)\s+(?:\|)?\s+(\d+\.\d+)\s+(?:\|)?\s+([A-Za-z][+-]?|I|W|WV|X)\s+(?:\|)?\s+(\d+\.\d+)\s+(?:\|)?\s+(\d+\.\d+)\s*$"
+            r"^\s*([A-Za-z]{2,4}\s*\d{3})\s*[|]?\s*(.+?)\s+[|]?\s*(\d+\.\d+)\s*[|]?\s*([A-Za-z][+-]?|I|W|WV|X)\s*[|]?\s*(\d+\.\d+)\s*[|]?\s*(\d+\.\d+)\s*$"
         )
         
         # Start scanning from Page 2
