@@ -22,6 +22,18 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://grad-trace.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Startup Checks
 @app.on_event("startup")
 async def startup_event():
@@ -64,20 +76,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 # CORS
 # ... (rest of the file as before)
 
-# CORS
-origins = [
-    "https://grad-trace.vercel.app",
-    "https://www.grad-trace.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:3001",
-]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Routes
 
 # Routes
 app.include_router(auth.router)

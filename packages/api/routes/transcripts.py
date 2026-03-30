@@ -3,9 +3,12 @@ GradeTrace API — Transcript Routes
 """
 
 import csv
+import logging
 import io
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from packages.api.deps import get_current_user, get_supabase_admin, success_response
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/transcripts", tags=["transcripts"])
 

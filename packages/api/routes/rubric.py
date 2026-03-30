@@ -10,8 +10,9 @@ Each accepts a CSV file and a program string, and returns structured JSON.
 
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException
 from typing import Any
-import pandas as pd
 import io
+import logging
+import pandas as pd
 
 from packages.core.level1 import run_level1
 from packages.core.level2 import run_level2
@@ -41,10 +42,10 @@ class FullAuditResponse(BaseModel):
 async def get_dataframe_from_upload(file: UploadFile) -> pd.DataFrame:
     content = await file.read()
     if file.filename.lower().endswith(".pdf"):
-        from packages.core.pdf_parser import PDFParser
+        from packages.core.pdf_parser import VisionParser
         from packages.api.config import get_settings
         settings = get_settings()
-        rows = PDFParser.parse(content, google_creds=settings.google_credentials_json)
+        rows = VisionParser.parse(content, google_creds=settings.google_credentials_json, filename=file.filename)
         return pd.DataFrame(rows)
     elif file.filename.lower().endswith(".csv"):
         # Use utf-8-sig to handle BOM correctly if present
@@ -115,7 +116,7 @@ async def api_debug_pdf(file: UploadFile = File(...)):
     try:
         import pdfplumber
         from packages.api.config import get_settings
-        from packages.core.pdf_parser import PDFParser
+        from packages.core.pdf_parser import VisionParser
         
         settings = get_settings()
         content = await file.read()
@@ -151,8 +152,8 @@ async def api_debug_pdf(file: UploadFile = File(...)):
         # If vision is enabled, try an OCR sample
         if has_vision:
             try:
-                # We reuse the logic from PDFParser to show what the final extracted text looks like
-                ocr_rows = PDFParser.parse(content, google_creds=settings.google_credentials_json)
+                # We reuse the logic from VisionParser to show what the final extracted text looks like
+                ocr_rows = VisionParser.parse(content, google_creds=settings.google_credentials_json, filename=file.filename)
                 return {
                     "status": "success", 
                     "ocr_engine": "Google Vision AI",
