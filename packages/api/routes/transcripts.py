@@ -15,43 +15,57 @@ async def upload_transcript(
     file: UploadFile = File(...),
     user: dict = Depends(get_current_user)
 ):
-    """Upload a CSV transcript, parse it, and store in Supabase."""
-    if not (file.filename.lower().endswith(".csv") or file.filename.lower().endswith(".pdf")):
-        raise HTTPException(status_code=400, detail="Only CSV and PDF files are supported")
+    """Upload a transcript (PDF, Image, or CSV), parse it, and store in Supabase."""
+    filename = file.filename.lower()
+    allowed_exts = {".csv", ".pdf", ".jpg", ".jpeg", ".png", ".webp"}
+    if not any(filename.endswith(ext) for ext in allowed_exts):
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Unsupported file type. Supported: {', '.join(allowed_exts)}"
+        )
 
     content = await file.read()
     rows = []
 
-    if file.filename.lower().endswith(".pdf"):
-        from packages.core.pdf_parser import PDFParser
+    if not filename.endswith(".csv"):
+        # Use Universal Vision Parser for all PDFs and Images
+        from packages.core.pdf_parser import VisionParser
         from packages.api.config import get_settings
         settings = get_settings()
         try:
-            rows = PDFParser.parse(content, google_creds=settings.google_credentials_json)
+            rows = VisionParser.parse(
+                content, 
+                google_creds=settings.google_credentials_json,
+                filename=file.filename
+            )
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Failed to parse PDF: {str(e)}")
+            logger.error(f"Vision Parsing failed: {str(e)}")
+            raise HTTPException(status_code=400, detail=str(e))
     else:
-        text = content.decode("utf-8-sig")
-        reader = csv.reader(io.StringIO(text))
-        for row in reader:
-            if not row or len(row) < 5:
-                continue
-            if row[0].strip().lower() == "course_code":
-                continue
-            rows.append({
-                "course_code": row[0].strip(),
-                "course_name": row[1].strip(),
-                "credits": row[2].strip(),
-                "grade": row[3].strip(),
-                "semester": row[4].strip(),
-            })
+        # CSV Parsing (standard logic)
+        try:
+            text = content.decode("utf-8-sig")
+            reader = csv.reader(io.StringIO(text))
+            for row in reader:
+                if not row or len(row) < 5:
+                    continue
+                if row[0].strip().lower() == "course_code":
+                    continue
+                rows.append({
+                    "course_code": row[0].strip(),
+                    "course_name": row[1].strip(),
+                    "credits": row[2].strip(),
+                    "grade": row[3].strip(),
+                    "semester": row[4].strip(),
+                })
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to parse CSV: {str(e)}")
 
     if not rows:
         raise HTTPException(status_code=400, detail="No valid course data found in file")
 
     # Store in Supabase
     db = get_supabase_admin()
-
     result = db.table("transcripts").insert({
         "user_id": user["id"],
         "file_name": file.filename,

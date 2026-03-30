@@ -33,10 +33,17 @@ export default function UploadPage() {
         setFile(f);
         setError("");
         
-        // If PDF, skip local preview string splitting
-        if (f.name.toLowerCase().endsWith(".pdf")) {
-            setPreview([{ course_code: "", course_name: "PDF Preview Unavailable (Will process server-side)", credits: "—", grade: "—", semester: "—" }]);
-            toast(`Loaded PDF transcript: ${f.name}`, "success");
+        // If PDF or Image, skip local preview string splitting
+        const isImage = /\.(jpg|jpeg|png|webp)$/i.test(f.name);
+        if (f.name.toLowerCase().endsWith(".pdf") || isImage) {
+            setPreview([{ 
+                course_code: "", 
+                course_name: `${isImage ? "Image" : "PDF"} Preview Unavailable (Will process server-side)`, 
+                credits: "—", 
+                grade: "—", 
+                semester: "—" 
+            }]);
+            toast(`Loaded ${isImage ? "Image" : "PDF"} transcript: ${f.name}`, "success");
             return;
         }
 
@@ -114,7 +121,7 @@ export default function UploadPage() {
             <div className="flex items-center justify-center min-h-[80vh] w-full">
                 <div className="w-full max-w-4xl mx-auto px-6 py-10">
                     <h1 className="text-2xl font-bold mb-2">Upload Transcript</h1>
-                    <p className="text-muted dark:text-gray-400 text-sm mb-8">Upload your NSU transcript CSV or PDF to get a full audit report</p>
+                    <p className="text-muted dark:text-gray-400 text-sm mb-8">Upload your NSU transcript CSV, PDF, or Image to get a full audit report</p>
 
                     {/* Program selector */}
                     <div className="flex gap-4 mb-6">
@@ -164,12 +171,12 @@ export default function UploadPage() {
                                     }`}
                             >
                                 <Upload className="w-10 h-10 text-muted dark:text-gray-500 mx-auto mb-4" />
-                                <p className="font-medium mb-1">Drop your transcript CSV or PDF here</p>
+                                <p className="font-medium mb-1">Drop your transcript CSV, PDF, or Image here</p>
                                 <p className="text-muted dark:text-gray-400 text-sm">or click to browse files</p>
                                 <input
                                     ref={fileRef}
                                     type="file"
-                                    accept=".csv,.pdf"
+                                    accept=".csv,.pdf,.jpg,.jpeg,.png,.webp"
                                     className="hidden"
                                     onChange={(e) => {
                                         const f = e.target.files?.[0];
@@ -202,11 +209,19 @@ export default function UploadPage() {
                                     <div>
                                         <p className="font-medium text-sm flex items-center gap-2">
                                             {file.name}
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider ${file.name.toLowerCase().endsWith('.pdf') ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400' : 'bg-green-100 text-green-700 dark:bg-emerald-500/20 dark:text-emerald-400'}`}>
-                                                {file.name.toLowerCase().endsWith(".pdf") ? "📄 PDF DETECTED" : "📊 CSV DETECTED"}
-                                            </span>
+                                            {(() => {
+                                                const isPdf = file.name.toLowerCase().endsWith(".pdf");
+                                                const isImage = /\.(jpg|jpeg|png|webp)$/i.test(file.name);
+                                                if (isPdf) return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400">📄 PDF DETECTED</span>;
+                                                if (isImage) return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider bg-blue-100 text-blue-700 dark:bg-cyan-500/20 dark:text-cyan-400">🖼️ IMAGE DETECTED</span>;
+                                                return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider bg-green-100 text-green-700 dark:bg-emerald-500/20 dark:text-emerald-400">📊 CSV DETECTED</span>;
+                                            })()}
                                         </p>
-                                        <p className="text-xs text-muted dark:text-gray-400">{file.name.toLowerCase().endsWith(".pdf") ? "Parsing engine will automatically extract data" : `${preview.length} courses found`}</p>
+                                        <p className="text-xs text-muted dark:text-gray-400">
+                                            {file.name.toLowerCase().endsWith(".csv") 
+                                                ? `${preview.length} courses found` 
+                                                : "High-accuracy Vision engine will extract data"}
+                                        </p>
                                     </div>
                                 </div>
                                 <button
@@ -261,7 +276,10 @@ export default function UploadPage() {
                                 className="w-full bg-primary dark:bg-gray-100 text-white dark:text-gray-950 py-3.5 rounded-xl font-medium hover:bg-primary/90 dark:hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                                 {uploading ? (
-                                    <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+                                        <span>{file?.name.toLowerCase().endsWith(".csv") ? "Uploading..." : "Processing with Vision API..."}</span>
+                                    </div>
                                 ) : (
                                     <>
                                         <Check className="w-5 h-5" />
