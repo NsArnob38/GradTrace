@@ -61,6 +61,8 @@ async def run_audit(
         "roadmap": result["roadmap"],
     }).execute()
 
+    audit_data = audit_record.data[0] if audit_record.data else {}
+
     # Prepare summary
     summary = {
         "cgpa": float(result["level_2"]["cgpa"]),
