@@ -60,8 +60,8 @@ code blocks. Each object must have exactly these keys:
 - semester (string, e.g. "Summer")
 - year (integer, e.g. 2023)"""
 
-        # We can pass all images at once to Gemini 1.5 Flash (multimodal)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # We can pass all images at once to Gemini (multimodal)
+        model = genai.GenerativeModel('gemini-2.5-flash-lite')
         
         contents = [prompt] + pages_to_process
         
