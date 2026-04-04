@@ -17,5 +17,6 @@ def run_level3(df: pd.DataFrame, program: str) -> dict:
     
     # Run Graduation Engine (assumes no specific concentration for raw wrapper)
     # The actual dict returned contains "eligible", "missing", "counts", and the roadmap.
-    result = GraduationAuditor.process(records, program, earned)
+    waivers = {}
+    result = GraduationAuditor.audit(records, program, waivers, earned, level1_data.get("cgpa", 0.0))
     return result
