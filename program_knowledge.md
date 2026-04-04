@@ -165,9 +165,17 @@ Any 2 courses from any department.
 - Probation if CGPA < 2.00
 
 ### Waivable Courses
-- **ENG102** (0 credits): Waived if >=60% on English admission test
-- **BUS112** (3 credits): Waived if >=60% on Math admission test (reduces total to 127)
 - **1 elective course**: Can be waived with documentation
+
+### Legacy & Alternative Course Codes
+The following older course codes are equivalent to modern requirements:
+- **ECO 172** → BUS 172 (Statistics)
+- **ECO 173** → BUS 173 (Applied Statistics)
+- **ECO 134** → BUS 135 (Applied Mathematics)
+- **MIS 105** → MIS 107 (Computer Applications)
+- **MIS 205** → MIS 207 (Compute Info Systems)
+- **ACT 322/330** → ACT Major Requirements
+- **BUS 101/401** → BBA Core/GED Requirements
 
 ---
 
@@ -175,13 +183,13 @@ Any 2 courses from any department.
 
 | Code    | Course Name                        | Cr | Classification |
 |---------|------------------------------------|----|----------------|
-| BUS 135 | Applied Mathematics                | 3  | School Core    |
-| BUS 172 | Introduction to Statistics         | 3  | School Core    |
-| BUS 173 | Applied Statistics                 | 3  | School Core    |
+| BUS 135 | Applied Mathematics (Legacy: ECO 134) | 3  | School Core    |
+| BUS 172 | Introduction to Statistics (Legacy: ECO 172) | 3  | School Core    |
+| BUS 173 | Applied Statistics (Legacy: ECO 173) | 3  | School Core    |
 | BUS 251 | Business Communication             | 3  | School Core    |
 | ECO 101 | Introduction to Microeconomics     | 3  | School Core    |
 | ECO 104 | Introduction to Macroeconomics     | 3  | School Core    |
-| MIS 105 | Computer Applications              | 3  | School Core    |
+| MIS 105 | Computer Applications (New: MIS 107) | 3  | School Core    |
 
 ### BBA Core Courses (36 credits / 12 courses)
 
@@ -197,8 +205,9 @@ Any 2 courses from any department.
 | MGT 368 | Entrepreneurship                  | 3  | BBA Core       |
 | MGT 372 | International Business             | 3  | BBA Core       |
 | MGT 489 | Strategic Management              | 3  | BBA Core       |
-| MIS 205 | Computer Information Systems      | 3  | BBA Core       |
+| MIS 205 | Computer Information Systems (New: MIS 207) | 3  | BBA Core       |
 | MKT 202 | Introduction to Marketing         | 3  | BBA Core       |
+| BUS 101 | Introduction to Business          | 3  | BBA Core       |
 
 ### GED Courses (36 credits / 12 courses)
 
@@ -212,10 +221,13 @@ Any 2 courses from any department.
 | HIS 101 | World History                | 3  | GED Required   |
 | SOC 101 | Introduction to Sociology    | 3  | GED Required   |
 | PSY 101 | Introduction to Psychology   | 3  | GED Required   |
-| ECO 201 | Intermediate Economics       | 3  | GED Required   |
+| ECO 201 | Intermediate Economics (Also: ECO 203/204) | 3  | GED Required   |
 | ENV 107 | Environmental Science        | 3  | GED Required   |
 | ART 101 | Introduction to Art          | 3  | GED Required   |
-| PHI 401 | Advanced Ethics              | 3  | GED Required   |
+| PHI 401 | Advanced Ethics (Also: BUS 401) | 3  | GED Required   |
+| INT 101 | International Relations      | 3  | GED Required   |
+| BIO 103 | Biology                      | 3  | GED Required   |
+| ECO 249 | Bangladesh Socio-Eco Profiles| 3  | GED Required   |
 
 ### Concentration/Major Courses (18 credits / 6 courses)
 
@@ -250,14 +262,15 @@ Any 2 courses from any department.
 
 | Code    | Course Name               | Type     |
 |---------|---------------------------|----------|
-| ACT 310 | Cost Accounting           | Required |
-| ACT 320 | Auditing                  | Required |
-| ACT 360 | Tax Accounting            | Required |
-| ACT 380 | Accounting Info Systems   | Required |
-| ACT 370 | Government Accounting     | Elective |
-| ACT 410 | Advanced Accounting       | Elective |
-| ACT 430 | Forensic Accounting       | Elective |
-| ACT 460 | International Accounting  | Elective |
+| ACT 310 | Cost Accounting / Intermediate I | Required |
+| ACT 320 | Auditing / Intermediate II      | Required |
+| ACT 360 | Tax Accounting (Legacy: ACT 322)| Required |
+| ACT 380 | Accounting Info Systems         | Required |
+| ACT 330 | Intermediate Accounting (Legacy)| Elective |
+| ACT 370 | Government Accounting           | Elective |
+| ACT 410 | Advanced Accounting             | Elective |
+| ACT 430 | Forensic Accounting             | Elective |
+| ACT 460 | International Accounting        | Elective |
 
 #### Management
 

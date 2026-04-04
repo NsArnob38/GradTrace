@@ -88,16 +88,19 @@ class CourseCatalog:
 
     BBA_SCHOOL_CORE = {
         "ECO101": 3, "ECO104": 3,
-        "MIS107": 3, "BUS251": 3,
-        "BUS172": 3, "BUS173": 3,
-        "BUS135": 3,
+        "MIS107": 3, "MIS105": 3,  # MIS105 is legacy Intro to Computers
+        "BUS251": 3,
+        "BUS172": 3, "ECO172": 3,  # ECO172 is legacy Statistics
+        "BUS173": 3, "ECO173": 3,  # ECO173 is legacy Applied Statistics
+        "BUS135": 3, "ECO134": 3,  # ECO134 is legacy Applied Math
     }
 
     BBA_CORE = {
         "ACT201": 3, "ACT202": 3,
         "FIN254": 3, "LAW200": 3,
-        "INB372": 3, "MKT202": 3,
-        "MIS207": 3, "MGT212": 3,
+        "INB372": 3, "MGT212": 3,
+        "MKT202": 3, "BUS101": 3,  # BUS101 often included in core/ged
+        "MIS207": 3, "MIS205": 3,  # MIS205 is legacy CIS
         "MGT351": 3, "MGT314": 3,
         "MGT368": 3, "MGT489": 3,
     }
@@ -348,6 +351,7 @@ class CourseCatalog:
         "ECO101": ("Intro to Microeconomics", 3),
         "ECO104": ("Intro to Macroeconomics", 3),
         "MIS107": ("Introduction to Computers", 3),
+        "MIS105": ("Introduction to Computers (Legacy)", 3),
         "BUS251": ("Business Communication", 3),
         "BUS172": ("Introduction to Statistics", 3),
         "BUS173": ("Applied Statistics", 3),
@@ -362,11 +366,13 @@ class CourseCatalog:
         "INB372": ("International Business", 3),
         "MKT202": ("Introduction to Marketing", 3),
         "MIS207": ("Management Information Systems", 3),
+        "MIS205": ("Computer Information Systems (Legacy)", 3),
         "MGT212": ("Principles of Management", 3),
         "MGT351": ("Human Resource Management", 3),
         "MGT314": ("Production Management", 3),
         "MGT368": ("Entrepreneurship", 3),
         "MGT489": ("Strategic Management", 3),
+        "BUS101": ("Introduction to Business", 3),
     }
 
     _BBA_GED_DB = {
@@ -399,6 +405,11 @@ class CourseCatalog:
         "PHY107L": ("Physics I Lab", 1),
         "CHE101L": ("Chemistry I Lab", 1),
         "BUS498": ("Internship", 4),
+        "BUS401": ("Business Ethics", 3),
+        "INT101": ("Introduction to International Relations", 3),
+        "ECO249": ("Socio Economic Profiles of Bangladesh", 3),
+        "ECO203": ("Intermediate Microeconomic Theory I", 3),
+        "ECO204": ("Intermediate Macroeconomic Theory I", 3),
     }
 
     _WAIVER_COURSES_DB = {
@@ -472,6 +483,9 @@ class CourseCatalog:
         "INB410": ("Cross-Cultural Management", 3), "INB350": ("Global Marketing", 3),
         "INB355": ("Global Finance", 3), "INB415": ("International Negotiations", 3),
         "INB450": ("Global Entrepreneurship", 3), "INB495": ("Special Topics in INB", 3),
+        "ACT330": ("Intermediate Accounting (Legacy)", 3),
+        "ACT322": ("Taxation (Legacy)", 3),
+        "FIN340": ("Working Capital Management", 3),
     }
 
     @classmethod
