@@ -89,13 +89,14 @@ export default function UploadPage() {
                 transcriptId, program,
                 program === "BBA" && concentration ? concentration : undefined,
             );
+            
             if (!auditRes.success) {
                 const msg = String(auditRes.error || "Audit failed");
-                setError(msg);
-                toast(msg, "error");
-                setUploading(false);
+                toast(msg + " — Redirecting to manual correction...", "error");
+                router.push(`/audit/${transcriptId}`);
                 return;
             }
+            
             toast("Audit complete! Redirecting to results...", "success");
             router.push(`/audit/${transcriptId}`);
         } catch {

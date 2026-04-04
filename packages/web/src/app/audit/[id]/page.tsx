@@ -25,6 +25,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [auditError, setAuditError] = useState("");
     const [openSections, setOpenSections] = useState<Set<string>>(new Set(["level1", "level2", "level3", "roadmap"]));
 
     useEffect(() => {
@@ -32,14 +33,26 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             api.getAuditResult(id),
             api.getTranscript(id)
         ]).then(([auditRes, transcriptRes]) => {
-            if (auditRes.data) {
-                setData(auditRes.data);
-                setPreviousData(auditRes.data);
-            } else setError(String(auditRes.error || "No audit result found"));
+            let transcriptLoaded = false;
             
             if (transcriptRes.data) {
                 setRawCourses((transcriptRes.data as any).raw_data || []);
+                transcriptLoaded = true;
+            } else {
+                setError(String(transcriptRes.error || "Transcript not found"));
             }
+            
+            if (auditRes.data) {
+                setData(auditRes.data);
+                setPreviousData(auditRes.data);
+            } else {
+                setAuditError(String(auditRes.error || "No audit result found. Please correct your courses below."));
+                if (transcriptLoaded) {
+                    setOpenSections(new Set(["courses"]));
+                    setIsEditingData(true);
+                }
+            }
+            
             setLoading(false);
         }).catch(() => {
             setError("Failed to load data");
@@ -63,12 +76,12 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
     const handleReaudit = async () => {
         setIsReauditing(true);
-        setError("");
+        setAuditError("");
         
         // Save
         const upRes = await api.updateTranscriptRawData(id, rawCourses);
         if (!upRes.success) {
-            setError(upRes.error || "Failed to save transcript courses");
+            setAuditError(upRes.error || "Failed to save transcript courses");
             setIsReauditing(false);
             return;
         }
@@ -77,7 +90,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
         let program = isBBA ? "BBA" : "CSE";
         if (data?.level_3?.total_credits_required === 124) program = "BBA";
         
-        const concentration = isBBA && data.level_3.concentration_label !== "Undeclared" ? data.level_3.concentration_label : undefined;
+        const concentration = isBBA && data?.level_3?.concentration_label !== "Undeclared" ? data?.level_3?.concentration_label : undefined;
 
         const auditRes = await api.runAudit(id, program, concentration);
         
@@ -85,8 +98,9 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             setPreviousData(data); // Capture old data immediately
             setData(auditRes.data);
             setIsEditingData(false);
+            setAuditError("");
         } else {
-            setError(String(auditRes.error || "Failed to re-audit. Fix courses and try again."));
+            setAuditError(String(auditRes.error || "Failed to re-audit. Fix courses and try again."));
         }
         setIsReauditing(false);
     };
@@ -132,19 +146,19 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
         );
     }
 
-    if (!data || error) {
+    if (error) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-bg dark:bg-gray-950 text-primary dark:text-gray-100">
-                <p className="text-muted dark:text-gray-400">{error || "No audit result found."}</p>
+                <p className="text-muted dark:text-gray-400">{error}</p>
                 <Link href="/upload" className="text-accent mt-4">Upload a transcript →</Link>
             </div>
         );
     }
 
-    const l1 = data.level_1 || {};
-    const l2 = data.level_2 || {};
-    const l3 = data.level_3 || {};
-    const roadmap = data.roadmap || {};
+    const l1 = data?.level_1 || {};
+    const l2 = data?.level_2 || {};
+    const l3 = data?.level_3 || {};
+    const roadmap = data?.roadmap || {};
 
     const cgpa = typeof l2.cgpa === "number" ? l2.cgpa : 0;
     const creditsEarned = l1.credits_earned ?? 0;
@@ -192,35 +206,53 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 {/* Top Summary Banner */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                    className={`rounded-2xl p-6 mb-8 text-white ${eligible ? "bg-gradient-to-r from-emerald-600 to-emerald-500" : "bg-gradient-to-r from-primary to-primary/80"}`}
-                >
-                    <div className="flex items-center gap-3 mb-2">
-                        {eligible ? <CheckCircle2 className="w-7 h-7" /> : <AlertTriangle className="w-7 h-7 text-warning" />}
-                        <h1 className="text-2xl font-bold">
-                            {eligible ? "Eligible for Graduation! 🎓" : "Not Yet Eligible"}
-                        </h1>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-                        <div>
-                            <p className="text-white/70 text-xs uppercase">CGPA</p>
-                            <p className="text-xl font-bold">{cgpa.toFixed(2)}</p>
+                {auditError && !data ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                        className="rounded-2xl p-6 mb-8 text-white bg-gradient-to-r from-red-600 to-red-500 shadow-md"
+                    >
+                        <div className="flex items-center gap-3">
+                            <AlertTriangle className="w-7 h-7" />
+                            <h1 className="text-2xl font-bold">Audit Paused: Invalid Courses Found</h1>
                         </div>
-                        <div>
-                            <p className="text-white/70 text-xs uppercase">Credits Earned</p>
-                            <p className="text-xl font-bold">{creditsEarned} / {totalRequired}</p>
+                        <p className="mt-3 text-white/90">
+                            {auditError}
+                        </p>
+                        <p className="mt-2 text-sm text-white/80">
+                            Please fix any AI typos in the <strong>Completed Courses</strong> list below and hit "Save & Re-run Audit".
+                        </p>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                        className={`rounded-2xl p-6 mb-8 text-white ${eligible ? "bg-gradient-to-r from-emerald-600 to-emerald-500" : "bg-gradient-to-r from-primary to-primary/80"}`}
+                    >
+                        <div className="flex items-center gap-3 mb-2">
+                            {eligible ? <CheckCircle2 className="w-7 h-7" /> : <AlertTriangle className="w-7 h-7 text-warning" />}
+                            <h1 className="text-2xl font-bold">
+                                {eligible ? "Eligible for Graduation! 🎓" : "Not Yet Eligible"}
+                            </h1>
                         </div>
-                        <div>
-                            <p className="text-white/70 text-xs uppercase">Standing</p>
-                            <p className="text-xl font-bold">{standing}</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
+                            <div>
+                                <p className="text-white/70 text-xs uppercase">CGPA</p>
+                                <p className="text-xl font-bold">{cgpa.toFixed(2)}</p>
+                            </div>
+                            <div>
+                                <p className="text-white/70 text-xs uppercase">Credits Earned</p>
+                                <p className="text-xl font-bold">{creditsEarned} / {totalRequired}</p>
+                            </div>
+                            <div>
+                                <p className="text-white/70 text-xs uppercase">Standing</p>
+                                <p className="text-xl font-bold">{standing}</p>
+                            </div>
+                            <div>
+                                <p className="text-white/70 text-xs uppercase">Issues</p>
+                                <p className="text-xl font-bold">{reasons.length}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-white/70 text-xs uppercase">Issues</p>
-                            <p className="text-xl font-bold">{reasons.length}</p>
-                        </div>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                )}
 
                 {/* Level 0 — Completed Courses (Editable) */}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
@@ -256,6 +288,13 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                     {isEditingData ? "Cancel" : "Edit Courses"}
                                 </button>
                             </div>
+
+                            {auditError && isEditingData && (
+                                <div className="mb-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg border border-red-200 dark:border-red-800/30 text-sm flex gap-2">
+                                    <AlertTriangle className="w-4 h-4 mt-0.5" />
+                                    <span>{auditError}</span>
+                                </div>
+                            )}
 
                             <div className="overflow-x-auto border border-border dark:border-gray-800 rounded-lg max-h-80 overflow-y-auto mb-4">
                                 <table className="w-full text-sm">
@@ -332,7 +371,9 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                 </motion.div>
 
                 {/* Level 1 — Credits */}
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                {data && (
+                    <>
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="bg-white dark:bg-gray-900 border border-transparent dark:border-gray-800 rounded-xl shadow-sm mb-4 overflow-hidden"
                 >
                     <SectionHeader id="level1" icon={BookOpen} title="Level 1 — Credit Tally" />
@@ -528,6 +569,8 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                         </div>
                     )}
                 </motion.div>
+                    </>
+                )}
             </div>
         </div>
     );
