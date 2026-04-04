@@ -61,8 +61,8 @@ code blocks. Each object must have exactly these keys:
 - semester (string, e.g. "Summer")
 - year (integer, e.g. 2023)"""
 
-        # We can pass all images at once to Gemini (multimodal)
-        model = genai.GenerativeModel('gemini-2.5-flash-lite')
+        # Using gemini-2.5-flash for the latest performance and a completely fresh quota
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         contents = [prompt] + pages_to_process
         
