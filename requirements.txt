@@ -11,3 +11,5 @@ google-generativeai>=0.7.1
 google-auth>=2.29.0
 Pillow>=10.3.0
 pypdfium2>=4.28.0
+rich>=13.7.1
+python-dotenv>=1.0.1

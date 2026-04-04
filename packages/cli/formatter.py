@@ -26,8 +26,8 @@ def _get_course_name(code: str) -> str:
     return _COURSE_NAMES.get(code, "")
 
 
-def format_full_audit(result: dict):
-    """Format a complete audit result (all levels + roadmap)."""
+def format_full_audit(result: dict, level: int = 4):
+    """Format an audit result up to the requested level (1-4)."""
     meta = result.get("meta", {})
     l1 = result.get("level_1", {})
     l2 = result.get("level_2", {})
@@ -41,23 +41,27 @@ def format_full_audit(result: dict):
     prog_label = program
     if concentration:
         prog_label += f" ({concentration})"
-    console.print(f"\n  [{AMBER}]★[/] [{BOLD}]Audit Report[/]  [{GRAY}]Program: {prog_label}[/]")
+    console.print(f"\n  [{AMBER}]★[/] [{BOLD}]Audit Report[/]  [{GRAY}]Program: {prog_label} | Level {level}[/]")
     console.print(f"  [{GRAY}]{'═' * 48}[/]")
 
     # ── Summary Cards ──
-    _print_summary_cards(l1, l2, l3)
+    if level >= 2:
+        _print_summary_cards(l1, l2, l3)
 
     # ── Level 1: Credit Breakdown ──
-    _print_credit_summary(l1)
+    if level >= 1:
+        _print_credit_summary(l1)
 
     # ── Level 2: CGPA & Standing ──
-    _print_cgpa_summary(l2)
+    if level >= 2:
+        _print_cgpa_summary(l2)
 
     # ── Level 3: Graduation Status ──
-    _print_graduation_status(l3, program)
+    if level >= 3:
+        _print_graduation_status(l3, program)
 
     # ── Roadmap ──
-    if roadmap:
+    if level >= 4 and roadmap:
         if isinstance(roadmap, dict):
             _print_roadmap_dict(roadmap)
         elif isinstance(roadmap, list):
@@ -155,6 +159,14 @@ def _print_cgpa_summary(l2: dict):
 
     standing_color = GREEN if standing == "NORMAL" else RED
     console.print(f"    Standing:           [{standing_color}]{standing}[/]")
+
+    if standing != "NORMAL" and standing != "—":
+        console.print(Panel(
+            Text(f"⚠️ ACADEMIC STANDING: {standing}", justify="center", style="bold"),
+            border_style=RED if standing == "DISMISSED" else ORANGE,
+            title="[bold]Action Required[/]",
+            subtitle="[dim]Check your enrollment limits[/]",
+        ))
 
     if prob_count > 0:
         console.print(f"    Probation Count:    [{RED}]{prob_count}[/]")
@@ -271,7 +283,7 @@ def _print_roadmap_dict(roadmap: dict):
 
     for step in steps:
         if isinstance(step, str):
-            console.print(f"    [{AMBER}]▸[/] {step}")
+            console.print(Panel(step, border_style=AMBER, title="[bold]Next Step[/]"))
             continue
         if not isinstance(step, dict):
             console.print(f"    [{GRAY}]• {step}[/]")
@@ -291,9 +303,12 @@ def _print_roadmap_dict(roadmap: dict):
         }
         p_color, p_icon = p_map.get(priority, (GRAY, "•"))
 
-        console.print(f"    {p_icon} [{p_color}][{priority}][/] [{BOLD}]{action}[/]")
-        if detail:
-            console.print(f"       [{GRAY}]{detail}[/]")
+        console.print(Panel(
+            f"{p_icon} [bold]{action}[/]\n[dim]{detail}[/]",
+            title=f"[{p_color}]{priority}[/]",
+            border_style=p_color,
+            padding=(0, 2)
+        ))
 
 
 def _print_roadmap_list(roadmap: list):

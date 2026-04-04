@@ -19,6 +19,9 @@ DEFAULT_API_URL = os.environ.get("GRADETRACE_API_URL", "http://localhost:8000")
 
 def main():
     from packages.cli.ui import console, logo, AMBER, GRAY, RED, GREEN, BOLD
+    from rich.table import Table
+    from rich.prompt import Prompt, Confirm
+    from rich.panel import Panel
 
     parser = argparse.ArgumentParser(
         prog="gradetrace",
@@ -37,16 +40,18 @@ def main():
     sub.add_parser("status", help="Show login status and account info")
 
     audit_p = sub.add_parser("audit", help="Upload a transcript and run audit")
-    audit_p.add_argument("file", help="Path to transcript CSV file")
+    audit_p.add_argument("file", help="Path to transcript file")
     audit_p.add_argument("--program", "-p", default="CSE", choices=["CSE", "BBA"])
     audit_p.add_argument("--concentration", "-c", default=None)
+    audit_p.add_argument("--edit", "-e", action="store_true", help="Manually edit courses before auditing")
 
     sub.add_parser("history", help="View past audit results")
 
     offline_p = sub.add_parser("offline", help="Run audit locally without API")
-    offline_p.add_argument("file", help="Path to transcript CSV file")
+    offline_p.add_argument("file", help="Path to transcript file")
     offline_p.add_argument("--program", "-p", default="CSE", choices=["CSE", "BBA"])
     offline_p.add_argument("--concentration", "-c", default=None)
+    offline_p.add_argument("--edit", "-e", action="store_true", help="Manually edit courses before auditing")
 
     args = parser.parse_args()
 
@@ -121,31 +126,31 @@ def _menu_offline_audit():
     console.print(f"\n  [{AMBER}]▸ Offline Audit[/]")
     console.print(f"  [{GRAY}]{'─' * 42}[/]")
 
-    # Step 1: Find CSV files
-    csv_files = _find_csv_files()
+    # Step 1: Find transcript files
+    transcript_files = _find_transcript_files()
 
-    if csv_files:
-        console.print(f"\n  [{GRAY}]Found CSV files:[/]\n")
-        for i, f in enumerate(csv_files, 1):
+    if transcript_files:
+        console.print(f"\n  [{GRAY}]Found transcript files:[/]\n")
+        for i, f in enumerate(transcript_files, 1):
             console.print(f"    [{GREEN}]{i}[/]  {os.path.basename(f)}  [{GRAY}]{os.path.dirname(f) or '.'}[/]")
-        console.print(f"    [{AMBER}]{len(csv_files) + 1}[/]  Enter a custom path")
+        console.print(f"    [{AMBER}]{len(transcript_files) + 1}[/]  Enter a custom path")
         console.print()
 
         try:
-            file_choice = console.input(f"  [{BOLD}]Select file (1-{len(csv_files) + 1}):[/] ").strip()
+            file_choice = console.input(f"  [{BOLD}]Select file (1-{len(transcript_files) + 1}):[/] ").strip()
         except (KeyboardInterrupt, EOFError):
             return
 
         idx = int(file_choice) if file_choice.isdigit() else 0
-        if 1 <= idx <= len(csv_files):
-            filepath = csv_files[idx - 1]
-        elif idx == len(csv_files) + 1:
+        if 1 <= idx <= len(transcript_files):
+            filepath = transcript_files[idx - 1]
+        elif idx == len(transcript_files) + 1:
             filepath = console.input(f"  [{BOLD}]File path:[/] ").strip()
         else:
             console.print(f"  [{RED}]Invalid choice.[/]")
             return
     else:
-        filepath = console.input(f"  [{BOLD}]CSV file path:[/] ").strip()
+        filepath = console.input(f"  [{BOLD}]File path:[/] ").strip()
 
     if not filepath or not os.path.isfile(filepath):
         console.print(f"  [{RED}]✗ File not found: {filepath}[/]")
@@ -188,20 +193,33 @@ def _menu_offline_audit():
         if 1 <= cidx <= len(concs):
             concentration = concs[cidx - 1]
 
+    # Step 3.5: Select audit level
+    console.print(f"\n  [{GRAY}]Select audit level:[/]\n")
+    console.print(f"    [{GREEN}]1[/]  Level 1 — Credits Only")
+    console.print(f"    [{GREEN}]2[/]  Level 2 — Credits + CGPA + Standing")
+    console.print(f"    [{GREEN}]3[/]  Level 3 — Complete Degree Audit")
+    console.print(f"    [{GREEN}]4[/]  Full    — Audit + Graduation Roadmap")
+    console.print()
+
+    try:
+        level_choice = console.input(f"  [{BOLD}]Choice (1-4, Default 4):[/] ").strip()
+    except (KeyboardInterrupt, EOFError):
+        return
+    audit_level = int(level_choice) if level_choice in ("1", "2", "3", "4") else 4
+
     # Step 4: Run audit
     console.print()
     with console.status(f"[{AMBER}]Running audit...[/]", spinner="dots"):
         from packages.core.unified import UnifiedAuditor
         result = UnifiedAuditor.run_from_file(filepath, program, concentration)
 
-    if result.get("meta", {}).get("fake_transcript"):
-        unrecognized = result["meta"].get("unrecognized_courses", [])
-        console.print(f"  [{RED}]✗ Fake transcript detected[/]")
-        console.print(f"  [{RED}]  Unrecognized: {', '.join(unrecognized)}[/]")
-        return
+    if result.get("meta", {}).get("fake_transcript") or result.get("meta", {}).get("unrecognized_courses"):
+        result = _handle_correction_loop(result, program, filepath)
+        if not result:
+            return
 
     console.print(f"  [{GREEN}]✓ Audit complete[/]")
-    format_full_audit(result)
+    format_full_audit(result, level=audit_level)
 
 
 def _menu_online_audit(api_url: str):
@@ -219,23 +237,23 @@ def _menu_online_audit(api_url: str):
     client = APIClient(api_url, token)
 
     # File selection (same as offline)
-    csv_files = _find_csv_files()
-    if csv_files:
-        console.print(f"\n  [{GRAY}]Found CSV files:[/]\n")
-        for i, f in enumerate(csv_files, 1):
+    transcript_files = _find_transcript_files()
+    if transcript_files:
+        console.print(f"\n  [{GRAY}]Found transcript files:[/]\n")
+        for i, f in enumerate(transcript_files, 1):
             console.print(f"    [{GREEN}]{i}[/]  {os.path.basename(f)}")
-        console.print(f"    [{AMBER}]{len(csv_files) + 1}[/]  Enter a custom path")
+        console.print(f"    [{AMBER}]{len(transcript_files) + 1}[/]  Enter a custom path")
         console.print()
 
         try:
-            file_choice = console.input(f"  [{BOLD}]Select file (1-{len(csv_files) + 1}):[/] ").strip()
+            file_choice = console.input(f"  [{BOLD}]Select file (1-{len(transcript_files) + 1}):[/] ").strip()
         except (KeyboardInterrupt, EOFError):
             return
 
         idx = int(file_choice) if file_choice.isdigit() else 0
-        if 1 <= idx <= len(csv_files):
-            filepath = csv_files[idx - 1]
-        elif idx == len(csv_files) + 1:
+        if 1 <= idx <= len(transcript_files):
+            filepath = transcript_files[idx - 1]
+        elif idx == len(transcript_files) + 1:
             filepath = console.input(f"  [{BOLD}]File path:[/] ").strip()
         else:
             console.print(f"  [{RED}]Invalid choice.[/]")
@@ -275,6 +293,15 @@ def _menu_online_audit(api_url: str):
         if 1 <= cidx <= len(concs):
             concentration = concs[cidx - 1]
 
+    # Level selection
+    console.print(f"\n  [{GRAY}]Select audit level (1-4, Default 4):[/]")
+    console.print(f"    [{GREEN}]1[/] L1 | [{GREEN}]2[/] L2 | [{GREEN}]3[/] L3 | [{GREEN}]4[/] Full")
+    try:
+        level_choice = console.input(f"  [{BOLD}]Level (1-4):[/] ").strip()
+    except (KeyboardInterrupt, EOFError):
+        return
+    audit_level = int(level_choice) if level_choice in ("1", "2", "3", "4") else 4
+
     # Upload
     console.print()
     with console.status(f"[{AMBER}]Uploading {os.path.basename(filepath)}...[/]", spinner="dots"):
@@ -302,7 +329,7 @@ def _menu_online_audit(api_url: str):
 
     result = audit_res.get("data", audit_res)
     console.print(f"  [{GREEN}]✓ Audit complete[/]")
-    format_full_audit(result)
+    format_full_audit(result, level=audit_level)
 
 
 def _menu_account(api_url: str):
@@ -330,16 +357,97 @@ def _menu_account(api_url: str):
         _cmd_login(api_url)
 
 
+def _handle_correction_loop(result: dict, program: str, original_path: str) -> dict | None:
+    """Interactive loop to fix unrecognized courses or manually edit transcript."""
+    from packages.cli.ui import console, AMBER, GRAY, RED, GREEN, BOLD, BLUE
+    from rich.table import Table
+    from rich.prompt import Prompt, Confirm
+    from packages.core.unified import UnifiedAuditor
+    from packages.core.course_catalog import ALL_COURSES
+
+    records = result.get("level_1", {}).get("records", [])
+    # If no records (e.g. from a failed CreditAuditor.process), we need to extract from meta if possible
+    # but UnifiedAuditor usually returns partial records.
+    
+    unrecognized = result.get("meta", {}).get("unrecognized_courses", [])
+    
+    while True:
+        console.print(f"\n  [{AMBER}]▸ Transcript Correction Mode[/]")
+        console.print(f"  [{GRAY}]{'─' * 42}[/]")
+        
+        table = Table(show_header=True, header_style="bold", box=None)
+        table.add_column("#", style="dim", width=3)
+        table.add_column("Code", style="bold", width=10)
+        table.add_column("Grade", width=6)
+        table.add_column("Semester", width=15)
+        table.add_column("Status")
+
+        for i, r in enumerate(records, 1):
+            is_bad = r["course_code"] in unrecognized or r["course_code"] not in ALL_COURSES
+            status = f"[{RED}]UNRECOGNIZED[/]" if is_bad else f"[{GREEN}]OK[/]"
+            table.add_row(str(i), r["course_code"], r["grade"], r["semester"], status)
+
+        console.print(table)
+        console.print(f"\n  [{GRAY}]Options: [0] Finish & Re-audit  [#] Edit Row  [q] Cancel[/]")
+        
+        choice = Prompt.ask("\n  [bold]Selection[/]").strip().lower()
+        
+        if choice == "q":
+            return None
+        if choice == "0":
+            break
+        
+        if choice.isdigit():
+            idx = int(choice) - 1
+            if 0 <= idx < len(records):
+                row = records[idx]
+                console.print(f"\n  Editing Row {idx + 1}: [{BOLD}]{row['course_code']}[/]")
+                new_code = Prompt.ask("    New Code", default=row["course_code"]).strip().upper()
+                new_grade = Prompt.ask("    New Grade", default=row["grade"]).strip().upper()
+                new_sem = Prompt.ask("    New Semester", default=row["semester"]).strip().title()
+                
+                row["course_code"] = new_code
+                row["grade"] = new_grade
+                row["semester"] = new_sem
+                
+                # Update unrecognized list
+                unrecognized = [c for c in unrecognized if c != row["course_code"]]
+                if new_code not in ALL_COURSES:
+                    unrecognized.append(new_code)
+            else:
+                console.print(f"  [{RED}]Invalid row number.[/]")
+
+    # Re-audit
+    with console.status(f"[{AMBER}]Re-running audit...[/]", spinner="dots"):
+        new_result = UnifiedAuditor.run_from_rows(records, program)
+    
+    # Auto-save logic
+    if Confirm.ask(f"\n  Save corrected transcript to [bold]{os.path.basename(original_path)}_corrected.csv[/]?"):
+        save_path = f"{os.path.splitext(original_path)[0]}_corrected.csv"
+        try:
+            import pandas as pd
+            df = pd.DataFrame(records)
+            # Reorder columns to match standard transcript format
+            cols = ["course_code", "course_name", "credits", "grade", "semester"]
+            df = df[cols]
+            df.to_csv(save_path, index=False)
+            console.print(f"  [{GREEN}]✓ Saved to {save_path}[/]")
+        except Exception as e:
+            console.print(f"  [{RED}]✗ Save failed: {e}[/]")
+
+    return new_result
+
+
 # ═══════════════════════════════════════════════
 # Helpers
 # ═══════════════════════════════════════════════
 
-def _find_csv_files() -> list[str]:
-    """Find CSV files in common locations."""
+def _find_transcript_files() -> list[str]:
+    """Find CSV, PDF, and Image files in common locations."""
     patterns = [
-        "*.csv",
-        "transcripts/*.csv",
-        "test_scenarios/*.csv",
+        "*.csv", "transcripts/*.csv", "test_scenarios/*.csv",
+        "*.pdf", "transcripts/*.pdf",
+        "*.jpg", "*.jpeg", "*.png", "*.webp", "transcripts/*.jpg",
     ]
     files = []
     seen = set()
@@ -487,11 +595,10 @@ def _cmd_offline(args):
         from packages.core.unified import UnifiedAuditor
         result = UnifiedAuditor.run_from_file(args.file, args.program, args.concentration)
 
-    if result.get("meta", {}).get("fake_transcript"):
-        unrecognized = result["meta"].get("unrecognized_courses", [])
-        console.print(f"\n  [{RED}]✗ Fake transcript detected[/]")
-        console.print(f"  [{RED}]  Unrecognized: {', '.join(unrecognized)}[/]\n")
-        sys.exit(1)
+    if args.edit or result.get("meta", {}).get("fake_transcript") or result.get("meta", {}).get("unrecognized_courses"):
+        result = _handle_correction_loop(result, args.program, args.file)
+        if not result:
+            sys.exit(1)
 
     console.print(f"  [{GREEN}]✓ Local audit complete[/]")
     format_full_audit(result)

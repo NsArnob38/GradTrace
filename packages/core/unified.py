@@ -7,11 +7,13 @@ and returns a combined report.
 This is the primary entry point for the API, CLI, and mobile apps.
 """
 
+import os
 from packages.core.models import CourseRecord
 from packages.core.credit_engine import CreditAuditor
 from packages.core.cgpa_engine import CGPAAuditor
 from packages.core.audit_engine import GraduationAuditor
 from packages.core.course_catalog import CourseCatalog
+from packages.core.pdf_parser import VisionParser
 
 
 class UnifiedAuditor:
@@ -22,11 +24,23 @@ class UnifiedAuditor:
                       concentration: str | None = None,
                       user_waivers: dict | None = None) -> dict:
         """
-        Full audit pipeline from a CSV file path.
-
-        Returns dict with: level_1, level_2, level_3, roadmap, meta.
+        Full audit pipeline from a file path (CSV, PDF, or Image).
         """
-        # Level 1: Credit tallying
+        ext = filepath.rsplit(".", 1)[-1].lower() if "." in filepath else ""
+        
+        if ext in ("pdf", "jpg", "jpeg", "png", "webp"):
+            # Vision path (requires GEMINI_API_KEY)
+            api_key = os.environ.get("GEMINI_API_KEY")
+            if not api_key:
+                raise ValueError("GEMINI_API_KEY environment variable is required for PDF/Image parsing.")
+            
+            with open(filepath, "rb") as f:
+                file_bytes = f.read()
+            
+            rows = VisionParser.parse(file_bytes, api_key, filename=filepath)
+            return UnifiedAuditor.run_from_rows(rows, program, concentration, user_waivers)
+            
+        # Standard CSV path
         level_1 = CreditAuditor.process(filepath)
         records = level_1["records"]
         credits_earned = level_1["credits_earned"]
