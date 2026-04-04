@@ -13,6 +13,7 @@ from typing import Optional
 
 import google.generativeai as genai
 from PIL import Image
+import gc
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +152,13 @@ code blocks. Each object must have exactly these keys:
             bitmap = page.render(scale=scale, rotation=0)
             pil_img = bitmap.to_pil()
             images.append(pil_img.convert("RGB"))
+            bitmap.close()
+            page.close()
         pdf.close()
+        
+        del pdf
+        gc.collect()
+        
         return images
 
     @classmethod

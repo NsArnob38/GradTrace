@@ -6,6 +6,7 @@ import csv
 import logging
 import io
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi.concurrency import run_in_threadpool
 from packages.api.deps import get_current_user, get_supabase_admin, success_response
 
 logger = logging.getLogger(__name__)
@@ -36,7 +37,8 @@ async def upload_transcript(
         from packages.api.config import get_settings
         settings = get_settings()
         try:
-            rows = VisionParser.parse(
+            rows = await run_in_threadpool(
+                VisionParser.parse,
                 content, 
                 gemini_api_key=settings.gemini_api_key,
                 filename=file.filename
@@ -80,7 +82,7 @@ async def upload_transcript(
 
 
 @router.get("")
-async def list_transcripts(user: dict = Depends(get_current_user)):
+def list_transcripts(user: dict = Depends(get_current_user)):
     """List all transcripts for the current user."""
     db = get_supabase_admin()
     result = db.table("transcripts") \
@@ -92,7 +94,7 @@ async def list_transcripts(user: dict = Depends(get_current_user)):
 
 
 @router.get("/{transcript_id}")
-async def get_transcript(transcript_id: str, user: dict = Depends(get_current_user)):
+def get_transcript(transcript_id: str, user: dict = Depends(get_current_user)):
     """Get a single transcript with raw data."""
     db = get_supabase_admin()
     result = db.table("transcripts") \
@@ -113,7 +115,7 @@ class UpdateTranscriptRequest(BaseModel):
     raw_data: List[Any]
 
 @router.put("/{transcript_id}")
-async def update_transcript(
+def update_transcript(
     transcript_id: str,
     req: UpdateTranscriptRequest,
     user: dict = Depends(get_current_user)

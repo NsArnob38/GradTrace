@@ -15,7 +15,7 @@ class AuditRequest(BaseModel):
     concentration: str | None = Field(default=None, description="Major concentration for BBA")
 
 @router.post("/{transcript_id}")
-async def run_audit(
+def run_audit(
     transcript_id: str,
     req: AuditRequest,
     user: dict = Depends(get_current_user),
@@ -91,7 +91,7 @@ async def run_audit(
 
 
 @router.get("/{transcript_id}")
-async def get_audit_result(
+def get_audit_result(
     transcript_id: str,
     user: dict = Depends(get_current_user),
 ):
@@ -113,7 +113,7 @@ async def get_audit_result(
 
 
 @router.get("")
-async def list_scan_history(user: dict = Depends(get_current_user)):
+def list_scan_history(user: dict = Depends(get_current_user)):
     """List audit/scan history for the current user."""
     db = get_supabase_admin()
     result = db.table("scan_history") \
@@ -125,7 +125,7 @@ async def list_scan_history(user: dict = Depends(get_current_user)):
 
 
 @router.delete("/{transcript_id}")
-async def delete_audit(
+def delete_audit(
     transcript_id: str,
     user: dict = Depends(get_current_user),
 ):
