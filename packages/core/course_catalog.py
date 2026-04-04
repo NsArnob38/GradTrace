@@ -19,6 +19,7 @@ class CourseCatalog:
         "ECO173": "BUS173",  # Applied Statistics
         "ECO134": "BUS135",  # Applied Math / Business Math I
         "MTH104": "BUS112",  # Business Math I (Alternative)
+        "BUS101": "BUS112",  # Legacy BUS101 was Business Math I
         "MGT210": "MGT212",  # Principles of Management
         "MGT372": "INB372",  # International Business
         "BUS103": "BUS101",  # Introduction to Business
