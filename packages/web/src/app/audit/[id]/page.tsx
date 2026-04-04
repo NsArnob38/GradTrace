@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import {
     Star, ArrowLeft, CheckCircle2, XCircle, AlertTriangle,
     GraduationCap, TrendingUp, BookOpen, MapPin, ChevronDown, ChevronUp, Printer,
+    Edit2, Save, X, PlusCircle, Trash2
 } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,20 +18,88 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export default function AuditReportPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [data, setData] = useState<any>(null);
+    const [previousData, setPreviousData] = useState<any>(null);
+    const [rawCourses, setRawCourses] = useState<any[]>([]);
+    const [isEditingData, setIsEditingData] = useState(false);
+    const [isReauditing, setIsReauditing] = useState(false);
+    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [openSections, setOpenSections] = useState<Set<string>>(new Set(["level1", "level2", "level3", "roadmap"]));
 
     useEffect(() => {
-        api.getAuditResult(id).then((res) => {
-            if (res.data) setData(res.data);
-            else setError(String(res.error || "No audit result found"));
+        Promise.all([
+            api.getAuditResult(id),
+            api.getTranscript(id)
+        ]).then(([auditRes, transcriptRes]) => {
+            if (auditRes.data) {
+                setData(auditRes.data);
+                setPreviousData(auditRes.data);
+            } else setError(String(auditRes.error || "No audit result found"));
+            
+            if (transcriptRes.data) {
+                setRawCourses((transcriptRes.data as any).raw_data || []);
+            }
             setLoading(false);
         }).catch(() => {
-            setError("Failed to load audit result");
+            setError("Failed to load data");
             setLoading(false);
         });
     }, [id]);
+
+    const handleCourseChange = (index: number, field: string, value: string) => {
+        const newCourses = [...rawCourses];
+        newCourses[index] = { ...newCourses[index], [field]: value };
+        setRawCourses(newCourses);
+    };
+
+    const handleRemoveCourse = (index: number) => {
+        setRawCourses(rawCourses.filter((_, i) => i !== index));
+    };
+
+    const handleAddCourse = () => {
+        setRawCourses([...rawCourses, { course_code: "", course_name: "", credits: "3", grade: "", semester: "" }]);
+    };
+
+    const handleReaudit = async () => {
+        setIsReauditing(true);
+        setError("");
+        
+        // Save
+        const upRes = await api.updateTranscriptRawData(id, rawCourses);
+        if (!upRes.success) {
+            setError(upRes.error || "Failed to save transcript courses");
+            setIsReauditing(false);
+            return;
+        }
+
+        const isBBA = data?.level_3?.concentration_label !== undefined;
+        let program = isBBA ? "BBA" : "CSE";
+        if (data?.level_3?.total_credits_required === 124) program = "BBA";
+        
+        const concentration = isBBA && data.level_3.concentration_label !== "Undeclared" ? data.level_3.concentration_label : undefined;
+
+        const auditRes = await api.runAudit(id, program, concentration);
+        
+        if (auditRes.data) {
+            setPreviousData(data); // Capture old data immediately
+            setData(auditRes.data);
+            setIsEditingData(false);
+        } else {
+            setError(String(auditRes.error || "Failed to re-audit. Fix courses and try again."));
+        }
+        setIsReauditing(false);
+    };
+
+    const renderChangedBadge = (current: any, prev: any, improvedFn?: (c: any, p: any) => boolean) => {
+        if (prev === null || current === prev) return null;
+        const improved = improvedFn ? improvedFn(current, prev) : false;
+        return (
+            <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded font-bold tracking-wider uppercase ${improved ? "bg-success/20 text-success" : "bg-warning/20 text-warning"}`}>
+                Was {prev}
+            </span>
+        );
+    };
 
     const toggle = (s: string) => {
         setOpenSections(prev => {
@@ -153,6 +222,115 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                     </div>
                 </motion.div>
 
+                {/* Level 0 — Completed Courses (Editable) */}
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+                    className="bg-white dark:bg-gray-900 border border-transparent dark:border-gray-800 rounded-xl shadow-sm mb-4 overflow-hidden"
+                >
+                    <SectionHeader id="courses" icon={Edit2} title="Completed Courses"
+                        badge={
+                            <span className="text-xs bg-bg dark:bg-gray-800 text-muted dark:text-gray-400 px-2 py-1 rounded-full font-medium">
+                                {rawCourses.length} courses
+                            </span>
+                        }
+                    />
+                    {openSections.has("courses") && (
+                        <div className="px-5 pb-5">
+                            <div className="flex justify-between mb-3 items-end">
+                                <p className="text-xs text-muted dark:text-gray-400 max-w-md">
+                                    If the AI missed or misread a course, you can fix it here and re-run the audit.
+                                </p>
+                                <button
+                                    onClick={() => {
+                                        if (isEditingData) {
+                                            setIsEditingData(false);
+                                            // Optional: reload from server if cancelled, for now we just exit mode
+                                        } else {
+                                            setIsEditingData(true);
+                                        }
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                                        isEditingData ? "bg-bg text-muted hover:text-primary" : "bg-accent/10 text-accent hover:bg-accent/20"
+                                    }`}
+                                >
+                                    {isEditingData ? <X className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
+                                    {isEditingData ? "Cancel" : "Edit Courses"}
+                                </button>
+                            </div>
+
+                            <div className="overflow-x-auto border border-border dark:border-gray-800 rounded-lg max-h-80 overflow-y-auto mb-4">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-bg dark:bg-gray-950 sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Code</th>
+                                            <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium min-w-[200px]">Name (Optional)</th>
+                                            <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Cr</th>
+                                            <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Grade</th>
+                                            <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Semester</th>
+                                            {isEditingData && <th className="px-4 py-2.5"></th>}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {rawCourses.map((c, i) => (
+                                            <tr key={i} className="border-t border-border dark:border-gray-800 group hover:bg-bg/50">
+                                                <td className="px-4 py-2 text-mono font-medium">
+                                                    {isEditingData ? (
+                                                        <input value={c.course_code} onChange={e => handleCourseChange(i, 'course_code', e.target.value)} className="w-20 bg-transparent border-b border-dashed focus:border-accent outline-none font-mono uppercase" placeholder="CSE115" />
+                                                    ) : c.course_code}
+                                                </td>
+                                                <td className="px-4 py-2 text-muted">
+                                                    {isEditingData ? (
+                                                        <input value={c.course_name} onChange={e => handleCourseChange(i, 'course_name', e.target.value)} className="w-full bg-transparent border-b border-dashed focus:border-accent outline-none" placeholder="Programming..." />
+                                                    ) : <span className="truncate block max-w-[200px]">{c.course_name || "—"}</span>}
+                                                </td>
+                                                <td className="px-4 py-2">
+                                                    {isEditingData ? (
+                                                        <input value={c.credits} onChange={e => handleCourseChange(i, 'credits', e.target.value)} className="w-10 bg-transparent border-b border-dashed focus:border-accent outline-none" type="number" step="0.5" />
+                                                    ) : c.credits}
+                                                </td>
+                                                <td className="px-4 py-2">
+                                                    {isEditingData ? (
+                                                        <input value={c.grade} onChange={e => handleCourseChange(i, 'grade', e.target.value)} className="w-12 bg-transparent border-b border-dashed focus:border-accent outline-none uppercase" placeholder="A" />
+                                                    ) : <span className={`font-medium ${["A", "A-", "B+", "B", "B-"].includes(c.grade) ? "text-success" : ["F", "I"].includes(c.grade) ? "text-danger" : "text-warning"}`}>{c.grade}</span>}
+                                                </td>
+                                                <td className="px-4 py-2">
+                                                    {isEditingData ? (
+                                                        <input value={c.semester} onChange={e => handleCourseChange(i, 'semester', e.target.value)} className="w-24 bg-transparent border-b border-dashed focus:border-accent outline-none" placeholder="Fall 2024" />
+                                                    ) : c.semester}
+                                                </td>
+                                                {isEditingData && (
+                                                    <td className="px-4 py-2 text-right">
+                                                        <button onClick={() => handleRemoveCourse(i)} className="text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            {isEditingData && (
+                                <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
+                                    <button onClick={handleAddCourse} className="text-accent text-sm font-medium flex items-center gap-1.5 hover:underline">
+                                        <PlusCircle className="w-4 h-4" /> Add Row
+                                    </button>
+                                    <button 
+                                        onClick={handleReaudit} 
+                                        disabled={isReauditing}
+                                        className="bg-primary text-white dark:bg-gray-100 dark:text-gray-950 px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                                    >
+                                        {isReauditing ? (
+                                            <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                                        ) : <Save className="w-4 h-4" />}
+                                        Save & Re-run Audit
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </motion.div>
+
                 {/* Level 1 — Credits */}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="bg-white dark:bg-gray-900 border border-transparent dark:border-gray-800 rounded-xl shadow-sm mb-4 overflow-hidden"
@@ -163,11 +341,17 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                 <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
                                     <p className="text-xs text-muted dark:text-gray-400 mb-1">Attempted</p>
-                                    <p className="text-xl font-bold">{creditsAttempted}</p>
+                                    <p className="text-xl font-bold">
+                                        {creditsAttempted}
+                                        {renderChangedBadge(creditsAttempted, previousData?.level_1?.credits_attempted)}
+                                    </p>
                                 </div>
                                 <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
                                     <p className="text-xs text-muted dark:text-gray-400 mb-1">Earned</p>
-                                    <p className="text-xl font-bold text-success">{creditsEarned}</p>
+                                    <p className="text-xl font-bold text-success">
+                                        {creditsEarned}
+                                        {renderChangedBadge(creditsEarned, previousData?.level_1?.credits_earned, (c, p) => c > p)}
+                                    </p>
                                 </div>
                             </div>
                             <div className="mt-2">
@@ -202,15 +386,24 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                                 <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
                                     <p className="text-xs text-muted dark:text-gray-400 mb-1">Overall CGPA</p>
-                                    <p className={`text-xl font-bold ${cgpa >= 2.0 ? "text-success" : "text-danger"}`}>{cgpa.toFixed(2)}</p>
+                                    <p className={`text-xl font-bold ${cgpa >= 2.0 ? "text-success" : "text-danger"}`}>
+                                        {cgpa.toFixed(2)}
+                                        {renderChangedBadge(cgpa, previousData?.level_2?.cgpa ? Number(previousData.level_2.cgpa).toFixed(2) : null, (c, p) => Number(c) > Number(p))}
+                                    </p>
                                 </div>
                                 <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
                                     <p className="text-xs text-muted dark:text-gray-400 mb-1">Quality Points</p>
-                                    <p className="text-xl font-bold">{l2.quality_points ?? "—"}</p>
+                                    <p className="text-xl font-bold">
+                                        {l2.quality_points ?? "—"}
+                                        {renderChangedBadge(l2.quality_points, previousData?.level_2?.quality_points, (c, p) => c > p)}
+                                    </p>
                                 </div>
                                 <div className="bg-bg dark:bg-gray-800 rounded-lg p-4">
                                     <p className="text-xs text-muted dark:text-gray-400 mb-1">GPA Credits</p>
-                                    <p className="text-xl font-bold">{l2.gpa_credits ?? "—"}</p>
+                                    <p className="text-xl font-bold">
+                                        {l2.gpa_credits ?? "—"}
+                                        {renderChangedBadge(l2.gpa_credits, previousData?.level_2?.gpa_credits)}
+                                    </p>
                                 </div>
                             </div>
                             {l2.waivers && Object.keys(l2.waivers).length > 0 && (

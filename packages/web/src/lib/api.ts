@@ -82,6 +82,8 @@ export const api = {
     },
     listTranscripts: () => request("/transcripts"),
     getTranscript: (id: string) => request(`/transcripts/${id}`),
+    updateTranscriptRawData: (id: string, raw_data: any[]) => 
+        request(`/transcripts/${id}`, { method: "PUT", body: JSON.stringify({ raw_data }) }),
 
     // Audit
     runAudit: (transcriptId: string, program: string, concentration?: string) =>

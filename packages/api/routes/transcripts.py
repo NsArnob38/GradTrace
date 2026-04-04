@@ -104,3 +104,40 @@ async def get_transcript(transcript_id: str, user: dict = Depends(get_current_us
     if not result.data:
         raise HTTPException(status_code=404, detail="Transcript not found")
     return success_response(result.data)
+
+
+from pydantic import BaseModel
+from typing import List, Any
+
+class UpdateTranscriptRequest(BaseModel):
+    raw_data: List[Any]
+
+@router.put("/{transcript_id}")
+async def update_transcript(
+    transcript_id: str,
+    req: UpdateTranscriptRequest,
+    user: dict = Depends(get_current_user)
+):
+    """Update the raw_data of a transcript (used for manual OCR corrections)."""
+    db = get_supabase_admin()
+    
+    # Verify ownership
+    existing = db.table("transcripts") \
+        .select("id") \
+        .eq("id", transcript_id) \
+        .eq("user_id", user["id"]) \
+        .single() \
+        .execute()
+        
+    if not existing.data:
+        raise HTTPException(status_code=404, detail="Transcript not found")
+        
+    # Update raw data
+    result = db.table("transcripts") \
+        .update({"raw_data": req.raw_data}) \
+        .eq("id", transcript_id) \
+        .eq("user_id", user["id"]) \
+        .execute()
+        
+    return success_response({"updated": True})
+
