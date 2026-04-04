@@ -151,7 +151,8 @@ class CourseCatalog:
     BBA_CORE_CGPA = 2.0
     BBA_CONCENTRATION_CGPA = 2.5
     BBA_CONCENTRATION_CREDITS = 18
-    BBA_FREE_ELECTIVE_CREDITS = 9
+    # Merged GED choices and free electives to support legacy and modern curriculums (33 credits)
+    BBA_FREE_ELECTIVE_CREDITS = 33
 
     BBA_ALL_CORE = {**BBA_SCHOOL_CORE, **BBA_CORE}
 

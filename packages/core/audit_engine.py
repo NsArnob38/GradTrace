@@ -290,39 +290,7 @@ class GraduationAuditor:
         if missing_ged:
             remaining["GED"] = missing_ged
 
-        # GED Choice: Language
-        missing_lang = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_LANG, passed)
-        if missing_lang:
-            remaining["GED Choice (Language)"] = missing_lang
-
-        # GED Choice: History (pick 2)
-        his_passed = [c for c in C.BBA_GED_CHOICE_HIS if c in passed]
-        his_needed = 2 - len(his_passed)
-        if his_needed > 0:
-            his_options = {c: cr for c, cr in C.BBA_GED_CHOICE_HIS.items() if c not in passed}
-            remaining[f"GED Choice (History, pick {his_needed})"] = his_options
-
-        # GED Choice: Political Science
-        missing_pol = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_POL, passed)
-        if missing_pol:
-            remaining["GED Choice (Political Science)"] = missing_pol
-
-        # GED Choice: Social Science
-        missing_soc = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_SOC, passed)
-        if missing_soc:
-            remaining["GED Choice (Social Science)"] = missing_soc
-
-        # GED Choice: Science (pick 3)
-        sci_passed = [c for c in C.BBA_GED_CHOICE_SCI if c in passed]
-        sci_needed = 3 - len(sci_passed)
-        if sci_needed > 0:
-            sci_options = {c: cr for c, cr in C.BBA_GED_CHOICE_SCI.items() if c not in passed}
-            remaining[f"GED Choice (Science, pick {sci_needed})"] = sci_options
-
-        # GED Choice: Lab
-        lab_passed = [c for c in C.BBA_GED_CHOICE_LAB if c in passed]
-        if len(lab_passed) == 0:
-            remaining["GED Choice (Lab)"] = dict(C.BBA_GED_CHOICE_LAB)
+        # Wait, GED Choices have been relaxed into the Free Elective pool (up to 33 credits)
 
         # Waivable courses
         waivable_remaining = {}
@@ -360,10 +328,7 @@ class GraduationAuditor:
         conc_code_set = set(conc_all_codes)
         all_required_codes = (
             set(C.BBA_SCHOOL_CORE.keys()) | set(C.BBA_CORE.keys()) |
-            set(C.BBA_GED.keys()) | set(C.BBA_GED_CHOICE_LANG.keys()) |
-            set(C.BBA_GED_CHOICE_HIS.keys()) | set(C.BBA_GED_CHOICE_POL.keys()) |
-            set(C.BBA_GED_CHOICE_SOC.keys()) | set(C.BBA_GED_CHOICE_SCI.keys()) |
-            set(C.BBA_GED_CHOICE_LAB.keys()) | set(C.BBA_GED_WAIVABLE.keys()) |
+            set(C.BBA_GED.keys()) | set(C.BBA_GED_WAIVABLE.keys()) |
             set(C.BBA_INTERNSHIP.keys()) | conc_code_set
         )
         counted_open = set()
@@ -378,7 +343,7 @@ class GraduationAuditor:
 
         if free_elec_credits < C.BBA_FREE_ELECTIVE_CREDITS:
             needed_cr = C.BBA_FREE_ELECTIVE_CREDITS - free_elec_credits
-            remaining["Free Electives"] = {f"Any courses ({needed_cr} credits needed)": needed_cr}
+            remaining["GED & Open Electives"] = {f"Any courses ({needed_cr} credits needed)": needed_cr}
 
         # CGPAs
         core_codes = list(C.BBA_ALL_CORE.keys())
