@@ -45,7 +45,7 @@ async def get_dataframe_from_upload(file: UploadFile) -> pd.DataFrame:
         from packages.core.pdf_parser import VisionParser
         from packages.api.config import get_settings
         settings = get_settings()
-        rows = VisionParser.parse(content, google_creds=settings.google_credentials_json, filename=file.filename)
+        rows = VisionParser.parse(content, gemini_api_key=settings.gemini_api_key, filename=file.filename)
         return pd.DataFrame(rows)
     elif file.filename.lower().endswith(".csv"):
         # Use utf-8-sig to handle BOM correctly if present
@@ -123,7 +123,7 @@ async def api_debug_pdf(file: UploadFile = File(...)):
         debug_pages = []
         
         # Check if Google Vision is available
-        has_vision = bool(settings.google_credentials_json)
+        has_vision = bool(settings.gemini_api_key)
         
         with pdfplumber.open(io.BytesIO(content)) as pdf:
             for i, page in enumerate(pdf.pages):
@@ -153,7 +153,7 @@ async def api_debug_pdf(file: UploadFile = File(...)):
         if has_vision:
             try:
                 # We reuse the logic from VisionParser to show what the final extracted text looks like
-                ocr_rows = VisionParser.parse(content, google_creds=settings.google_credentials_json, filename=file.filename)
+                ocr_rows = VisionParser.parse(content, gemini_api_key=settings.gemini_api_key, filename=file.filename)
                 return {
                     "status": "success", 
                     "ocr_engine": "Google Vision AI",

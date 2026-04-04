@@ -38,7 +38,7 @@ async def upload_transcript(
         try:
             rows = VisionParser.parse(
                 content, 
-                google_creds=settings.google_credentials_json,
+                gemini_api_key=settings.gemini_api_key,
                 filename=file.filename
             )
         except Exception as e:
