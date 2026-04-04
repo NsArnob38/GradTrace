@@ -24,8 +24,15 @@ class GraduationAuditor:
     @staticmethod
     def _get_passed_courses(records: list[CourseRecord]) -> set[str]:
         """Return set of course codes the student has passed."""
-        return {r.course_code for r in records
-                if r.status in ("BEST", "WAIVED") and r.grade not in ("F", "I", "W")}
+        passed = {r.course_code for r in records
+                  if r.status in ("BEST", "WAIVED") and r.grade not in ("F", "I", "W")}
+
+        # Expand set with aliases (if student has legacy, they also "have" modern)
+        expanded = set(passed)
+        for code in passed:
+            if code in CourseCatalog.LEGACY_MAPPINGS:
+                expanded.add(CourseCatalog.LEGACY_MAPPINGS[code])
+        return expanded
 
     @staticmethod
     def _find_missing(required_dict: dict, passed_set: set) -> dict:

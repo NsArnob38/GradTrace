@@ -11,6 +11,22 @@ class CourseCatalog:
     """NSU course database, program requirements, and prerequisites."""
 
     # ═══════════════════════════════════════════════════
+    # LEGACY & ALIAS MAPPING
+    # ═══════════════════════════════════════════════════
+
+    LEGACY_MAPPINGS = {
+        "ECO172": "BUS172",  # Statistics
+        "ECO173": "BUS173",  # Applied Statistics
+        "ECO134": "BUS135",  # Applied Math / Business Math I
+        "MGT210": "MGT212",  # Principles of Management
+        "MGT372": "INB372",  # International Business
+        "BUS103": "BUS101",  # Introduction to Business
+        "BUS261": "BUS251",  # Business Communication
+        "MIS105": "MIS107",  # Introduction to Computers
+        "MIS205": "MIS207",  # Computer Information Systems (CIS)
+    }
+
+    # ═══════════════════════════════════════════════════
     # CSE PROGRAM REQUIREMENTS (130 credits)
     # ═══════════════════════════════════════════════════
 
@@ -88,21 +104,20 @@ class CourseCatalog:
 
     BBA_SCHOOL_CORE = {
         "ECO101": 3, "ECO104": 3,
-        "MIS107": 3, "MIS105": 3,  # MIS105 is legacy Intro to Computers
-        "BUS251": 3, "BUS261": 3,  # BUS261 is legacy Business Communication
-        "BUS172": 3, "ECO172": 3,  # ECO172 is legacy Statistics
-        "BUS173": 3, "ECO173": 3,  # ECO173 is legacy Applied Statistics
-        "BUS135": 3, "ECO134": 3,  # ECO134 is legacy Applied Math
+        "MIS107": 3,
+        "BUS251": 3,
+        "BUS172": 3,
+        "BUS173": 3,
+        "BUS135": 3,
     }
 
     BBA_CORE = {
         "ACT201": 3, "ACT202": 3,
         "FIN254": 3, "LAW200": 3,
-        "INB372": 3, "MGT372": 3,  # MGT372 is legacy International Business
-        "MGT212": 3, "MGT210": 3,  # MGT210 is legacy Principles of Management
-        "MKT202": 3, "BUS101": 3,  # BUS101/103 are BBA intro courses
-        "BUS103": 3,
-        "MIS207": 3, "MIS205": 3,  # MIS205 is legacy CIS
+        "INB372": 3,
+        "MGT212": 3,
+        "MKT202": 3, "BUS101": 3,
+        "MIS207": 3,
         "MGT351": 3, "MGT314": 3,
         "MGT368": 3, "MGT489": 3,
     }
