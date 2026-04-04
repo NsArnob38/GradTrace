@@ -269,7 +269,6 @@ class VisionParser:
                 in_waiver        = False
                 continue
 
-            # --- Course row extraction ---
             # Scan tokens to find: course_code, credit, grade (in any order after code)
             course_code: Optional[str] = None
             credit:      Optional[str] = None
@@ -279,14 +278,21 @@ class VisionParser:
             i = 0
             while i < len(tokens):
                 tok = tokens[i]
-                # Normalise OCR artefacts: "CSE3I1" → won't match; that's intentional
-                if COURSE_PATTERN.match(tok.upper()):
-                    course_code = tok.upper()
-                elif GRADE_PATTERN.match(tok.upper()) and course_code is not None and grade is None:
+                
+                # Check for course code (single token like "CSE115" or split tokens like "CSE" "115")
+                if course_code is None:
+                    if COURSE_PATTERN.match(tok.upper()):
+                        course_code = tok.upper()
+                    elif i + 1 < len(tokens) and re.match(r"^[A-Z]{2,4}$", tok.upper()) and re.match(r"^\d{3}$", tokens[i+1]):
+                        course_code = tok.upper() + tokens[i+1]
+                        i += 1  # Skip next token
+                    else:
+                        name_parts.append(tok)
+                elif GRADE_PATTERN.match(tok.upper()) and grade is None:
                     grade = tok.upper()
-                elif CREDIT_PATTERN.match(tok) and course_code is not None and credit is None:
+                elif CREDIT_PATTERN.match(tok) and credit is None:
                     credit = tok
-                elif course_code is not None and grade is None and credit is None:
+                elif grade is None and credit is None:
                     # Looks like part of the course name
                     name_parts.append(tok)
                 i += 1
