@@ -37,12 +37,13 @@ async def upload_transcript(
         from packages.api.config import get_settings
         settings = get_settings()
         try:
-            rows = await run_in_threadpool(
+            parsed_result = await run_in_threadpool(
                 VisionParser.parse,
                 content, 
                 gemini_api_key=settings.gemini_api_key,
                 filename=file.filename
             )
+            rows = parsed_result["courses"] if isinstance(parsed_result, dict) else parsed_result
         except Exception as e:
             logger.error(f"Vision Parsing failed: {str(e)}")
             raise HTTPException(status_code=400, detail=str(e))

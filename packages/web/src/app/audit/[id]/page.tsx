@@ -40,7 +40,15 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             let transcriptLoaded = false;
             
             if (transcriptRes.data) {
-                setRawCourses((transcriptRes.data as any).raw_data || []);
+                let parsedCourses = (transcriptRes.data as any).raw_data || [];
+                if (!Array.isArray(parsedCourses)) {
+                    if (parsedCourses.courses && Array.isArray(parsedCourses.courses)) {
+                        parsedCourses = parsedCourses.courses;
+                    } else {
+                        parsedCourses = [];
+                    }
+                }
+                setRawCourses(parsedCourses);
                 
                 // Initialize program/concentration from results
                 const prog = (auditRes.data as any)?.meta?.program || "CSE";
