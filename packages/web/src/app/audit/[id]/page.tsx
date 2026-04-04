@@ -169,12 +169,12 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     const creditsEarned = l1.credits_earned ?? 0;
     const creditsAttempted = l1.credits_attempted ?? 0;
     const totalRequired = l3.total_credits_required ?? 124;
-    const standing = l2.standing ?? "UNKNOWN";
+    const standing = l2.standing ?? "NORMAL";
     const eligible = l3.eligible ?? false;
-    const reasons = l3.reasons ?? [];
-    const remaining = l3.remaining ?? {};
-    const prereqViolations = l3.prereq_violations ?? [];
-    const roadmapSteps = roadmap.steps ?? [];
+    const reasons = Array.isArray(l3.reasons) ? l3.reasons : [];
+    const remaining = l3.remaining || {};
+    const prereqViolations = Array.isArray(l3.prereq_violations) ? l3.prereq_violations : [];
+    const roadmapSteps = Array.isArray(roadmap.steps) ? roadmap.steps : [];
     const estimatedSemesters = roadmap.estimated_semesters ?? 0;
 
     const SectionHeader = ({ id: sId, icon: Icon, title, badge }: { id: string; icon: any; title: string; badge?: any }) => (
@@ -218,13 +218,29 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                     >
                         <div className="flex items-center gap-3">
                             <AlertTriangle className="w-7 h-7" />
-                            <h1 className="text-2xl font-bold">Audit Paused: Invalid Courses Found</h1>
+                            <h1 className="text-2xl font-bold">Audit Paused: Issues Found</h1>
                         </div>
                         <p className="mt-3 text-white/90">
                             {auditError}
                         </p>
                         <p className="mt-2 text-sm text-white/80">
                             Please fix any AI typos in the <strong>Completed Courses</strong> list below and hit "Save & Re-run Audit".
+                        </p>
+                    </motion.div>
+                ) : !data ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                        className="rounded-2xl p-6 mb-8 text-white bg-gradient-to-r from-gray-700 to-gray-600 shadow-md"
+                    >
+                        <div className="flex items-center gap-3 mb-2">
+                            <AlertTriangle className="w-7 h-7 text-warning" />
+                            <h1 className="text-2xl font-bold">Audit Not Generated</h1>
+                        </div>
+                        <p className="mt-2 text-white/90">
+                            We haven't generated an audit for this transcript yet. 
+                        </p>
+                        <p className="mt-4 text-sm bg-black/20 p-3 rounded-lg border border-white/10">
+                            <strong>How to fix:</strong> Click <strong>Edit Courses</strong> below, ensure the Program (BBA/CSE) is correct, and hit <strong>Save & Re-run Audit</strong>.
                         </p>
                     </motion.div>
                 ) : (
