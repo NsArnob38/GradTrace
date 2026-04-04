@@ -37,7 +37,17 @@ class UnifiedAuditor:
             with open(filepath, "rb") as f:
                 file_bytes = f.read()
             
-            rows = VisionParser.parse(file_bytes, api_key, filename=filepath)
+            parse_result = VisionParser.parse(file_bytes, api_key, filename=filepath)
+            rows = parse_result["courses"]
+            detected_prog = parse_result["program"]
+            
+            # If program is CSE (the default) or UNKNOWN, but AI detected BBA, switch to BBA
+            if (program.upper() == "CSE" or program.upper() == "UNKNOWN") and detected_prog == "BBA":
+                program = "BBA"
+            # Vice-versa (though less likely)
+            elif (program.upper() == "BBA" or program.upper() == "UNKNOWN") and detected_prog == "CSE":
+                program = "CSE"
+
             return UnifiedAuditor.run_from_rows(rows, program, concentration, user_waivers)
             
         # Standard CSV path

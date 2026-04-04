@@ -23,6 +23,10 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     const [isEditingData, setIsEditingData] = useState(false);
     const [isReauditing, setIsReauditing] = useState(false);
     
+    // Program/Concentration state for re-auditing
+    const [selectedProgram, setSelectedProgram] = useState("CSE");
+    const [selectedConcentration, setSelectedConcentration] = useState("");
+    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [auditError, setAuditError] = useState("");
@@ -37,6 +41,13 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             
             if (transcriptRes.data) {
                 setRawCourses((transcriptRes.data as any).raw_data || []);
+                
+                // Initialize program/concentration from results
+                const prog = (auditRes.data as any)?.meta?.program || "CSE";
+                const conc = (auditRes.data as any)?.meta?.concentration || "";
+                setSelectedProgram(prog);
+                setSelectedConcentration(conc);
+                
                 transcriptLoaded = true;
             } else {
                 setError(String(transcriptRes.error || "Transcript not found"));
@@ -86,13 +97,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             return;
         }
 
-        const isBBA = data?.level_3?.concentration_label !== undefined;
-        let program = isBBA ? "BBA" : "CSE";
-        if (data?.level_3?.total_credits_required === 124) program = "BBA";
-        
-        const concentration = isBBA && data?.level_3?.concentration_label !== "Undeclared" ? data?.level_3?.concentration_label : undefined;
-
-        const auditRes = await api.runAudit(id, program, concentration);
+        const auditRes = await api.runAudit(id, selectedProgram, selectedConcentration || undefined);
         
         if (auditRes.data) {
             setPreviousData(data); // Capture old data immediately
@@ -163,7 +168,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     const cgpa = typeof l2.cgpa === "number" ? l2.cgpa : 0;
     const creditsEarned = l1.credits_earned ?? 0;
     const creditsAttempted = l1.credits_attempted ?? 0;
-    const totalRequired = l3.total_credits_required ?? 130;
+    const totalRequired = l3.total_credits_required ?? 124;
     const standing = l2.standing ?? "UNKNOWN";
     const eligible = l3.eligible ?? false;
     const reasons = l3.reasons ?? [];
@@ -288,6 +293,45 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                     {isEditingData ? "Cancel" : "Edit Courses"}
                                 </button>
                             </div>
+
+                            {isEditingData && (
+                                <div className="mb-6 p-4 bg-bg dark:bg-gray-800 rounded-xl border border-border dark:border-gray-700 flex flex-wrap gap-6 items-end">
+                                    <div className="flex-1 min-w-[200px]">
+                                        <label className="text-[10px] text-muted dark:text-gray-400 uppercase tracking-widest font-bold block mb-2">Program Requirement</label>
+                                        <div className="flex bg-white dark:bg-gray-900 rounded-lg p-1 border border-border dark:border-gray-700">
+                                            {["CSE", "BBA"].map(p => (
+                                                <button
+                                                    key={p}
+                                                    onClick={() => setSelectedProgram(p)}
+                                                    className={`flex-1 py-1.5 px-4 rounded-md text-xs font-bold transition-all ${
+                                                        selectedProgram === p 
+                                                        ? "bg-primary text-white shadow-sm" 
+                                                        : "text-muted hover:text-primary dark:hover:text-gray-300"
+                                                    }`}
+                                                >
+                                                    {p} Audit ({p === "CSE" ? "130cr" : "124cr"})
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    {selectedProgram === "BBA" && (
+                                        <div className="flex-1 min-w-[200px]">
+                                            <label className="text-[10px] text-muted dark:text-gray-400 uppercase tracking-widest font-bold block mb-2">BBA Concentration</label>
+                                            <select
+                                                value={selectedConcentration}
+                                                onChange={e => setSelectedConcentration(e.target.value)}
+                                                className="w-full bg-white dark:bg-gray-900 border border-border dark:border-gray-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent appearance-none cursor-pointer"
+                                            >
+                                                <option value="">Auto-detect Concentration</option>
+                                                {["ACT", "FIN", "MKT", "MGT", "HRM", "MIS", "SCM", "ECO", "INB"].map(c => (
+                                                    <option key={c} value={c}>{c}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             {auditError && isEditingData && (
                                 <div className="mb-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg border border-red-200 dark:border-red-800/30 text-sm flex gap-2">

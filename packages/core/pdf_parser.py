@@ -50,16 +50,25 @@ class VisionParser:
         pages_to_process = cls._select_pages(images)
         logger.info(f"[GeminiLLM] Processing {len(pages_to_process)} page(s) out of {len(images)} total.")
 
-        prompt = """You are a transcript parser for North South University (NSU) Bangladesh. 
-Extract every course listed in this image. Ignore any watermarks, headers, 
-or decorative text. Return ONLY a valid JSON array, no explanation, no markdown 
-code blocks. Each object must have exactly these keys:
-- course_code (string, e.g. "CSE115")
-- course_name (string)
-- credits (float)
-- grade (string, null if no grade e.g. waiver/transfer courses)
-- semester (string, e.g. "Summer")
-- year (integer, e.g. 2023)"""
+        prompt = """You are a high-precision transcript parser for North South University (NSU) Bangladesh.
+Extract ALL course data from this image.
+
+### CRITICAL RULES:
+1. ROW STABILITY: A grade listed on the same vertical line as a course code MUST stay with that course. Do not shift grades between rows.
+2. PROGRAM DETECTION: Look for the degree name (e.g., "Bachelor of Business Administration" or "Bachelor of Science in Computer Science and Engineering").
+3. OUTPUT FORMAT: Return ONLY a valid JSON object (no markdown, no explanation) with exactly two keys:
+   - "program": The detected degree name (string, e.g., "BBA" or "CSE")
+   - "courses": An array of objects, each with:
+     - course_code (string, e.g. "CSE115")
+     - course_name (string)
+     - credits (float)
+     - grade (string, null if no grade)
+     - semester (string, e.g. "Summer")
+     - year (integer)
+
+### DETECTION HINTS:
+- If you see courses like ACT, FIN, MKT, BUS, MGT -> Program is "BBA".
+- If you see courses like CSE, MAT116, EEE, PHY -> Program is "CSE"."""
 
         # Using gemini-2.5-flash for the latest performance and a completely fresh quota
         model = genai.GenerativeModel('gemini-2.5-flash')
@@ -81,17 +90,31 @@ code blocks. Each object must have exactly these keys:
         raw_text = raw_text.strip()
         
         try:
-            parsed_data = json.loads(raw_text)
+            full_data = json.loads(raw_text)
         except json.JSONDecodeError as e:
             logger.error(f"[GeminiLLM] Failed to decode JSON from Gemini output. Raw response: {raw_text[:200]}...")
             raise ValueError("Failed to parse transcript data (invalid format returned by AI).")
             
-        if not isinstance(parsed_data, list):
-            raise ValueError("Failed to parse transcript data (did not return an array).")
+        if not isinstance(full_data, dict) or "courses" not in full_data:
+            # Fallback if Gemini ignored structure but gave an array
+            if isinstance(full_data, list):
+                parsed_courses = full_data
+                detected_program = "UNKNOWN"
+            else:
+                raise ValueError("Failed to parse transcript data (invalid structure).")
+        else:
+            parsed_courses = full_data["courses"]
+            detected_program = str(full_data.get("program", "")).upper()
+            if "COMPUTER" in detected_program or "SCIENCE" in detected_program:
+                detected_program = "CSE"
+            elif "BUSINESS" in detected_program or "BBA" in detected_program:
+                detected_program = "BBA"
+            else:
+                detected_program = "UNKNOWN"
 
         # Validation and formatting mapping
         processed_records = []
-        for item in parsed_data:
+        for item in parsed_courses:
             course_code = str(item.get("course_code", "")).replace(" ", "").upper()
             
             # Post-parsing regex validation to fix hallucinations
@@ -135,8 +158,11 @@ code blocks. Each object must have exactly these keys:
                 "Ensure the transcript is clear and in a supported NSU format."
             )
 
-        logger.info(f"[GeminiLLM] Extracted {len(records_deduped)} validated courses.")
-        return records_deduped
+        logger.info(f"[GeminiLLM] Extracted {len(records_deduped)} validated courses. Detected Program: {detected_program}")
+        return {
+            "program": detected_program,
+            "courses": records_deduped
+        }
 
     @classmethod
     def _pdf_to_images(cls, file_bytes: bytes) -> list[Image.Image]:

@@ -79,18 +79,30 @@ class GraduationAuditor:
                 for r in sem_records:
                     if r.grade not in ("F", "W", "I"):
                         passed_so_far.add(r.course_code)
+                        # Add modern alias if it's a legacy course
+                        if r.course_code in CourseCatalog.LEGACY_MAPPINGS:
+                            passed_so_far.add(CourseCatalog.LEGACY_MAPPINGS[r.course_code])
                         credits_at_step += r.credits
 
             for r in sem_records:
                 code = r.course_code
-                if code in prereq_map:
-                    required = prereq_map[code]
+                # Check for aliases of the current course too (prereqs might be defined on modern code)
+                modern_code = CourseCatalog.LEGACY_MAPPINGS.get(code, code)
+                
+                # Check prerequisites for either the literal code or its modern alias
+                reqs_for_code = prereq_map.get(code, [])
+                reqs_for_modern = prereq_map.get(modern_code, []) if modern_code != code else []
+                combined_required = list(set(reqs_for_code) | set(reqs_for_modern))
+
+                if combined_required:
                     missing = []
-                    for req in required:
+                    for req in combined_required:
                         if req == "_SENIOR_":
                             if credits_at_step < 100:
                                 missing.append("Senior Status (100+ Credits)")
                         elif req not in passed_so_far:
+                            # Also check if the required course itself has a legacy alias the student might have passed
+                            # (Wait, if we already added all modern aliases to passed_so_far, this should be covered)
                             missing.append(req)
                     if missing:
                         violations.append({
@@ -103,6 +115,9 @@ class GraduationAuditor:
                 for r in sem_records:
                     if r.grade not in ("F", "W", "I"):
                         passed_so_far.add(r.course_code)
+                        # Add modern alias if it's a legacy course
+                        if r.course_code in CourseCatalog.LEGACY_MAPPINGS:
+                            passed_so_far.add(CourseCatalog.LEGACY_MAPPINGS[r.course_code])
                         credits_at_step += r.credits
 
         return violations

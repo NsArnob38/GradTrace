@@ -73,7 +73,7 @@ The platform strictly exposes the modular audit logic via proper REST API endpoi
   "status": "success",
   "data": {
     "credits_attempted": 133,
-    "credits_earned": 130,
+    "credits_earned": 124,
     "unrecognized": []
   }
 }
@@ -93,7 +93,7 @@ The platform strictly exposes the modular audit logic via proper REST API endpoi
   "data": {
     "cgpa": 3.75,
     "quality_points": 487.5,
-    "gpa_credits": 130,
+    "gpa_credits": 124,
     "standing": "NORMAL",
     "probation_count": 0,
     "credit_reduction": 0

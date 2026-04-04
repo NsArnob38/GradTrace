@@ -155,10 +155,10 @@ Any 2 courses from any department.
 
 ---
 
-## BBA Program (130 Credits)
+## BBA Program (124 Credits)
 
 ### Graduation Requirements
-- **130 credits** (127 if BUS112 waived)
+- **124 credits** (121 if BUS112 waived)
 - Overall CGPA >= **2.00**
 - School Core & BBA Core GPA >= **2.00**
 - Major/Concentration GPA >= **2.50**

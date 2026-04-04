@@ -24,6 +24,11 @@ class CourseCatalog:
         "BUS261": "BUS251",  # Business Communication
         "MIS105": "MIS107",  # Introduction to Computers
         "MIS205": "MIS207",  # Computer Information Systems (CIS)
+        "BUS401": "PHI401",  # Business Ethics -> Advanced Ethics
+        "ACT322": "ACT360",  # Taxation
+        "ACT330": "ACT310",  # Intermediate Accounting I
+        "ACT321": "ACT320",  # Cost Accounting
+        "FIN464": "FIN340",  # Working Capital Management
     }
 
     # ═══════════════════════════════════════════════════
@@ -141,7 +146,7 @@ class CourseCatalog:
 
     BBA_INTERNSHIP = {"BUS498": 4}
 
-    BBA_TOTAL_CREDITS = 130
+    BBA_TOTAL_CREDITS = 124
     BBA_MIN_CGPA = 2.0
     BBA_CORE_CGPA = 2.0
     BBA_CONCENTRATION_CGPA = 2.5

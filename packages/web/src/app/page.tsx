@@ -118,7 +118,7 @@ export default function LandingPage() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span className="font-semibold text-primary dark:text-gray-100">Degree Progress</span>
-                    <span className="text-muted dark:text-gray-400">102 / 130</span>
+                    <span className="text-muted dark:text-gray-400">102 / 124</span>
                   </div>
                   <div className="h-2.5 w-full bg-bg dark:bg-gray-800 rounded-full overflow-hidden">
                     <motion.div

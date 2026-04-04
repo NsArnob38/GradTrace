@@ -1,0 +1,56 @@
+course_code,course_name,credits,grade,semester
+CSE173,Discrete Mathematics,3,A,Spring 2021
+CSE215,Programming Language II,3,A-,Summer 2021
+CSE215L,Programming Language II Lab,1,A,Summer 2021
+CSE225,Data Structures & Algorithms,3,B+,Autumn 2021
+CSE225L,Data Structures & Algorithms Lab,1,A,Autumn 2021
+CSE231,Digital Logic Design,3,B,Spring 2022
+CSE231L,Digital Logic Design Lab,1,A,Spring 2022
+CSE299,Junior Design Project,1,A,Spring 2022
+CSE311,Database Management Systems,3,A,Summer 2022
+CSE311L,Database Management Systems Lab,1,A,Summer 2022
+CSE323,Operating Systems Design,3,B+,Autumn 2022
+CSE325,Operating Systems,3,B,Autumn 2022
+CSE331,Microprocessor Interfacing & Embedded,3,B+,Summer 2023
+CSE331L,Microprocessor Interfacing Lab,1,A,Summer 2023
+CSE332,Computer Organization & Architecture,3,B,Summer 2023
+CSE373,Design & Analysis of Algorithms,3,A,Autumn 2023
+CSE425,Concepts of Programming Languages,3,A-,Spring 2024
+EEE141,Electrical Circuits I,3,B,Autumn 2021
+EEE141L,Electrical Circuits I Lab,1,A,Autumn 2021
+EEE111,Analog Electronics I,3,B+,Spring 2022
+EEE111L,Analog Electronics I Lab,1,A,Spring 2022
+CSE499A,Senior Capstone Design I,2,A,Summer 2024
+CSE499B,Senior Capstone Design II,2,A,Autumn 2024
+EEE452,Engineering Economics,3,B+,Autumn 2023
+CSE115,Programming Language I,3,A,Spring 2021
+CSE115L,Programming Language I Lab,1,A,Spring 2021
+MAT116,Pre-Calculus,3,A,Spring 2021
+MAT120,Calculus I,3,A-,Summer 2021
+MAT125,Linear Algebra,3,B+,Summer 2021
+MAT130,Calculus II,3,B,Autumn 2021
+MAT250,Calculus III,3,B+,Spring 2022
+MAT350,Complex Variables,3,A-,Summer 2022
+MAT361,Discrete Mathematics II,3,B+,Autumn 2022
+PHY107,Physics I,3,B,Summer 2021
+PHY107L,Physics I Lab,1,A,Summer 2021
+PHY108,Physics II,3,B+,Autumn 2021
+PHY108L,Physics II Lab,1,A,Autumn 2021
+CHE101,Chemistry I,3,B,Spring 2022
+CHE101L,Chemistry I Lab,1,A,Spring 2022
+BIO103,Biology I,3,A-,Summer 2022
+BIO103L,Biology I Lab,1,A,Summer 2022
+CEE110,Engineering Drawing,1,A,Autumn 2022
+ENG103,Intermediate Composition,3,A,Spring 2021
+ENG105,Advanced Writing Skills,3,A,Summer 2021
+ENG111,Public Speaking,3,A-,Autumn 2021
+PHI101,Introduction to Philosophy,3,B+,Spring 2022
+PHI104,Introduction to Ethics,3,B,Summer 2022
+HIS101,Bangladesh History & Culture,3,A,Autumn 2022
+ECO101,Intro to Microeconomics,3,A,Autumn 2023
+POL101,Intro to Political Science,3,A,Spring 2024
+SOC101,Intro to Sociology,3,A,Summer 2024
+CSE421,Machine Learning,3,A,Spring 2024
+CSE422,Simulation and Modeling,3,A,Summer 2024
+CSE472,Advanced Algorithms,3,A,Autumn 2024
+CSE101,Intro to Python Programming,3,A,Autumn 2023
