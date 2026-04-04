@@ -89,7 +89,7 @@ class CourseCatalog:
     BBA_SCHOOL_CORE = {
         "ECO101": 3, "ECO104": 3,
         "MIS107": 3, "MIS105": 3,  # MIS105 is legacy Intro to Computers
-        "BUS251": 3,
+        "BUS251": 3, "BUS261": 3,  # BUS261 is legacy Business Communication
         "BUS172": 3, "ECO172": 3,  # ECO172 is legacy Statistics
         "BUS173": 3, "ECO173": 3,  # ECO173 is legacy Applied Statistics
         "BUS135": 3, "ECO134": 3,  # ECO134 is legacy Applied Math
@@ -98,8 +98,10 @@ class CourseCatalog:
     BBA_CORE = {
         "ACT201": 3, "ACT202": 3,
         "FIN254": 3, "LAW200": 3,
-        "INB372": 3, "MGT212": 3,
-        "MKT202": 3, "BUS101": 3,  # BUS101 often included in core/ged
+        "INB372": 3, "MGT372": 3,  # MGT372 is legacy International Business
+        "MGT212": 3, "MGT210": 3,  # MGT210 is legacy Principles of Management
+        "MKT202": 3, "BUS101": 3,  # BUS101/103 are BBA intro courses
+        "BUS103": 3,
         "MIS207": 3, "MIS205": 3,  # MIS205 is legacy CIS
         "MGT351": 3, "MGT314": 3,
         "MGT368": 3, "MGT489": 3,
@@ -353,9 +355,13 @@ class CourseCatalog:
         "MIS107": ("Introduction to Computers", 3),
         "MIS105": ("Introduction to Computers (Legacy)", 3),
         "BUS251": ("Business Communication", 3),
+        "BUS261": ("Business Communication (Legacy)", 3),
         "BUS172": ("Introduction to Statistics", 3),
+        "ECO172": ("Introduction to Statistics (Legacy)", 3),
         "BUS173": ("Applied Statistics", 3),
+        "ECO173": ("Applied Statistics (Legacy)", 3),
         "BUS135": ("Business Mathematics", 3),
+        "ECO134": ("Business Mathematics I (Legacy)", 3),
     }
 
     _BBA_CORE_DB = {
@@ -364,15 +370,18 @@ class CourseCatalog:
         "FIN254": ("Intro to Financial Management", 3),
         "LAW200": ("Legal Environment of Business", 3),
         "INB372": ("International Business", 3),
+        "MGT372": ("International Business (Legacy)", 3),
         "MKT202": ("Introduction to Marketing", 3),
         "MIS207": ("Management Information Systems", 3),
         "MIS205": ("Computer Information Systems (Legacy)", 3),
         "MGT212": ("Principles of Management", 3),
+        "MGT210": ("Principles of Management (Legacy)", 3),
         "MGT351": ("Human Resource Management", 3),
         "MGT314": ("Production Management", 3),
         "MGT368": ("Entrepreneurship", 3),
         "MGT489": ("Strategic Management", 3),
         "BUS101": ("Introduction to Business", 3),
+        "BUS103": ("Introduction to Business (Legacy)", 3),
     }
 
     _BBA_GED_DB = {
