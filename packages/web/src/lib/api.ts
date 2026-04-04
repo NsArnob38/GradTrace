@@ -27,10 +27,12 @@ async function request<T = unknown>(
             if (json.detail) {
                 if (Array.isArray(json.detail)) {
                     errorMsg = json.detail.map((e: any) => 
-                        `${e.loc.join(".")}: ${e.msg}`
+                        `${e.loc?.join(".") || "error"}: ${e.msg}`
                     ).join(", ");
                 } else if (typeof json.detail === "string") {
                     errorMsg = json.detail;
+                } else if (json.detail.msg) {
+                    errorMsg = json.detail.msg;
                 } else {
                     errorMsg = JSON.stringify(json.detail);
                 }
