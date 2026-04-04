@@ -52,12 +52,32 @@ def grade_rank(grade: str) -> int:
 # ═══════════════════════════════════════════════════════
 
 SEMESTERS = [
+    "Spring2005", "Summer2005", "Fall2005",
+    "Spring2006", "Summer2006", "Fall2006",
+    "Spring2007", "Summer2007", "Fall2007",
+    "Spring2008", "Summer2008", "Fall2008",
+    "Spring2009", "Summer2009", "Fall2009",
+    "Spring2010", "Summer2010", "Fall2010",
+    "Spring2011", "Summer2011", "Fall2011",
+    "Spring2012", "Summer2012", "Fall2012",
+    "Spring2013", "Summer2013", "Fall2013",
+    "Spring2014", "Summer2014", "Fall2014",
+    "Spring2015", "Summer2015", "Fall2015",
+    "Spring2016", "Summer2016", "Fall2016",
+    "Spring2017", "Summer2017", "Fall2017",
+    "Spring2018", "Summer2018", "Fall2018",
     "Spring2019", "Summer2019", "Fall2019",
     "Spring2020", "Summer2020", "Fall2020",
     "Spring2021", "Summer2021", "Fall2021",
     "Spring2022", "Summer2022", "Fall2022",
     "Spring2023", "Summer2023", "Fall2023",
     "Spring2024", "Summer2024", "Fall2024",
+    "Spring2025", "Summer2025", "Fall2025",
+    "Spring2026", "Summer2026", "Fall2026",
+    "Spring2027", "Summer2027", "Fall2027",
+    "Spring2028", "Summer2028", "Fall2028",
+    "Spring2029", "Summer2029", "Fall2029",
+    "Spring2030", "Summer2030", "Fall2030",
 ]
 
 

@@ -18,10 +18,15 @@ class CourseCatalog:
         "ECO172": "BUS172",  # Statistics
         "ECO173": "BUS173",  # Applied Statistics
         "ECO134": "BUS135",  # Applied Math / Business Math I
+        "MTH104": "BUS112",  # Business Math I (Alternative)
         "MGT210": "MGT212",  # Principles of Management
         "MGT372": "INB372",  # International Business
         "BUS103": "BUS101",  # Introduction to Business
         "BUS261": "BUS251",  # Business Communication
+        "ACT111": "ACT201",  # Fundamentals of Accounting -> Intro to Financial Accounting
+        "ACT211": "ACT202",  # Intro to Management Accounting
+        "ACT212": "ACT202",
+        "FIN255": "FIN254",  # Old Finance code -> Modern Finance Code
         "MIS105": "MIS107",  # Introduction to Computers
         "MIS205": "MIS207",  # Computer Information Systems (CIS)
         "BUS401": "PHI401",  # Business Ethics -> Advanced Ethics
