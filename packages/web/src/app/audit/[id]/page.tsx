@@ -20,6 +20,9 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     const [data, setData] = useState<any>(null);
     const [previousData, setPreviousData] = useState<any>(null);
     const [rawCourses, setRawCourses] = useState<any[]>([]);
+    const [customMappings, setCustomMappings] = useState<Record<string, string>>({});
+    const [ignoredCourses, setIgnoredCourses] = useState<string[]>([]);
+    
     const [isEditingData, setIsEditingData] = useState(false);
     const [isReauditing, setIsReauditing] = useState(false);
     
@@ -105,7 +108,13 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             return;
         }
 
-        const auditRes = await api.runAudit(id, selectedProgram, selectedConcentration || undefined);
+        const auditRes = await api.runAudit(
+            id, 
+            selectedProgram, 
+            selectedConcentration || undefined,
+            customMappings,
+            ignoredCourses
+        );
         
         if (auditRes.data) {
             setPreviousData(data); // Capture old data immediately
@@ -373,7 +382,8 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                             <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Cr</th>
                                             <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Grade</th>
                                             <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Semester</th>
-                                            {isEditingData && <th className="px-4 py-2.5"></th>}
+                                            {isEditingData && <th className="text-left px-4 py-2.5 text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">Map To (Optional)</th>}
+                                            {isEditingData && <th className="text-right px-4 py-2.5"></th>}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -405,10 +415,47 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                                     ) : c.semester}
                                                 </td>
                                                 {isEditingData && (
+                                                    <td className="px-4 py-2">
+                                                        {ignoredCourses.includes(c.course_code) ? (
+                                                            <span className="text-xs text-muted block text-center italic">Ignored</span>
+                                                        ) : (
+                                                            <input 
+                                                                value={customMappings[c.course_code] || ""} 
+                                                                onChange={e => {
+                                                                    const val = e.target.value.toUpperCase();
+                                                                    setCustomMappings(prev => {
+                                                                        const copy = { ...prev };
+                                                                        if (val) copy[c.course_code] = val;
+                                                                        else delete copy[c.course_code];
+                                                                        return copy;
+                                                                    });
+                                                                }}
+                                                                className="w-24 bg-transparent border-b border-dashed focus:border-accent outline-none font-mono uppercase text-xs" 
+                                                                placeholder="e.g. ACT201" 
+                                                            />
+                                                        )}
+                                                    </td>
+                                                )}
+                                                {isEditingData && (
                                                     <td className="px-4 py-2 text-right">
-                                                        <button onClick={() => handleRemoveCourse(i)} className="text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                        <div className="flex justify-end gap-2 items-center">
+                                                            <button 
+                                                                onClick={() => {
+                                                                    setIgnoredCourses(prev => 
+                                                                        prev.includes(c.course_code) 
+                                                                            ? prev.filter(code => code !== c.course_code) 
+                                                                            : [...prev, c.course_code]
+                                                                    );
+                                                                }} 
+                                                                title="Ignore Course"
+                                                                className={`p-1 rounded-md transition-colors ${ignoredCourses.includes(c.course_code) ? 'text-warning bg-warning/10' : 'text-muted hover:text-warning'}`}
+                                                            >
+                                                                <XCircle className="w-4 h-4" />
+                                                            </button>
+                                                            <button onClick={() => handleRemoveCourse(i)} title="Delete row" className="text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 )}
                                             </tr>

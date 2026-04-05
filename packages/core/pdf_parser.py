@@ -70,8 +70,8 @@ Extract ALL course data from this image.
 - If you see courses like ACT, FIN, MKT, BUS, MGT -> Program is "BBA".
 - If you see courses like CSE, MAT116, EEE, PHY -> Program is "CSE"."""
 
-        # Using gemini-2.5-flash for the latest performance and a completely fresh quota
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # Using gemini-3.1-flash-lite per user request
+        model = genai.GenerativeModel('gemini-3.1-flash-lite')
         
         contents = [prompt] + pages_to_process
         

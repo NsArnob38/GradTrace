@@ -238,15 +238,28 @@ class CreditAuditor:
         }
 
     @staticmethod
-    def process_rows(rows: list[dict]) -> dict:
+    def process_rows(rows: list[dict], custom_mappings: dict | None = None, ignored_courses: list[str] | None = None) -> dict:
         """
         Same as process() but accepts pre-parsed dict rows (from API/DB).
+        Applies custom mappings and drops ignored courses before processing.
 
         Returns dict with: records, credits_attempted, credits_earned,
                            unrecognized (set).
         """
         records = TranscriptParser.parse_rows(rows)
-        records = CreditAuditor.resolve_retakes(records)
+        
+        custom_mappings = custom_mappings or {}
+        ignored_courses = set(ignored_courses or [])
+        
+        filtered_records = []
+        for r in records:
+            if r.course_code in ignored_courses:
+                continue # Drop ignored courses completely
+            if r.course_code in custom_mappings:
+                r.course_code = custom_mappings[r.course_code]
+            filtered_records.append(r)
+            
+        records = CreditAuditor.resolve_retakes(filtered_records)
 
         sem_map = {sem: i for i, sem in enumerate(SEMESTERS)}
 

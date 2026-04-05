@@ -13,6 +13,8 @@ from pydantic import BaseModel, Field
 class AuditRequest(BaseModel):
     program: str = Field(default="CSE", description="e.g. 'CSE' or 'BBA'")
     concentration: str | None = Field(default=None, description="Major concentration for BBA")
+    custom_mappings: dict[str, str] | None = Field(default=None, description="Overrides for legacy courses")
+    ignored_courses: list[str] | None = Field(default=None, description="Courses to exclude from processing")
 
 @router.post("/{transcript_id}")
 def run_audit(
@@ -43,7 +45,13 @@ def run_audit(
 
     # Run audit engine
     from packages.core.unified import UnifiedAuditor
-    result = UnifiedAuditor.run_from_rows(raw_data, program, concentration)
+    result = UnifiedAuditor.run_from_rows(
+        raw_data, 
+        program, 
+        concentration=concentration,
+        custom_mappings=req.custom_mappings,
+        ignored_courses=req.ignored_courses
+    )
 
     if result["meta"]["fake_transcript"]:
         raise HTTPException(

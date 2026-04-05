@@ -81,14 +81,16 @@ class UnifiedAuditor:
     @staticmethod
     def run_from_rows(rows: list[dict], program: str,
                       concentration: str | None = None,
-                      user_waivers: dict | None = None) -> dict:
+                      user_waivers: dict | None = None,
+                      custom_mappings: dict | None = None,
+                      ignored_courses: list[str] | None = None) -> dict:
         """
         Full audit pipeline from pre-parsed dict rows (API/DB path).
 
         Each row must have: course_code, course_name, credits, grade, semester.
         Returns dict with: level_1, level_2, level_3, roadmap, meta.
         """
-        level_1 = CreditAuditor.process_rows(rows)
+        level_1 = CreditAuditor.process_rows(rows, custom_mappings, ignored_courses)
         records = level_1["records"]
         credits_earned = level_1["credits_earned"]
 

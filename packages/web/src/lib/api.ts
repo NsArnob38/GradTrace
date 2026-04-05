@@ -88,10 +88,21 @@ export const api = {
         request(`/transcripts/${id}`, { method: "PUT", body: JSON.stringify({ raw_data }) }),
 
     // Audit
-    runAudit: (transcriptId: string, program: string, concentration?: string) =>
+    runAudit: (
+        transcriptId: string, 
+        program: string, 
+        concentration?: string,
+        customMappings?: Record<string, string>,
+        ignoredCourses?: string[]
+    ) =>
         request(`/audit/${transcriptId}`, {
             method: "POST",
-            body: JSON.stringify({ program, concentration }),
+            body: JSON.stringify({ 
+                program, 
+                concentration,
+                custom_mappings: customMappings,
+                ignored_courses: ignoredCourses
+            }),
         }),
     getAuditResult: (transcriptId: string) => request(`/audit/${transcriptId}`),
     listHistory: () => request("/audit"),
