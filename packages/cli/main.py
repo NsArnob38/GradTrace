@@ -44,6 +44,8 @@ def main():
     audit_p.add_argument("--program", "-p", default="CSE", choices=["CSE", "BBA"])
     audit_p.add_argument("--concentration", "-c", default=None)
     audit_p.add_argument("--edit", "-e", action="store_true", help="Manually edit courses before auditing")
+    audit_p.add_argument("--map", "-m", action="append", help="Map old course to new (format: OLD=NEW)")
+    audit_p.add_argument("--ignore", "-i", action="append", help="Ignore course code")
 
     sub.add_parser("history", help="View past audit results")
 
@@ -52,6 +54,8 @@ def main():
     offline_p.add_argument("--program", "-p", default="CSE", choices=["CSE", "BBA"])
     offline_p.add_argument("--concentration", "-c", default=None)
     offline_p.add_argument("--edit", "-e", action="store_true", help="Manually edit courses before auditing")
+    offline_p.add_argument("--map", "-m", action="append", help="Map old course to new (format: OLD=NEW)")
+    offline_p.add_argument("--ignore", "-i", action="append", help="Ignore course code")
 
     args = parser.parse_args()
 
@@ -211,6 +215,8 @@ def _menu_offline_audit():
     console.print()
     with console.status(f"[{AMBER}]Running audit...[/]", spinner="dots"):
         from packages.core.unified import UnifiedAuditor
+        # For now, interactive offline uses empty overrides initially,
+        # but they get populated in the correction loop if needed.
         result = UnifiedAuditor.run_from_file(filepath, program, concentration)
 
     if result.get("meta", {}).get("fake_transcript") or result.get("meta", {}).get("unrecognized_courses"):
@@ -322,6 +328,8 @@ def _menu_online_audit(api_url: str):
     # Run audit
     with console.status(f"[{AMBER}]Running audit...[/]", spinner="dots"):
         try:
+            # Online interactive currently uses empty overrides, 
+            # as it's intended for first-time uploads.
             audit_res = client.run_audit(transcript_id, program, concentration)
         except Exception as e:
             console.print(f"  [{RED}]✗ Audit failed: {e}[/]")
@@ -357,13 +365,18 @@ def _menu_account(api_url: str):
         _cmd_login(api_url)
 
 
-def _handle_correction_loop(result: dict, program: str, original_path: str) -> dict | None:
+def _handle_correction_loop(result: dict, program: str, original_path: str, 
+                            custom_mappings: dict | None = None, 
+                            ignored_courses: list[str] | None = None) -> dict | None:
     """Interactive loop to fix unrecognized courses or manually edit transcript."""
     from packages.cli.ui import console, AMBER, GRAY, RED, GREEN, BOLD, BLUE
     from rich.table import Table
     from rich.prompt import Prompt, Confirm
     from packages.core.unified import UnifiedAuditor
     from packages.core.course_catalog import ALL_COURSES
+
+    custom_mappings = custom_mappings or {}
+    ignored_courses = ignored_courses or []
 
     records = result.get("level_1", {}).get("records", [])
     # If no records (e.g. from a failed CreditAuditor.process), we need to extract from meta if possible
@@ -380,15 +393,31 @@ def _handle_correction_loop(result: dict, program: str, original_path: str) -> d
         table.add_column("Code", style="bold", width=10)
         table.add_column("Grade", width=6)
         table.add_column("Semester", width=15)
+        table.add_column("Map To", width=10)
         table.add_column("Status")
 
         for i, r in enumerate(records, 1):
-            is_bad = r["course_code"] in unrecognized or r["course_code"] not in ALL_COURSES
+            code = r["course_code"]
+            is_ignored = code in ignored_courses
+            mapped_to = custom_mappings.get(code, "")
+            
+            is_bad = code not in unrecognized and code not in ALL_COURSES and not is_ignored
+            
             status = f"[{RED}]UNRECOGNIZED[/]" if is_bad else f"[{GREEN}]OK[/]"
-            table.add_row(str(i), r["course_code"], r["grade"], r["semester"], status)
+            if is_ignored: status = f"[{AMBER}]IGNORED[/]"
+            
+            style = "dim" if is_ignored else "bold"
+            table.add_row(
+                str(i), 
+                f"[{style}]{code}[/]", 
+                r["grade"], 
+                r["semester"], 
+                mapped_to,
+                status
+            )
 
         console.print(table)
-        console.print(f"\n  [{GRAY}]Options: [0] Finish & Re-audit  [#] Edit Row  [q] Cancel[/]")
+        console.print(f"\n  [{GRAY}]Options: [0] Finish & Re-audit  [#] Options for Row  [q] Cancel[/]")
         
         choice = Prompt.ask("\n  [bold]Selection[/]").strip().lower()
         
@@ -401,25 +430,42 @@ def _handle_correction_loop(result: dict, program: str, original_path: str) -> d
             idx = int(choice) - 1
             if 0 <= idx < len(records):
                 row = records[idx]
-                console.print(f"\n  Editing Row {idx + 1}: [{BOLD}]{row['course_code']}[/]")
-                new_code = Prompt.ask("    New Code", default=row["course_code"]).strip().upper()
-                new_grade = Prompt.ask("    New Grade", default=row["grade"]).strip().upper()
-                new_sem = Prompt.ask("    New Semester", default=row["semester"]).strip().title()
+                code = row['course_code']
                 
-                row["course_code"] = new_code
-                row["grade"] = new_grade
-                row["semester"] = new_sem
+                console.print(f"\n  [{AMBER}]▸ Row Options for {code}[/]")
+                console.print(f"    [{GREEN}]1[/]  Edit Code/Grade/Sem")
+                console.print(f"    [{GREEN}]2[/]  Map to Modern Code")
+                console.print(f"    [{GREEN}]3[/]  {'Unignore' if code in ignored_courses else 'Ignore'} Course")
+                console.print(f"    [{GREEN}]0[/]  Back")
                 
-                # Update unrecognized list
-                unrecognized = [c for c in unrecognized if c != row["course_code"]]
-                if new_code not in ALL_COURSES:
-                    unrecognized.append(new_code)
+                opt = Prompt.ask("\n  [bold]Action[/]", default="0").strip()
+                
+                if opt == "1":
+                    new_code = Prompt.ask("    New Code", default=row["course_code"]).strip().upper()
+                    new_grade = Prompt.ask("    New Grade", default=row["grade"]).strip().upper()
+                    new_sem = Prompt.ask("    New Semester", default=row["semester"]).strip().title()
+                    row["course_code"] = new_code
+                    row["grade"] = new_grade
+                    row["semester"] = new_sem
+                elif opt == "2":
+                    target = Prompt.ask("    Map to Modern Code (e.g. ACT201)", default=custom_mappings.get(code, "")).strip().upper()
+                    if target: custom_mappings[code] = target
+                    else: custom_mappings.pop(code, None)
+                elif opt == "3":
+                    if code in ignored_courses:
+                        ignored_courses.remove(code)
+                    else:
+                        ignored_courses.append(code)
             else:
                 console.print(f"  [{RED}]Invalid row number.[/]")
 
     # Re-audit
     with console.status(f"[{AMBER}]Re-running audit...[/]", spinner="dots"):
-        new_result = UnifiedAuditor.run_from_rows(records, program)
+        new_result = UnifiedAuditor.run_from_rows(
+            records, program, 
+            custom_mappings=custom_mappings,
+            ignored_courses=ignored_courses
+        )
     
     # Auto-save logic
     if Confirm.ask(f"\n  Save corrected transcript to [bold]{os.path.basename(original_path)}_corrected.csv[/]?"):
@@ -540,6 +586,8 @@ def _cmd_audit(args):
         console.print(f"\n  [{RED}]✗ File not found: {args.file}[/]\n")
         sys.exit(1)
 
+    maps, ignores = _parse_args_overrides(args)
+
     token = _ensure_auth(args.api_url)
     if not token:
         return
@@ -556,7 +604,11 @@ def _cmd_audit(args):
     console.print(f"  [{GREEN}]✓ Uploaded[/]")
 
     with console.status(f"[{AMBER}]Running audit...[/]", spinner="dots"):
-        audit_res = client.run_audit(tid, args.program, args.concentration)
+        audit_res = client.run_audit(
+            tid, args.program, args.concentration,
+            custom_mappings=maps,
+            ignored_courses=ignores
+        )
 
     result = audit_res.get("data", audit_res)
     console.print(f"  [{GREEN}]✓ Audit complete[/]")
@@ -591,17 +643,40 @@ def _cmd_offline(args):
         console.print(f"\n  [{RED}]✗ File not found: {args.file}[/]\n")
         sys.exit(1)
 
+    maps, ignores = _parse_args_overrides(args)
+
     with console.status(f"[{AMBER}]Running local audit...[/]", spinner="dots"):
         from packages.core.unified import UnifiedAuditor
-        result = UnifiedAuditor.run_from_file(args.file, args.program, args.concentration)
+        result = UnifiedAuditor.run_from_file(
+            args.file, args.program, args.concentration,
+            custom_mappings=maps,
+            ignored_courses=ignores
+        )
 
     if args.edit or result.get("meta", {}).get("fake_transcript") or result.get("meta", {}).get("unrecognized_courses"):
-        result = _handle_correction_loop(result, args.program, args.file)
+        maps, ignores = _parse_args_overrides(args)
+        result = _handle_correction_loop(result, args.program, args.file, maps, ignores)
         if not result:
             sys.exit(1)
 
     console.print(f"  [{GREEN}]✓ Local audit complete[/]")
     format_full_audit(result)
+
+
+def _parse_args_overrides(args) -> tuple[dict, list]:
+    """Helper to parse --map OLD=NEW and --ignore CODE into dict/list."""
+    maps = {}
+    if hasattr(args, "map") and args.map:
+        for m in args.map:
+            if "=" in m:
+                k, v = m.split("=", 1)
+                maps[k.upper()] = v.upper()
+    
+    ignores = []
+    if hasattr(args, "ignore") and args.ignore:
+        ignores = [i.upper() for i in args.ignore]
+        
+    return maps, ignores
 
 
 if __name__ == "__main__":

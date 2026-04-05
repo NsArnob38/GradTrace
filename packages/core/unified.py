@@ -22,7 +22,9 @@ class UnifiedAuditor:
     @staticmethod
     def run_from_file(filepath: str, program: str,
                       concentration: str | None = None,
-                      user_waivers: dict | None = None) -> dict:
+                      user_waivers: dict | None = None,
+                      custom_mappings: dict | None = None,
+                      ignored_courses: list[str] | None = None) -> dict:
         """
         Full audit pipeline from a file path (CSV, PDF, or Image).
         """
@@ -48,10 +50,13 @@ class UnifiedAuditor:
             elif (program.upper() == "BBA" or program.upper() == "UNKNOWN") and detected_prog == "CSE":
                 program = "CSE"
 
-            return UnifiedAuditor.run_from_rows(rows, program, concentration, user_waivers)
+            return UnifiedAuditor.run_from_rows(
+                rows, program, concentration, user_waivers, 
+                custom_mappings, ignored_courses
+            )
             
         # Standard CSV path
-        level_1 = CreditAuditor.process(filepath)
+        level_1 = CreditAuditor.process(filepath, custom_mappings, ignored_courses)
         records = level_1["records"]
         credits_earned = level_1["credits_earned"]
 

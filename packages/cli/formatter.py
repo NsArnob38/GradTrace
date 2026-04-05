@@ -51,6 +51,7 @@ def format_full_audit(result: dict, level: int = 4):
     # ── Level 1: Credit Breakdown ──
     if level >= 1:
         _print_credit_summary(l1)
+        _print_detailed_course_list(l1)
 
     # ── Level 2: CGPA & Standing ──
     if level >= 2:
@@ -138,6 +139,47 @@ def _print_credit_summary(l1: dict):
             color = GREEN if s == "BEST" else GRAY if s == "REPEAT" else ORANGE
             parts.append(f"[{color}]{s}:{count}[/]")
         console.print(f"    Courses:            {' │ '.join(parts)}")
+
+
+def _print_detailed_course_list(l1: dict):
+    """Print the full list of passed courses in a compact grid."""
+    section("Completed Courses")
+    records = l1.get("records", [])
+    if not records:
+        console.print(f"    [{GRAY}]No completed courses found.[/]")
+        return
+    
+    # Filter to only show relevant records (avoiding duplicates if they exist)
+    display_records = [r for r in records if r.get("status") != "REPEAT"]
+    
+    table = Table(show_header=False, box=None, padding=(0, 2))
+    table.add_column("C1", style="bold", width=8)
+    table.add_column("G1", width=3)
+    table.add_column("S1", style=GRAY, width=12)
+    table.add_column("Sep", style=DIM, width=1)
+    table.add_column("C2", style="bold", width=8)
+    table.add_column("G2", width=3)
+    table.add_column("S2", style=GRAY, width=12)
+
+    # Chunk into pairs for 2-column layout
+    for i in range(0, len(display_records), 2):
+        r1 = display_records[i]
+        r2 = display_records[i+1] if i+1 < len(display_records) else None
+        
+        row = [
+            r1["course_code"], 
+            r1["grade"], 
+            r1["semester"],
+            "│"
+        ]
+        if r2:
+            row.extend([r2["course_code"], r2["grade"], r2["semester"]])
+        else:
+            row.extend(["", "", ""])
+            
+        table.add_row(*row)
+    
+    console.print(table)
 
 
 def _print_cgpa_summary(l2: dict):

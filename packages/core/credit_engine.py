@@ -203,15 +203,28 @@ class CreditAuditor:
     # ───────────────────────────────────────────────
 
     @staticmethod
-    def process(filepath: str) -> dict:
+    def process(filepath: str, custom_mappings: dict | None = None, ignored_courses: list[str] | None = None) -> dict:
         """
         Full Level 1 pipeline: parse → resolve retakes → sort → calculate credits.
+        Applies custom mappings and drops ignored courses before processing.
 
         Returns dict with: records, credits_attempted, credits_earned,
-                           unrecognized (set), dismissal (dict).
+                           unrecognized (set).
         """
         records = TranscriptParser.parse(filepath)
-        records = CreditAuditor.resolve_retakes(records)
+        
+        custom_mappings = custom_mappings or {}
+        ignored_courses = set(ignored_courses or [])
+        
+        filtered_records = []
+        for r in records:
+            if r.course_code in ignored_courses:
+                continue # Drop ignored courses completely
+            if r.course_code in custom_mappings:
+                r.course_code = custom_mappings[r.course_code]
+            filtered_records.append(r)
+            
+        records = CreditAuditor.resolve_retakes(filtered_records)
 
         # Sort: prefix → number → suffix → semester
         sem_map = {sem: i for i, sem in enumerate(SEMESTERS)}

@@ -69,10 +69,16 @@ class APIClient:
 
     # ── Audit ──
 
-    def run_audit(self, transcript_id: str, program: str, concentration: str | None = None) -> dict:
-        body = {"program": program}
-        if concentration:
-            body["concentration"] = concentration
+    def run_audit(self, transcript_id: str, program: str, 
+                  concentration: str | None = None,
+                  custom_mappings: dict | None = None,
+                  ignored_courses: list[str] | None = None) -> dict:
+        body = {
+            "program": program,
+            "concentration": concentration,
+            "custom_mappings": custom_mappings,
+            "ignored_courses": ignored_courses
+        }
         r = requests.post(
             f"{self.base_url}/audit/{transcript_id}",
             json=body,
