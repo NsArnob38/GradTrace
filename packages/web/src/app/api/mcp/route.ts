@@ -40,6 +40,117 @@ function getMcpUrl(): string | null {
     return `${base.replace(/\/+$/, "")}/v1/mcp`;
 }
 
+function getMcpBaseUrl(): string | null {
+    const base = process.env.MCP_SERVER_URL?.trim();
+    if (!base) return null;
+    return base.replace(/\/+$/, "");
+}
+
+async function fallbackJsonRpcToRest(baseUrl: string, body: JsonRpcRequest) {
+    if (body.method === "initialize") {
+        return NextResponse.json(
+            {
+                jsonrpc: "2.0",
+                id: body.id ?? null,
+                result: {
+                    protocolVersion: "2024-11-05",
+                    serverInfo: {
+                        name: "graduation-audit-mcp",
+                        version: "1.0.0",
+                    },
+                    capabilities: {
+                        tools: { listChanged: false },
+                    },
+                },
+            },
+            { status: 200 }
+        );
+    }
+
+    if (body.method === "tools/list") {
+        const upstream = await fetch(`${baseUrl}/v1/tools`, {
+            method: "GET",
+            cache: "no-store",
+        });
+        const payload = await upstream.json().catch(() => ({}));
+
+        if (!upstream.ok) {
+            return NextResponse.json(
+                {
+                    jsonrpc: "2.0",
+                    id: body.id ?? null,
+                    error: {
+                        code: -32000,
+                        message: "MCP tools/list fallback failed.",
+                        data: payload,
+                    },
+                },
+                { status: upstream.status }
+            );
+        }
+
+        return NextResponse.json(
+            {
+                jsonrpc: "2.0",
+                id: body.id ?? null,
+                result: {
+                    tools: Array.isArray((payload as { tools?: unknown }).tools)
+                        ? (payload as { tools: unknown[] }).tools
+                        : [],
+                },
+            },
+            { status: 200 }
+        );
+    }
+
+    const params = body.params ?? {};
+    const toolName = typeof params.name === "string" ? params.name : "";
+    const args = isObject(params.arguments) ? params.arguments : {};
+
+    const upstream = await fetch(`${baseUrl}/v1/tools/${encodeURIComponent(toolName)}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        cache: "no-store",
+        body: JSON.stringify(args),
+    });
+
+    const payload = await upstream.json().catch(() => ({}));
+    if (!upstream.ok) {
+        return NextResponse.json(
+            {
+                jsonrpc: "2.0",
+                id: body.id ?? null,
+                error: {
+                    code: -32000,
+                    message: "MCP tools/call fallback failed.",
+                    data: payload,
+                },
+            },
+            { status: upstream.status }
+        );
+    }
+
+    return NextResponse.json(
+        {
+            jsonrpc: "2.0",
+            id: body.id ?? null,
+            result: {
+                content: [
+                    {
+                        type: "text",
+                        text: JSON.stringify(payload),
+                    },
+                ],
+                structuredContent: payload,
+                isError: false,
+            },
+        },
+        { status: 200 }
+    );
+}
+
 export async function POST(request: NextRequest) {
     const mcpUrl = getMcpUrl();
     if (!mcpUrl) {
@@ -60,6 +171,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Invalid MCP JSON-RPC payload." }, { status: 400 });
     }
 
+    const validBody = body as JsonRpcRequest;
+    const mcpBaseUrl = getMcpBaseUrl();
+
     try {
         const upstream = await fetch(mcpUrl, {
             method: "POST",
@@ -67,12 +181,16 @@ export async function POST(request: NextRequest) {
                 "Content-Type": "application/json",
             },
             cache: "no-store",
-            body: JSON.stringify(body),
+            body: JSON.stringify(validBody),
         });
+
+        if (upstream.status === 404 && mcpBaseUrl) {
+            return fallbackJsonRpcToRest(mcpBaseUrl, validBody);
+        }
 
         const payload = await upstream.json().catch(() => ({
             jsonrpc: "2.0",
-            id: body.id ?? null,
+            id: validBody.id ?? null,
             error: {
                 code: -32000,
                 message: "Invalid response from MCP upstream.",
@@ -85,7 +203,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
             {
                 jsonrpc: "2.0",
-                id: body.id ?? null,
+                id: validBody.id ?? null,
                 error: {
                     code: -32001,
                     message: "Unable to reach MCP server.",
