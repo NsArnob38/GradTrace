@@ -29,6 +29,9 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     // Program/Concentration state for re-auditing
     const [selectedProgram, setSelectedProgram] = useState("CSE");
     const [selectedConcentration, setSelectedConcentration] = useState("");
+    const [aiPlan, setAiPlan] = useState<{ recommended_courses: string[]; reasoning: string } | null>(null);
+    const [aiPlanLoading, setAiPlanLoading] = useState(false);
+    const [aiPlanError, setAiPlanError] = useState("");
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -125,6 +128,81 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             setAuditError(String(auditRes.error || "Failed to re-audit. Fix courses and try again."));
         }
         setIsReauditing(false);
+    };
+
+    const handleGenerateAiPlan = async () => {
+        setAiPlanLoading(true);
+        setAiPlanError("");
+
+        const completedCourses = rawCourses
+            .map((course) => {
+                const code = String(course?.course_code || "").trim().toUpperCase().replace(/\s+/g, "");
+                const grade = String(course?.grade || "").trim().toUpperCase();
+                const parsedCredits = Number(course?.credits);
+                const credits = Number.isFinite(parsedCredits) ? Math.max(0, Math.min(12, Math.round(parsedCredits))) : 0;
+                return { course_code: code, credits, grade };
+            })
+            .filter((course) => Boolean(course.course_code) && Boolean(course.grade));
+
+        const remainingEntries = Object.entries(remaining).flatMap(([category, courses]) => {
+            if (!courses || typeof courses !== "object") return [];
+            return Object.entries(courses as Record<string, unknown>).map(([code, cr]) => ({
+                code: String(code).trim().toUpperCase().replace(/\s+/g, ""),
+                credits: Number(cr) || 3,
+                category,
+            }));
+        });
+
+        const coreCoursesRequired = remainingEntries
+            .filter((entry) => entry.category.toLowerCase().includes("core"))
+            .map((entry) => entry.code);
+
+        const electivePool = remainingEntries
+            .filter((entry) => entry.category.toLowerCase().includes("elective"))
+            .map((entry) => entry.code);
+
+        const availableCourses = remainingEntries.map((entry) => ({
+            course_code: entry.code,
+            credits: Math.max(0, Math.min(12, Math.round(entry.credits))),
+            category: entry.category.toLowerCase().includes("core")
+                ? "CORE"
+                : entry.category.toLowerCase().includes("elective")
+                    ? "ELECTIVE"
+                    : "GENERAL",
+        }));
+
+        const response = await api.mcpCallTool<{
+            structuredContent?: {
+                recommended_courses?: string[];
+                reasoning?: string;
+            };
+        }>("plan_path", {
+            student_record: {
+                student_id: id,
+                courses: completedCourses,
+            },
+            program_requirements: {
+                program_code: selectedProgram,
+                total_credits_required: Number(totalRequired) || 0,
+                core_courses_required: Array.from(new Set(coreCoursesRequired)),
+                elective_credit_required: Number(remaining?.open_elective_credits || 0),
+                elective_pool: Array.from(new Set(electivePool)),
+            },
+            available_courses: availableCourses,
+        });
+
+        if (!response.success || !response.data?.structuredContent) {
+            setAiPlanError(response.error || "Failed to generate MCP plan.");
+            setAiPlanLoading(false);
+            return;
+        }
+
+        const plan = response.data.structuredContent;
+        setAiPlan({
+            recommended_courses: Array.isArray(plan.recommended_courses) ? plan.recommended_courses : [],
+            reasoning: typeof plan.reasoning === "string" ? plan.reasoning : "",
+        });
+        setAiPlanLoading(false);
     };
 
     const renderChangedBadge = (current: any, prev: any, improvedFn?: (c: any, p: any) => boolean) => {
@@ -635,6 +713,46 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                     <span>All requirements satisfied!</span>
                                 </div>
                             )}
+
+                            <div className="mt-5 pt-4 border-t border-border dark:border-gray-800">
+                                <div className="flex items-center justify-between gap-3 mb-3">
+                                    <div>
+                                        <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium">AI Plan</p>
+                                        <p className="text-sm text-muted dark:text-gray-400">Generate an MCP-powered recommended course sequence.</p>
+                                    </div>
+                                    <button
+                                        onClick={handleGenerateAiPlan}
+                                        disabled={aiPlanLoading}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-60"
+                                    >
+                                        {aiPlanLoading ? "Generating..." : "Generate AI Plan"}
+                                    </button>
+                                </div>
+
+                                {aiPlanError && (
+                                    <div className="text-sm text-danger bg-danger/10 border border-danger/20 rounded-lg px-3 py-2 mb-3">
+                                        {aiPlanError}
+                                    </div>
+                                )}
+
+                                {aiPlan && (
+                                    <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 p-3">
+                                        <p className="text-sm font-medium mb-2 text-primary dark:text-gray-100">Recommended Courses</p>
+                                        <div className="flex flex-wrap gap-2 mb-3">
+                                            {aiPlan.recommended_courses.length > 0 ? aiPlan.recommended_courses.map((course) => (
+                                                <span key={course} className="text-xs bg-white dark:bg-gray-900 border border-border dark:border-gray-700 px-2.5 py-1 rounded-md font-mono">
+                                                    {course}
+                                                </span>
+                                            )) : (
+                                                <span className="text-sm text-muted dark:text-gray-400">No additional courses recommended.</span>
+                                            )}
+                                        </div>
+                                        {aiPlan.reasoning && (
+                                            <p className="text-xs text-muted dark:text-gray-400">{aiPlan.reasoning}</p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </motion.div>
