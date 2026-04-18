@@ -15,6 +15,12 @@ type JsonRpcResponse<T = unknown> = {
     error?: JsonRpcError;
 };
 
+type ApiEnvelope<T = unknown> = {
+    success: boolean;
+    data: T | null;
+    error: string | null;
+};
+
 async function getToken(): Promise<string | null> {
     if (typeof window === "undefined") return null;
     const { supabase } = await import("./supabase");
@@ -25,7 +31,7 @@ async function getToken(): Promise<string | null> {
 async function request<T = unknown>(
     path: string,
     options: RequestInit = {}
-): Promise<{ success: boolean; data: T | null; error: string | null }> {
+): Promise<ApiEnvelope<T>> {
     const token = await getToken();
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -35,15 +41,14 @@ async function request<T = unknown>(
 
     try {
         const res = await fetch(`${API_URL}${path}`, { ...options, headers });
-        const json = (await res.json().catch(() => ({ detail: res.statusText }))) as {
-            detail?: unknown;
-        };
+        const json = (await res.json().catch(() => ({ detail: res.statusText }))) as unknown;
         
         if (!res.ok) {
             let errorMsg = "Request failed";
-            if (json.detail) {
-                if (Array.isArray(json.detail)) {
-                    errorMsg = json.detail
+            if (typeof json === "object" && json !== null && "detail" in json) {
+                const detail = (json as { detail?: unknown }).detail;
+                if (Array.isArray(detail)) {
+                    errorMsg = detail
                         .map((e) => {
                             if (typeof e !== "object" || e === null) return "error: invalid detail";
                             const detailObj = e as { loc?: unknown; msg?: unknown };
@@ -54,23 +59,34 @@ async function request<T = unknown>(
                             return `${loc}: ${msg}`;
                         })
                         .join(", ");
-                } else if (typeof json.detail === "string") {
-                    errorMsg = json.detail;
+                } else if (typeof detail === "string") {
+                    errorMsg = detail;
                 } else if (
-                    typeof json.detail === "object" &&
-                    json.detail !== null &&
-                    "msg" in json.detail &&
-                    typeof (json.detail as { msg?: unknown }).msg === "string"
+                    typeof detail === "object" &&
+                    detail !== null &&
+                    "msg" in detail &&
+                    typeof (detail as { msg?: unknown }).msg === "string"
                 ) {
-                    errorMsg = (json.detail as { msg: string }).msg;
+                    errorMsg = (detail as { msg: string }).msg;
                 } else {
-                    errorMsg = JSON.stringify(json.detail);
+                    errorMsg = JSON.stringify(detail);
                 }
             }
             console.error(`API Error [${res.status}]:`, { path, json, errorMsg });
             return { success: false, data: null, error: errorMsg };
         }
-        return json;
+
+        if (
+            typeof json === "object" &&
+            json !== null &&
+            "success" in json &&
+            "data" in json &&
+            "error" in json
+        ) {
+            return json as ApiEnvelope<T>;
+        }
+
+        return { success: true, data: json as T, error: null };
     } catch (err: unknown) {
         return {
             success: false,
