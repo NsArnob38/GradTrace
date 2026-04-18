@@ -2,6 +2,13 @@
 
 Deterministic MCP server for graduation audit logic used by AI agents.
 
+Production features included:
+- request logging with request IDs
+- strict input validation (`extra=forbid`)
+- safe error responses (no internal stack details leaked)
+- in-memory rate limiting
+- versioned endpoints (`/v1/*`)
+
 ## Structure
 
 ```text
@@ -21,12 +28,25 @@ pip install -r requirements.txt
 uvicorn server:app --reload --port 8100
 ```
 
+Optional env vars:
+
+- `LOG_LEVEL` (default: `INFO`)
+- `MCP_RATE_LIMIT_MAX_REQUESTS` (default: `120`)
+- `MCP_RATE_LIMIT_WINDOW_SECONDS` (default: `60`)
+- `MCP_MAX_ARGUMENT_BYTES` (default: `250000`)
+
 ## MCP endpoints
 
 - `POST /mcp` (JSON-RPC)
+- `POST /v1/mcp` (JSON-RPC, versioned)
   - `initialize`
   - `tools/list`
   - `tools/call`
+
+Utility endpoints:
+- `GET /health`, `GET /v1/health`
+- `GET /tools`, `GET /v1/tools`
+- `POST /tools/{tool_name}`, `POST /v1/tools/{tool_name}`
 
 ## Tool examples
 

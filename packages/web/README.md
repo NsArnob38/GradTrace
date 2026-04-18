@@ -16,6 +16,16 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+### MCP proxy configuration
+
+To call the MCP server from the website, set:
+
+```bash
+MCP_SERVER_URL=https://your-mcp-service.onrender.com
+```
+
+The app proxies MCP JSON-RPC calls through `POST /api/mcp` to avoid direct browser-to-Render CORS issues.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

@@ -27,6 +27,8 @@ class ToolSpec:
     input_model: type[BaseModel]
     output_model: type[BaseModel]
     handler: Callable[[BaseModel], BaseModel]
+    safe_for_agent: bool = True
+    mutates_state: bool = False
 
     def to_mcp_descriptor(self) -> dict[str, Any]:
         return {
@@ -34,6 +36,10 @@ class ToolSpec:
             "description": self.description,
             "inputSchema": self.input_model.model_json_schema(),
             "outputSchema": self.output_model.model_json_schema(),
+            "annotations": {
+                "safeForAgent": self.safe_for_agent,
+                "readOnlyHint": not self.mutates_state,
+            },
         }
 
 

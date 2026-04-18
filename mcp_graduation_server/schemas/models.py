@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 VALID_GRADES = {
@@ -23,7 +23,11 @@ VALID_GRADES = {
 }
 
 
-class CourseRecord(BaseModel):
+class StrictModel(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+
+class CourseRecord(StrictModel):
     course_code: str = Field(..., min_length=2, max_length=20)
     credits: int = Field(..., ge=0, le=12)
     grade: str = Field(...)
@@ -42,17 +46,17 @@ class CourseRecord(BaseModel):
         return normalized
 
 
-class StudentRecord(BaseModel):
+class StudentRecord(StrictModel):
     student_id: str = Field(..., min_length=1, max_length=64)
-    courses: list[CourseRecord] = Field(default_factory=list)
+    courses: list[CourseRecord] = Field(default_factory=list, max_length=1200)
 
 
-class ProgramRequirements(BaseModel):
+class ProgramRequirements(StrictModel):
     program_code: str = Field(..., min_length=1, max_length=32)
     total_credits_required: int = Field(..., ge=0, le=250)
-    core_courses_required: list[str] = Field(default_factory=list)
+    core_courses_required: list[str] = Field(default_factory=list, max_length=400)
     elective_credit_required: int = Field(default=0, ge=0, le=100)
-    elective_pool: list[str] = Field(default_factory=list)
+    elective_pool: list[str] = Field(default_factory=list, max_length=800)
 
     @field_validator("core_courses_required", "elective_pool")
     @classmethod
@@ -60,8 +64,14 @@ class ProgramRequirements(BaseModel):
         normalized = [item.strip().upper().replace(" ", "") for item in value if item.strip()]
         return sorted(set(normalized))
 
+    @model_validator(mode="after")
+    def validate_credit_policy(self) -> "ProgramRequirements":
+        if self.elective_credit_required > self.total_credits_required:
+            raise ValueError("elective_credit_required cannot exceed total_credits_required")
+        return self
 
-class ToolAuditStudentInput(BaseModel):
+
+class ToolAuditStudentInput(StrictModel):
     student_record: StudentRecord
     program_requirements: ProgramRequirements
 
@@ -72,35 +82,35 @@ class AuditIssueType(str, Enum):
     ELECTIVE_SHORTAGE = "ELECTIVE_SHORTAGE"
 
 
-class AuditIssue(BaseModel):
+class AuditIssue(StrictModel):
     issue_type: AuditIssueType
     detail: str
     requirement_key: str
 
 
-class AuditResult(BaseModel):
+class AuditResult(StrictModel):
     eligible: bool
-    missing_requirements: list[str]
-    credit_deficit: int
+    missing_requirements: list[str] = Field(max_length=2000)
+    credit_deficit: int = Field(ge=0)
     missing_core_courses: list[str] = Field(default_factory=list)
-    elective_credit_deficit: int = 0
-    earned_total_credits: int = 0
-    earned_elective_credits: int = 0
+    elective_credit_deficit: int = Field(default=0, ge=0)
+    earned_total_credits: int = Field(default=0, ge=0)
+    earned_elective_credits: int = Field(default=0, ge=0)
 
 
-class ExplainAuditInput(BaseModel):
+class ExplainAuditInput(StrictModel):
     audit_result: AuditResult
 
 
-class ExplainAuditResult(BaseModel):
+class ExplainAuditResult(StrictModel):
     summary: str
     structured_issues: list[AuditIssue]
 
 
-class AvailableCourse(BaseModel):
+class AvailableCourse(StrictModel):
     course_code: str = Field(..., min_length=2, max_length=20)
     credits: int = Field(..., ge=0, le=12)
-    term: str | None = None
+    term: str | None = Field(default=None, max_length=32)
     category: Literal["CORE", "ELECTIVE", "GENERAL"] = "GENERAL"
 
     @field_validator("course_code")
@@ -109,35 +119,35 @@ class AvailableCourse(BaseModel):
         return value.strip().upper().replace(" ", "")
 
 
-class PlanPathInput(BaseModel):
+class PlanPathInput(StrictModel):
     student_record: StudentRecord
     program_requirements: ProgramRequirements
-    available_courses: list[AvailableCourse]
+    available_courses: list[AvailableCourse] = Field(max_length=1200)
 
 
-class PlanPathResult(BaseModel):
-    recommended_courses: list[str]
-    reasoning: str
+class PlanPathResult(StrictModel):
+    recommended_courses: list[str] = Field(max_length=1200)
+    reasoning: str = Field(max_length=300)
 
 
-class SimulateChangesInput(BaseModel):
+class SimulateChangesInput(StrictModel):
     student_record: StudentRecord
-    hypothetical_courses: list[CourseRecord]
+    hypothetical_courses: list[CourseRecord] = Field(max_length=400)
     program_requirements: ProgramRequirements
 
 
-class SimulateChangesResult(BaseModel):
+class SimulateChangesResult(StrictModel):
     eligible_after: bool
-    remaining_requirements: list[str]
+    remaining_requirements: list[str] = Field(max_length=2000)
 
 
-class OptimizeGraduationPathInput(BaseModel):
+class OptimizeGraduationPathInput(StrictModel):
     student_record: StudentRecord
     program_requirements: ProgramRequirements
-    available_courses: list[AvailableCourse]
+    available_courses: list[AvailableCourse] = Field(max_length=1200)
 
 
-class OptimizeGraduationPathResult(BaseModel):
-    minimum_course_set: list[str]
-    estimated_remaining_credits: int
-    rationale: str
+class OptimizeGraduationPathResult(StrictModel):
+    minimum_course_set: list[str] = Field(max_length=1200)
+    estimated_remaining_credits: int = Field(ge=0)
+    rationale: str = Field(max_length=400)
