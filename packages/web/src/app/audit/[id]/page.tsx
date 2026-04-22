@@ -15,6 +15,36 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+const VALID_MCP_GRADES = new Set(["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "P", "T"]);
+
+function normalizeMcpCode(value: unknown): string {
+    return String(value || "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "")
+        .replace(/[^A-Z0-9]/g, "")
+        .slice(0, 20);
+}
+
+function normalizeMcpGrade(value: unknown): string | null {
+    const grade = String(value || "").trim().toUpperCase();
+    if (VALID_MCP_GRADES.has(grade)) return grade;
+    if (grade === "A+") return "A";
+    return null;
+}
+
+function toMcpCredits(value: unknown): number {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return 0;
+    return Math.max(0, Math.min(12, Math.round(parsed)));
+}
+
+function toMcpWhole(value: unknown, fallback = 0): number {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return fallback;
+    return Math.max(0, Math.round(parsed));
+}
+
 export default function AuditReportPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [data, setData] = useState<any>(null);
@@ -167,19 +197,18 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
         const completedCourses = rawCourses
             .map((course) => {
-                const code = String(course?.course_code || "").trim().toUpperCase().replace(/\s+/g, "");
-                const grade = String(course?.grade || "").trim().toUpperCase();
-                const parsedCredits = Number(course?.credits);
-                const credits = Number.isFinite(parsedCredits) ? Math.max(0, Math.min(12, Math.round(parsedCredits))) : 0;
+                const code = normalizeMcpCode(course?.course_code);
+                const grade = normalizeMcpGrade(course?.grade);
+                const credits = toMcpCredits(course?.credits);
                 return { course_code: code, credits, grade };
             })
-            .filter((course) => Boolean(course.course_code) && Boolean(course.grade));
+            .filter((course): course is { course_code: string; credits: number; grade: string } => Boolean(course.course_code) && Boolean(course.grade));
 
         const remainingEntries = Object.entries(remaining).flatMap(([category, courses]) => {
             if (!courses || typeof courses !== "object") return [];
             return Object.entries(courses as Record<string, unknown>).map(([code, cr]) => ({
-                code: String(code).trim().toUpperCase().replace(/\s+/g, ""),
-                credits: Number(cr) || 3,
+                code: normalizeMcpCode(code),
+                credits: toMcpCredits(cr) || 3,
                 category,
             }));
         });
@@ -206,11 +235,13 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
         const coreCoursesRequired = remainingEntries
             .filter((entry) => entry.category.toLowerCase().includes("core"))
-            .map((entry) => entry.code);
+            .map((entry) => entry.code)
+            .filter(Boolean);
 
         const electivePool = remainingEntries
             .filter((entry) => entry.category.toLowerCase().includes("elective"))
-            .map((entry) => entry.code);
+            .map((entry) => entry.code)
+            .filter(Boolean);
 
         const electiveCreditRequired = remainingEntries
             .filter((entry) => entry.category.toLowerCase().includes("elective"))
@@ -218,13 +249,13 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
 
         const availableCourses = remainingEntries.map((entry) => ({
             course_code: entry.code,
-            credits: Math.max(0, Math.min(12, Math.round(entry.credits))),
+            credits: toMcpCredits(entry.credits),
             category: entry.category.toLowerCase().includes("core")
                 ? "CORE"
                 : entry.category.toLowerCase().includes("elective")
                     ? "ELECTIVE"
                     : "GENERAL",
-        }));
+        })).filter((entry) => Boolean(entry.course_code));
 
         const creditsByCode = new Map(availableCourses.map((course) => [course.course_code, course.credits]));
 
@@ -251,9 +282,9 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
             },
             program_requirements: {
                 program_code: selectedProgram,
-                total_credits_required: Number(totalRequired) || 0,
+                total_credits_required: toMcpWhole(totalRequired),
                 core_courses_required: Array.from(new Set(coreCoursesRequired)),
-                elective_credit_required: Math.max(0, Math.round(electiveCreditRequired)),
+                elective_credit_required: toMcpWhole(electiveCreditRequired),
                 elective_pool: Array.from(new Set(electivePool)),
             },
             available_courses: availableCourses,

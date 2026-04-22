@@ -32,6 +32,10 @@ class Settings(BaseSettings):
     
     # Gemini 1.5 Flash (LLM Parser)
     gemini_api_key: str = ""
+    advisor_model: str = "gemini-3.1-flash-lite-preview"
+
+    # Graduation MCP
+    mcp_server_url: str = ""
 
     class Config:
         env_file = ".env"

@@ -39,3 +39,9 @@ services:
         value: northsouth.edu
       - key: CORS_ORIGINS
         value: https://grad-trace.vercel.app
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ADVISOR_MODEL
+        value: gemini-3.1-flash-lite-preview
+      - key: MCP_SERVER_URL
+        sync: false

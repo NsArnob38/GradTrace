@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from packages.api.config import get_settings
-from packages.api.routes import auth, transcripts, audit, admin_auth, rubric
+from packages.api.routes import advisor, auth, transcripts, audit, admin_auth, rubric
 
 import os
 settings = get_settings()
@@ -80,6 +80,7 @@ app.include_router(auth.router)
 app.include_router(transcripts.router)
 app.include_router(rubric.router)    # Important: Must come BEFORE audit.router so literal paths like /audit/level1 are caught before /audit/{id}
 app.include_router(audit.router)
+app.include_router(advisor.router)
 app.include_router(admin_auth.router)
 
 

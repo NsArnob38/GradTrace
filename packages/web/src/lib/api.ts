@@ -170,6 +170,10 @@ export const api = {
     listHistory: () => request("/audit"),
     deleteHistory: (transcriptId: string) => request(`/audit/${transcriptId}`, { method: "DELETE" }),
 
+    // Advisor
+    advisorChat: (payload: Record<string, unknown>) =>
+        request("/advisor/chat", { method: "POST", body: JSON.stringify(payload) }),
+
     // Admin
     listStudents: () => request("/admin/students"),
     getStudent: (id: string) => request(`/admin/students/${id}`),
