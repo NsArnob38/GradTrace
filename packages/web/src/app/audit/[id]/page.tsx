@@ -505,6 +505,30 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
     const roadmapSteps = Array.isArray(roadmap.steps) ? roadmap.steps : [];
     const estimatedSemesters = roadmap.estimated_semesters ?? 0;
 
+    const selectedPlan = aiPlan?.[selectedAiPlan] ?? null;
+    const selectedPlanStatusText = !selectedPlan
+        ? ""
+        : selectedPlan.eligibleAfter === null
+            ? "Simulation unavailable"
+            : selectedPlan.eligibleAfter
+                ? "Eligible after this plan"
+                : "Not eligible after this term";
+    const selectedPlanStatusTone = !selectedPlan || selectedPlan.eligibleAfter === null
+        ? "text-muted dark:text-gray-400"
+        : selectedPlan.eligibleAfter
+            ? "text-success"
+            : "text-warning";
+    const selectedPlanRequirementsText = !selectedPlan || selectedPlan.remainingRequirementsCount === null
+        ? "Unknown"
+        : selectedPlan.remainingRequirementsCount === 0
+            ? "All cleared"
+            : `${selectedPlan.remainingRequirementsCount} still open`;
+    const selectedPlanCreditText = !selectedPlan || selectedPlan.remainingCreditDeficit === null
+        ? "Unknown"
+        : selectedPlan.remainingCreditDeficit === 0
+            ? "No credit gap"
+            : `${selectedPlan.remainingCreditDeficit} credits still needed`;
+
     const SectionHeader = ({ id: sId, icon: Icon, title, badge }: { id: string; icon: any; title: string; badge?: any }) => (
         <button onClick={() => toggle(sId)} className="w-full flex items-center justify-between p-5 hover:bg-bg/50 dark:hover:bg-gray-800/50 transition-colors">
             <div className="flex items-center gap-3">
@@ -1016,18 +1040,18 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                             ))}
                                         </div>
 
-                                        {aiPlan[selectedAiPlan] && (
+                                        {selectedPlan && (
                                             <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 p-3">
                                                 <div className="flex items-start justify-between gap-3 mb-2">
                                                     <div>
-                                                        <p className="text-sm font-semibold text-primary dark:text-gray-100">{aiPlan[selectedAiPlan].title}</p>
-                                                        <p className="text-xs text-muted dark:text-gray-400">{aiPlan[selectedAiPlan].subtitle}</p>
+                                                        <p className="text-sm font-semibold text-primary dark:text-gray-100">{selectedPlan.title}</p>
+                                                        <p className="text-xs text-muted dark:text-gray-400">{selectedPlan.subtitle}</p>
                                                     </div>
-                                                    <span className="text-[11px] px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold">{aiPlan[selectedAiPlan].totalCredits} credits</span>
+                                                    <span className="text-[11px] px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold">{selectedPlan.totalCredits} credits</span>
                                                 </div>
 
                                                 <div className="flex flex-wrap gap-2 mb-3">
-                                                    {aiPlan[selectedAiPlan].courses.length > 0 ? aiPlan[selectedAiPlan].courses.map((course, index) => (
+                                                    {selectedPlan.courses.length > 0 ? selectedPlan.courses.map((course, index) => (
                                                         <span key={course} className="text-xs bg-white dark:bg-gray-900 border border-border dark:border-gray-700 px-2.5 py-1 rounded-md font-mono">
                                                             {index + 1}. {course}
                                                         </span>
@@ -1039,25 +1063,33 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                                                     <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
                                                         <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Roadmap overlap</p>
-                                                        <p className="text-sm font-semibold">{aiPlan[selectedAiPlan].overlapCount}/{aiPlan[selectedAiPlan].overlapTotal}</p>
+                                                        <p className="text-sm font-semibold">{selectedPlan.overlapCount}/{selectedPlan.overlapTotal}</p>
                                                     </div>
                                                     <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
-                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">After simulation</p>
-                                                        <p className={`text-sm font-semibold ${aiPlan[selectedAiPlan].eligibleAfter ? "text-success" : "text-warning"}`}>
-                                                            {aiPlan[selectedAiPlan].eligibleAfter === null ? "Unknown" : aiPlan[selectedAiPlan].eligibleAfter ? "Eligible" : "Not yet"}
+                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Projected status</p>
+                                                        <p className={`text-sm font-semibold ${selectedPlanStatusTone}`}>
+                                                            {selectedPlanStatusText}
                                                         </p>
                                                     </div>
                                                     <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
-                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Remaining credit deficit</p>
+                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Outstanding requirements</p>
                                                         <p className="text-sm font-semibold">
-                                                            {aiPlan[selectedAiPlan].remainingCreditDeficit === null ? "—" : aiPlan[selectedAiPlan].remainingCreditDeficit}
+                                                            {selectedPlanRequirementsText}
                                                         </p>
                                                     </div>
                                                 </div>
 
+                                                <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2 mb-3">
+                                                    <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Overall credit gap after this plan</p>
+                                                    <p className="text-sm font-semibold">{selectedPlanCreditText}</p>
+                                                    <p className="text-[11px] mt-1 text-muted dark:text-gray-400">
+                                                        This is the remaining program-wide credit gap, not just this term&apos;s unfinished courses.
+                                                    </p>
+                                                </div>
+
                                                 <div>
                                                     <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Why this plan</p>
-                                                    {aiPlan[selectedAiPlan].reasoning.map((line, i) => (
+                                                    {selectedPlan.reasoning.map((line, i) => (
                                                         <p key={`${selectedAiPlan}-reason-${i}`} className="text-xs text-muted dark:text-gray-400 mb-1">- {line}</p>
                                                     ))}
                                                 </div>
