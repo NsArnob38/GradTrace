@@ -54,6 +54,15 @@ npm run dev
 ```
 *The web dashboard will be available at `http://localhost:3000`*
 
+### 3. Local MCP Server
+
+This repo includes two MCP paths:
+
+- `mcp_graduation_server/` — existing HTTP JSON-RPC MCP server for deterministic graduation-audit tools.
+- `mcp_server/` — local `stdio` MCP adapter for Cursor, Claude Desktop, and other local MCP clients.
+
+See `mcp_server/README.md` for install, run, and client configuration instructions.
+
 ---
 
 ## 🔌 API Endpoints (CSE226 Rubric)

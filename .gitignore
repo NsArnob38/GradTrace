@@ -23,3 +23,11 @@ level_3_output.txt
 .env
 .env.*
 !.env.example
+
+# Local MCP/client config and uploaded/generated media artifacts
+.cursor/mcp.json
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.webp
