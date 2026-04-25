@@ -528,6 +528,14 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
         : selectedPlan.remainingCreditDeficit === 0
             ? "No credit gap"
             : `${selectedPlan.remainingCreditDeficit} credits still needed`;
+    const selectedPlanProgressText = !selectedPlan
+        ? ""
+        : selectedPlan.overlapTotal > 0
+            ? `${selectedPlan.overlapCount} of ${selectedPlan.overlapTotal} roadmap items targeted`
+            : `${selectedPlan.courses.length} course${selectedPlan.courses.length === 1 ? "" : "s"} planned`;
+    const selectedPlanTermSummary = selectedPlan
+        ? `This next-term plan adds ${selectedPlan.totalCredits} planned credits and targets ${selectedPlan.overlapCount} roadmap item${selectedPlan.overlapCount === 1 ? "" : "s"}.`
+        : "";
 
     const SectionHeader = ({ id: sId, icon: Icon, title, badge }: { id: string; icon: any; title: string; badge?: any }) => (
         <button onClick={() => toggle(sId)} className="w-full flex items-center justify-between p-5 hover:bg-bg/50 dark:hover:bg-gray-800/50 transition-colors">
@@ -1060,10 +1068,18 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                                     )}
                                                 </div>
 
+                                                <div className="rounded-md border border-accent/30 bg-accent/10 px-2.5 py-2 mb-3">
+                                                    <p className="text-[10px] uppercase tracking-wider text-accent font-semibold">Next-term progress</p>
+                                                    <p className="text-sm font-semibold text-primary dark:text-gray-100">{selectedPlanTermSummary}</p>
+                                                    <p className="text-[11px] mt-1 text-muted dark:text-gray-400">
+                                                        This is a semester plan, not a promise that all graduation requirements finish immediately.
+                                                    </p>
+                                                </div>
+
                                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                                                     <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
-                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Roadmap overlap</p>
-                                                        <p className="text-sm font-semibold">{selectedPlan.overlapCount}/{selectedPlan.overlapTotal}</p>
+                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Plan coverage</p>
+                                                        <p className="text-sm font-semibold">{selectedPlanProgressText}</p>
                                                     </div>
                                                     <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
                                                         <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Projected status</p>
@@ -1072,18 +1088,18 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                                         </p>
                                                     </div>
                                                     <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
-                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Outstanding requirements</p>
+                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">After this term</p>
                                                         <p className="text-sm font-semibold">
                                                             {selectedPlanRequirementsText}
                                                         </p>
                                                     </div>
                                                 </div>
 
-                                                <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2 mb-3">
-                                                    <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Overall credit gap after this plan</p>
-                                                    <p className="text-sm font-semibold">{selectedPlanCreditText}</p>
+                                                <div className="rounded-md border border-border dark:border-gray-700 bg-white/40 dark:bg-gray-900/70 px-2.5 py-2 mb-3">
+                                                    <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Long-term graduation context</p>
+                                                    <p className="text-sm font-semibold text-muted dark:text-gray-300">{selectedPlanCreditText}</p>
                                                     <p className="text-[11px] mt-1 text-muted dark:text-gray-400">
-                                                        This is the remaining program-wide credit gap, not just this term&apos;s unfinished courses.
+                                                        The number above is the remaining program-wide gap after this semester plan. Future terms are still expected.
                                                     </p>
                                                 </div>
 
