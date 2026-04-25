@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "GradeTrace",
+    "slug": "gradetrace-mobile",
+    "scheme": "gradetrace",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nsarnob38.gradetrace"
+    },
+    "android": {
+      "package": "com.nsarnob38.gradetrace"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-web-browser"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f3fa5369-998d-4dd4-b66b-600d206ca069"
+      }
+    },
+    "owner": "steiny38"
+  }
+}
