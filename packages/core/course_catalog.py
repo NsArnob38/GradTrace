@@ -42,6 +42,7 @@ class CourseCatalog:
     # ═══════════════════════════════════════════════════
 
     CSE_MAJOR_CORE = {
+        "CSE115": 3, "CSE115L": 1,
         "CSE173": 3,
         "CSE215": 3, "CSE215L": 1,
         "CSE225": 3, "CSE225L": 1,
@@ -55,18 +56,16 @@ class CourseCatalog:
         "CSE332": 3,
         "CSE373": 3,
         "CSE425": 3,
-        "EEE141": 3, "EEE141L": 1,
-        "EEE111": 3, "EEE111L": 1,
+        "EEE452": 3,
+        "CEE110": 1,
     }
 
     CSE_CAPSTONE = {
         "CSE499A": 2,
         "CSE499B": 2,
-        "EEE452": 3,
     }
 
     CSE_SEPS_CORE = {
-        "CSE115": 3, "CSE115L": 1,
         "MAT116": 3,
         "MAT120": 3,
         "MAT130": 3,
@@ -78,7 +77,8 @@ class CourseCatalog:
         "PHY108": 3, "PHY108L": 1,
         "CHE101": 3, "CHE101L": 1,
         "BIO103": 3, "BIO103L": 1,
-        "CEE110": 1,
+        "EEE141": 3, "EEE141L": 1,
+        "EEE111": 3, "EEE111L": 1,
     }
 
     CSE_GED_REQUIRED = {
@@ -279,6 +279,8 @@ class CourseCatalog:
 
     # CSE courses
     _CSE_MAJOR_CORE_DB = {
+        "CSE115": ("Programming Language I", 3),
+        "CSE115L": ("Programming Language I Lab", 1),
         "CSE173": ("Discrete Mathematics", 3),
         "CSE215": ("Programming Language II", 3),
         "CSE215L": ("Programming Language II Lab", 1),
@@ -297,21 +299,16 @@ class CourseCatalog:
         "CSE332": ("Computer Organization & Architecture", 3),
         "CSE373": ("Design & Analysis of Algorithms", 3),
         "CSE425": ("Concepts of Programming Languages", 3),
-        "EEE141": ("Electrical Circuits I", 3),
-        "EEE141L": ("Electrical Circuits I Lab", 1),
-        "EEE111": ("Analog Electronics I", 3),
-        "EEE111L": ("Analog Electronics I Lab", 1),
+        "EEE452": ("Engineering Economics", 3),
+        "CEE110": ("Engineering Drawing", 1),
     }
 
     _CSE_CAPSTONE_DB = {
         "CSE499A": ("Senior Capstone Design I", 2),
         "CSE499B": ("Senior Capstone Design II", 2),
-        "EEE452": ("Engineering Economics", 3),
     }
 
     _CSE_SEPS_DB = {
-        "CSE115": ("Programming Language I", 3),
-        "CSE115L": ("Programming Language I Lab", 1),
         "MAT116": ("Pre-Calculus", 3),
         "MAT120": ("Calculus I", 3),
         "MAT125": ("Linear Algebra", 3),
@@ -327,7 +324,10 @@ class CourseCatalog:
         "CHE101L": ("Chemistry I Lab", 1),
         "BIO103": ("Biology I", 3),
         "BIO103L": ("Biology I Lab", 1),
-        "CEE110": ("Engineering Drawing", 1),
+        "EEE141": ("Electrical Circuits I", 3),
+        "EEE141L": ("Electrical Circuits I Lab", 1),
+        "EEE111": ("Analog Electronics I", 3),
+        "EEE111L": ("Analog Electronics I Lab", 1),
     }
 
     _CSE_GED_DB = {
