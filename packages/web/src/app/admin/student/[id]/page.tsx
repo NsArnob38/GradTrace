@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import {
-    Star, ArrowLeft, GraduationCap, TrendingUp, Clock, CheckCircle2, XCircle,
+    Star, ArrowLeft, GraduationCap, Clock, CheckCircle2, XCircle,
 } from "lucide-react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -110,7 +110,7 @@ export default function AdminStudentPage({ params }: { params: Promise<{ id: str
                 </h2>
                 {history.length > 0 ? (
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                        {history.map((h: any, i: number) => (
+                        {history.map((h: any) => (
                             <div key={h.id} className="flex items-center justify-between px-5 py-3 border-b border-border last:border-0">
                                 <div>
                                     <p className="text-sm font-medium">{h.file_name}</p>

@@ -33,9 +33,9 @@ export default function AdminLogin() {
 
             const { token } = await res.json();
             localStorage.setItem("admin_token", token);
-            router.push("/admin/dashboard");
-        } catch (err: any) {
-            setError(err.message || "Failed to connect to the server.");
+            router.push("/admin");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Failed to connect to the server.");
         } finally {
             setLoading(false);
         }

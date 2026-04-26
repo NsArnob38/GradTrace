@@ -28,11 +28,17 @@ async function getToken(): Promise<string | null> {
     return data.session?.access_token ?? null;
 }
 
+function getAdminToken(): string | null {
+    if (typeof window === "undefined") return null;
+    return window.localStorage.getItem("admin_token");
+}
+
 async function request<T = unknown>(
     path: string,
     options: RequestInit = {}
 ): Promise<ApiEnvelope<T>> {
-    const token = await getToken();
+    const isAdminPath = path.startsWith("/admin");
+    const token = isAdminPath ? getAdminToken() : await getToken();
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
         ...(options.headers as Record<string, string>),
@@ -177,6 +183,12 @@ export const api = {
     // Admin
     listStudents: () => request("/admin/students"),
     getStudent: (id: string) => request(`/admin/students/${id}`),
+    getAdminStats: () => request("/admin/stats"),
+    listAdminAudits: () => request("/admin/audits"),
+    listAdmins: () => request<string[]>("/admin/admins"),
+    addAdmin: (admin_id: string, password: string) =>
+        request("/admin/admins", { method: "POST", body: JSON.stringify({ admin_id, password }) }),
+    removeAdmin: (admin_id: string) => request(`/admin/admins/${admin_id}`, { method: "DELETE" }),
     listPrograms: () => request("/admin/programs"),
     updatePrograms: (entries: Record<string, unknown>[]) =>
         request("/admin/programs", { method: "PUT", body: JSON.stringify(entries) }),

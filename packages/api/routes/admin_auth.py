@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Header, Body
 from pydantic import BaseModel
 from packages.api.config import get_settings
 from packages.api.deps import get_supabase_admin
@@ -7,6 +7,24 @@ import datetime
 import os
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+
+def _require_admin_token(authorization: str) -> dict:
+    settings = get_settings()
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+
+    if payload.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Not an admin")
+
+    return payload
 
 class AdminLoginRequest(BaseModel):
     admin_id: str
@@ -36,16 +54,7 @@ async def admin_login(body: AdminLoginRequest):
 
 @router.get("/stats")
 async def get_stats(authorization: str = Header(...)):
-    import jwt as pyjwt
-    from packages.api.config import get_settings
-    settings = get_settings()
-    token = authorization.replace("Bearer ", "")
-    try:
-        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Not an admin")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+    _require_admin_token(authorization)
         
     db = get_supabase_admin()
     
@@ -84,40 +93,70 @@ async def get_stats(authorization: str = Header(...)):
 
 @router.get("/students")  
 async def get_students(authorization: str = Header(...)):
-    import jwt as pyjwt
-    from packages.api.config import get_settings
-    settings = get_settings()
-    token = authorization.replace("Bearer ", "")
-    try:
-        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Not an admin")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
-        
+    _require_admin_token(authorization)
+         
     db = get_supabase_admin()
-    profiles = db.table("profiles").select("id, email, created_at, role, full_name").order("created_at", desc=True).execute()
+    profiles = db.table("profiles").select(
+        "id, email, created_at, role, full_name, student_id, program, bba_concentration"
+    ).order("created_at", desc=True).execute()
     students = profiles.data or []
     
     for s in students:
         hist = db.table("audit_results").select("id", count="exact").eq("user_id", s["id"]).execute()
         s["total_audits"] = hist.count if hist.count else 0
-        
+
+        latest = db.table("scan_history") \
+            .select("summary, scanned_at") \
+            .eq("user_id", s["id"]) \
+            .order("scanned_at", desc=True) \
+            .limit(1) \
+            .execute()
+        s["latest_audit"] = latest.data[0] if latest.data else None
+         
     return students
+
+
+@router.get("/students/{student_id}")
+async def get_student_detail(student_id: str, authorization: str = Header(...)):
+    _require_admin_token(authorization)
+
+    db = get_supabase_admin()
+
+    profile = db.table("profiles") \
+        .select("*") \
+        .eq("id", student_id) \
+        .single() \
+        .execute()
+    if not profile.data:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    history = db.table("scan_history") \
+        .select("*") \
+        .eq("user_id", student_id) \
+        .order("scanned_at", desc=True) \
+        .execute()
+
+    latest_audit = None
+    if history.data:
+        latest_audit_id = history.data[0].get("audit_result_id")
+        if latest_audit_id:
+            latest = db.table("audit_results") \
+                .select("*") \
+                .eq("id", latest_audit_id) \
+                .single() \
+                .execute()
+            latest_audit = latest.data
+
+    return {
+        "profile": profile.data,
+        "history": history.data or [],
+        "latest_audit": latest_audit,
+    }
 
 
 @router.get("/audits")
 async def get_audits(authorization: str = Header(...)):
-    import jwt as pyjwt
-    from packages.api.config import get_settings
-    settings = get_settings()
-    token = authorization.replace("Bearer ", "")
-    try:
-        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Not an admin")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+    _require_admin_token(authorization)
         
     db = get_supabase_admin()
     audits = db.table("audit_results").select("*").order("generated_at", desc=True).limit(100).execute()
@@ -136,16 +175,7 @@ async def get_audits(authorization: str = Header(...)):
 
 @router.get("/admins")
 async def list_admins(authorization: str = Header(...)):
-    import jwt as pyjwt
-    from packages.api.config import get_settings
-    settings = get_settings()
-    token = authorization.replace("Bearer ", "")
-    try:
-        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Not an admin")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+    _require_admin_token(authorization)
         
     admins = []
     if settings.admin_credentials:
@@ -160,18 +190,18 @@ class AddAdminRequest(BaseModel):
     admin_id: str
     password: str
 
+
+class ProgramEntry(BaseModel):
+    program_code: str
+    course_code: str
+    course_name: str
+    credits: int | float
+    category: str
+
 @router.post("/admins")
 async def add_admin(body: AddAdminRequest, authorization: str = Header(...)):
-    import jwt as pyjwt
-    from packages.api.config import get_settings
     settings = get_settings()
-    token = authorization.replace("Bearer ", "")
-    try:
-        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Not an admin")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+    _require_admin_token(authorization)
         
     admins = {}
     if settings.admin_credentials:
@@ -195,16 +225,8 @@ async def add_admin(body: AddAdminRequest, authorization: str = Header(...)):
 
 @router.delete("/admins/{admin_id}")
 async def remove_admin(admin_id: str, authorization: str = Header(...)):
-    import jwt as pyjwt
-    from packages.api.config import get_settings
     settings = get_settings()
-    token = authorization.replace("Bearer ", "")
-    try:
-        payload = pyjwt.decode(token, settings.admin_jwt_secret, algorithms=["HS256"])
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Not an admin")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Invalid or expired token: {str(e)}")
+    _require_admin_token(authorization)
         
     admins = []
     if settings.admin_credentials:
@@ -216,3 +238,28 @@ async def remove_admin(admin_id: str, authorization: str = Header(...)):
                 
     os.environ["ADMIN_CREDENTIALS"] = ",".join(admins)
     return {"success": True}
+
+
+@router.get("/programs")
+async def list_programs(authorization: str = Header(...)):
+    _require_admin_token(authorization)
+
+    db = get_supabase_admin()
+    result = db.table("programs").select("*").execute()
+    return result.data or []
+
+
+@router.put("/programs")
+async def update_programs(entries: list[ProgramEntry] = Body(...), authorization: str = Header(...)):
+    _require_admin_token(authorization)
+
+    db = get_supabase_admin()
+    payload = [entry.model_dump() for entry in entries]
+
+    if payload:
+        program_codes = sorted({entry["program_code"] for entry in payload})
+        for program_code in program_codes:
+            db.table("programs").delete().eq("program_code", program_code).execute()
+        db.table("programs").insert(payload).execute()
+
+    return {"updated": len(payload)}

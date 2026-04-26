@@ -14,6 +14,11 @@ services:
           type: web
           name: gradetrace-api
           envVarKey: RENDER_EXTERNAL_URL
+      - key: MCP_SERVER_URL
+        fromService:
+          type: web
+          name: gradetrace-mcp
+          envVarKey: RENDER_EXTERNAL_URL
 
   # FastAPI Backend
   - type: web
@@ -44,4 +49,22 @@ services:
       - key: ADVISOR_MODEL
         value: gemini-3.1-flash-lite-preview
       - key: MCP_SERVER_URL
-        sync: false
+        fromService:
+          type: web
+          name: gradetrace-mcp
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # Graduation MCP Server
+  - type: web
+    name: gradetrace-mcp
+    env: python
+    region: ohio
+    plan: free
+    rootDir: mcp_graduation_server
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: LOG_LEVEL
+        value: INFO
