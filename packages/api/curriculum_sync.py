@@ -23,6 +23,10 @@ _DEFAULTS = {
     "BBA_CORE": deepcopy(CourseCatalog.BBA_CORE),
     "BBA_GED": deepcopy(CourseCatalog.BBA_GED),
     "BBA_GED_WAIVABLE": deepcopy(CourseCatalog.BBA_GED_WAIVABLE),
+    "BBA_GED_CHOICE_LANG": deepcopy(CourseCatalog.BBA_GED_CHOICE_LANG),
+    "BBA_GED_CHOICE_HIS": deepcopy(CourseCatalog.BBA_GED_CHOICE_HIS),
+    "BBA_GED_CHOICE_POL": deepcopy(CourseCatalog.BBA_GED_CHOICE_POL),
+    "BBA_GED_CHOICE_SOC": deepcopy(CourseCatalog.BBA_GED_CHOICE_SOC),
     "BBA_GED_CHOICE_SCI": deepcopy(CourseCatalog.BBA_GED_CHOICE_SCI),
     "BBA_GED_CHOICE_LAB": deepcopy(CourseCatalog.BBA_GED_CHOICE_LAB),
     "BBA_INTERNSHIP": deepcopy(CourseCatalog.BBA_INTERNSHIP),
@@ -149,6 +153,8 @@ def _sync_cse(rows: list[dict[str, Any]]) -> None:
             CourseCatalog._CSE_SEPS_DB[code] = (name, credits)
         elif category == "GED_open_elective":
             open_elective_credits = max(0, credits)
+        elif category == "catalog_only":
+            CourseCatalog._CSE_GED_DB[code] = (name, credits)
         elif category.endswith("pick1") or category.endswith("choice_1"):
             ged_choice_1[code] = credits
             CourseCatalog._CSE_GED_DB[code] = (name, credits)
@@ -186,6 +192,10 @@ def _sync_bba(rows: list[dict[str, Any]], concentration_rows: list[dict[str, Any
     major_core: dict[str, int] = {}
     ged_required: dict[str, int] = {}
     ged_waivable = deepcopy(_DEFAULTS["BBA_GED_WAIVABLE"])
+    ged_choice_lang: dict[str, int] = {}
+    ged_choice_his: dict[str, int] = {}
+    ged_choice_pol: dict[str, int] = {}
+    ged_choice_soc: dict[str, int] = {}
     ged_science: dict[str, int] = {}
     ged_labs: dict[str, int] = {}
     internship: dict[str, int] = {}
@@ -213,11 +223,26 @@ def _sync_bba(rows: list[dict[str, Any]], concentration_rows: list[dict[str, Any
             CourseCatalog._BBA_GED_DB[code] = (name, credits)
         elif category == "free_elective":
             free_elective_credits += max(0, credits)
-        elif category == "GED_science_pick3":
+        elif category == "GED_choice_lang":
+            ged_choice_lang[code] = credits
+            CourseCatalog._BBA_GED_DB[code] = (name, credits)
+        elif category == "GED_choice_his":
+            ged_choice_his[code] = credits
+            CourseCatalog._BBA_GED_DB[code] = (name, credits)
+        elif category == "GED_choice_pol":
+            ged_choice_pol[code] = credits
+            CourseCatalog._BBA_GED_DB[code] = (name, credits)
+        elif category == "GED_choice_soc":
+            ged_choice_soc[code] = credits
+            CourseCatalog._BBA_GED_DB[code] = (name, credits)
+        elif category in {"GED_choice_sci", "GED_science_pick3"}:
             if code.endswith("L"):
                 ged_labs[code] = credits
             else:
                 ged_science[code] = credits
+            CourseCatalog._BBA_GED_DB[code] = (name, credits)
+        elif category == "GED_choice_lab":
+            ged_labs[code] = credits
             CourseCatalog._BBA_GED_DB[code] = (name, credits)
         elif category.startswith("GED_"):
             ged_required[code] = credits
@@ -230,6 +255,10 @@ def _sync_bba(rows: list[dict[str, Any]], concentration_rows: list[dict[str, Any
     if ged_required:
         CourseCatalog.BBA_GED = ged_required
     CourseCatalog.BBA_GED_WAIVABLE = ged_waivable
+    CourseCatalog.BBA_GED_CHOICE_LANG = ged_choice_lang
+    CourseCatalog.BBA_GED_CHOICE_HIS = ged_choice_his
+    CourseCatalog.BBA_GED_CHOICE_POL = ged_choice_pol
+    CourseCatalog.BBA_GED_CHOICE_SOC = ged_choice_soc
     CourseCatalog.BBA_GED_CHOICE_SCI = ged_science
     CourseCatalog.BBA_GED_CHOICE_LAB = ged_labs
     if internship:

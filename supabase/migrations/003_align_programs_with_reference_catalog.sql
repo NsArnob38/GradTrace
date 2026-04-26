@@ -1,14 +1,8 @@
--- GradeTrace curriculum seed aligned to packages/core/course_catalog.py
-
-DELETE FROM programs;
+DELETE FROM programs WHERE program_code = 'CSE' OR program_code = 'BBA' OR program_code LIKE 'BBA\_%';
 
 INSERT INTO programs (program_code, course_code, course_name, credits, category) VALUES
-
--- CSE waivable
 ('CSE', 'ENG102', 'Introduction to Composition', 3, 'waivable'),
 ('CSE', 'MAT112', 'College Algebra', 0, 'waivable'),
-
--- CSE GED required
 ('CSE', 'ENG103', 'Intermediate Composition', 3, 'GED_required'),
 ('CSE', 'ENG105', 'Advanced Writing Skills', 3, 'GED_required'),
 ('CSE', 'ENG111', 'Public Speaking', 3, 'GED_required'),
@@ -16,8 +10,6 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('CSE', 'PHI104', 'Introduction to Ethics', 3, 'GED_required'),
 ('CSE', 'HIS101', 'Bangladesh History & Culture', 3, 'GED_required'),
 ('CSE', 'HIS102', 'World Civilization', 3, 'GED_required'),
-
--- CSE GED choice groups
 ('CSE', 'ECO101', 'Intro to Microeconomics', 3, 'GED_choice_1'),
 ('CSE', 'ECO104', 'Intro to Macroeconomics', 3, 'GED_choice_1'),
 ('CSE', 'POL101', 'Intro to Political Science', 3, 'GED_choice_2'),
@@ -26,13 +18,9 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('CSE', 'ANT101', 'Anthropology', 3, 'GED_choice_3'),
 ('CSE', 'ENV203', 'Environmental Studies', 3, 'GED_choice_3'),
 ('CSE', 'GEO205', 'Geography', 3, 'GED_choice_3'),
-
--- CSE recognized catalog-only lower-level courses
 ('CSE', 'CSE101', 'Intro to Python Programming', 3, 'catalog_only'),
 ('CSE', 'CSE145', 'Intro to AI', 3, 'catalog_only'),
 ('CSE', 'CSE226', 'Fundamentals of Vibe Coding', 3, 'catalog_only'),
-
--- CSE SEPS core
 ('CSE', 'CSE115', 'Programming Language I', 3, 'SEPS_core'),
 ('CSE', 'CSE115L', 'Programming Language I Lab', 1, 'SEPS_core'),
 ('CSE', 'MAT116', 'Pre-Calculus', 3, 'SEPS_core'),
@@ -51,8 +39,6 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('CSE', 'BIO103', 'Biology I', 3, 'SEPS_core'),
 ('CSE', 'BIO103L', 'Biology I Lab', 1, 'SEPS_core'),
 ('CSE', 'CEE110', 'Engineering Drawing', 1, 'SEPS_core'),
-
--- CSE major core
 ('CSE', 'CSE173', 'Discrete Mathematics', 3, 'major_core'),
 ('CSE', 'CSE215', 'Programming Language II', 3, 'major_core'),
 ('CSE', 'CSE215L', 'Programming Language II Lab', 1, 'major_core'),
@@ -75,16 +61,10 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('CSE', 'EEE141L', 'Electrical Circuits I Lab', 1, 'major_core'),
 ('CSE', 'EEE111', 'Analog Electronics I', 3, 'major_core'),
 ('CSE', 'EEE111L', 'Analog Electronics I Lab', 1, 'major_core'),
-
--- CSE capstone
 ('CSE', 'CSE499A', 'Senior Capstone Design I', 2, 'capstone'),
 ('CSE', 'CSE499B', 'Senior Capstone Design II', 2, 'capstone'),
 ('CSE', 'EEE452', 'Engineering Economics', 3, 'capstone'),
-
--- CSE open elective placeholder
 ('CSE', 'OPEN_ELECTIVE', 'Open Elective', 3, 'GED_open_elective'),
-
--- CSE elective catalog
 ('CSE', 'CSE421', 'Machine Learning', 3, 'elective_400'),
 ('CSE', 'CSE422', 'Simulation and Modeling', 3, 'elective_400'),
 ('CSE', 'CSE423', 'Advanced Operating Systems', 3, 'elective_400'),
@@ -105,8 +85,6 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('CSE', 'CSE474', 'Computational Complexity', 3, 'elective_400'),
 ('CSE', 'CSE475', 'Automata Theory & Formal Language', 3, 'elective_400'),
 ('CSE', 'CSE478', 'Graph Theory', 3, 'elective_400'),
-
--- BBA school core
 ('BBA', 'ECO101', 'Intro to Microeconomics', 3, 'school_core'),
 ('BBA', 'ECO104', 'Intro to Macroeconomics', 3, 'school_core'),
 ('BBA', 'MIS107', 'Introduction to Computers', 3, 'school_core'),
@@ -114,8 +92,6 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('BBA', 'BUS172', 'Introduction to Statistics', 3, 'school_core'),
 ('BBA', 'BUS173', 'Applied Statistics', 3, 'school_core'),
 ('BBA', 'BUS135', 'Business Mathematics', 3, 'school_core'),
-
--- BBA core
 ('BBA', 'ACT201', 'Intro to Financial Accounting', 3, 'major_core'),
 ('BBA', 'ACT202', 'Intro to Managerial Accounting', 3, 'major_core'),
 ('BBA', 'FIN254', 'Intro to Financial Management', 3, 'major_core'),
@@ -129,16 +105,12 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('BBA', 'MGT314', 'Production Management', 3, 'major_core'),
 ('BBA', 'MGT368', 'Entrepreneurship', 3, 'major_core'),
 ('BBA', 'MGT489', 'Strategic Management', 3, 'major_core'),
-
--- BBA GED required
 ('BBA', 'ENG103', 'Intermediate Composition', 3, 'GED_required'),
 ('BBA', 'ENG105', 'Advanced Composition', 3, 'GED_required'),
 ('BBA', 'PHI401', 'Ethics / Philosophy', 3, 'GED_required'),
 ('BBA', 'BUS401', 'Business Ethics', 3, 'GED_required'),
 ('BBA', 'INT101', 'Introduction to International Relations', 3, 'GED_required'),
 ('BBA', 'ECO249', 'Socio Economic Profiles of Bangladesh', 3, 'GED_required'),
-
--- BBA GED choices
 ('BBA', 'BEN205', 'Bengali Literature', 3, 'GED_choice_lang'),
 ('BBA', 'ENG115', 'Advanced English', 3, 'GED_choice_lang'),
 ('BBA', 'CHN101', 'Chinese Language', 3, 'GED_choice_lang'),
@@ -164,16 +136,12 @@ INSERT INTO programs (program_code, course_code, course_name, credits, category)
 ('BBA', 'PSY101L', 'Intro to Psychology Lab', 1, 'GED_choice_lab'),
 ('BBA', 'PHY107L', 'Physics I Lab', 1, 'GED_choice_lab'),
 ('BBA', 'CHE101L', 'Chemistry I Lab', 1, 'GED_choice_lab'),
-
--- BBA waivable and internship/free elective
 ('BBA', 'ENG102', 'Introduction to Composition', 3, 'waivable'),
 ('BBA', 'BUS112', 'Intro to Business Mathematics', 3, 'waivable'),
 ('BBA', 'BUS498', 'Internship', 4, 'internship'),
 ('BBA', 'FREE_ELEC_1', 'Free Elective 1', 3, 'free_elective'),
 ('BBA', 'FREE_ELEC_2', 'Free Elective 2', 3, 'free_elective'),
 ('BBA', 'FREE_ELEC_3', 'Free Elective 3', 3, 'free_elective'),
-
--- BBA concentrations
 ('BBA_ACT', 'ACT310', 'Intermediate Accounting I', 3, 'concentration_core'),
 ('BBA_ACT', 'ACT320', 'Intermediate Accounting II', 3, 'concentration_core'),
 ('BBA_ACT', 'ACT360', 'Advanced Managerial Accounting', 3, 'concentration_core'),

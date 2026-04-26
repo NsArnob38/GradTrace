@@ -290,16 +290,29 @@ class GraduationAuditor:
         if missing_ged:
             remaining["GED"] = missing_ged
 
-        # Wait, GED Choices have been relaxed into the Free Elective pool (up to 33 credits)
+        missing_lang = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_LANG, passed)
+        if missing_lang:
+            remaining["GED Language Choice"] = missing_lang
 
-        science_options = {**C.BBA_GED_CHOICE_SCI, **C.BBA_GED_CHOICE_LAB}
-        if science_options:
-            science_credits = sum(cr for code, cr in science_options.items() if code in passed)
-            science_required = 12
-            if science_credits < science_required:
-                remaining["GED Science & Lab"] = {
-                    f"Science and lab courses ({science_required - science_credits} credits needed)": science_required - science_credits
-                }
+        missing_his = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_HIS, passed)
+        if missing_his:
+            remaining["GED History Choice"] = missing_his
+
+        missing_pol = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_POL, passed)
+        if missing_pol:
+            remaining["GED Political Science Choice"] = missing_pol
+
+        missing_soc = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_SOC, passed)
+        if missing_soc:
+            remaining["GED Social Science Choice"] = missing_soc
+
+        missing_sci = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_SCI, passed)
+        if missing_sci:
+            remaining["GED Science Choice"] = missing_sci
+
+        missing_lab = GraduationAuditor._check_choice_group(C.BBA_GED_CHOICE_LAB, passed)
+        if missing_lab:
+            remaining["GED Lab Choice"] = missing_lab
 
         # Waivable courses
         waivable_remaining = {}
