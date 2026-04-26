@@ -14,6 +14,8 @@ import io
 import logging
 import pandas as pd
 
+from packages.api.curriculum_sync import sync_course_catalog_with_supabase
+from packages.api.deps import get_supabase_admin
 from packages.core.level1 import run_level1
 from packages.core.level2 import run_level2
 from packages.core.level3 import run_level3
@@ -56,12 +58,17 @@ async def get_dataframe_from_upload(file: UploadFile) -> pd.DataFrame:
 
 router = APIRouter(prefix="/audit", tags=["rubric_endpoints"])
 
+
+def sync_curriculum() -> None:
+    sync_course_catalog_with_supabase(get_supabase_admin())
+
 @router.post("/level1", summary="CSE226 Rubric: Level 1 (Credit Tallying)", response_model=Level1Response)
 async def api_level1(
     file: UploadFile = File(..., description="The student's transcript CSV or PDF file"),
     program: str = Form(..., description="The student's major (e.g., 'CSE' or 'BBA')")
 ):
     try:
+        sync_curriculum()
         df = await get_dataframe_from_upload(file)
         result = run_level1(df, program)
         return {"status": "success", "data": result}
@@ -75,6 +82,7 @@ async def api_level2(
     program: str = Form(...)
 ):
     try:
+        sync_curriculum()
         df = await get_dataframe_from_upload(file)
         result = run_level2(df, program)
         return {"status": "success", "data": result}
@@ -88,6 +96,7 @@ async def api_level3(
     program: str = Form(...)
 ):
     try:
+        sync_curriculum()
         df = await get_dataframe_from_upload(file)
         result = run_level3(df, program)
         return {"status": "success", "data": result}
@@ -101,6 +110,7 @@ async def api_full_audit(
     program: str = Form(...)
 ):
     try:
+        sync_curriculum()
         df = await get_dataframe_from_upload(file)
         result = run_full_audit(df, program)
         return {"status": "success", "data": result}

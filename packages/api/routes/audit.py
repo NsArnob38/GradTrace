@@ -3,6 +3,7 @@ GradeTrace API — Audit Routes
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Body
+from packages.api.curriculum_sync import sync_course_catalog_with_supabase
 from packages.api.deps import get_current_user, get_supabase_admin, success_response
 
 router = APIRouter(prefix="/audit", tags=["audit"])
@@ -42,6 +43,8 @@ def run_audit(
     raw_data = transcript.data.get("raw_data", [])
     if not raw_data:
         raise HTTPException(status_code=400, detail="Transcript has no course data")
+
+    sync_course_catalog_with_supabase(db)
 
     # Run audit engine
     from packages.core.unified import UnifiedAuditor

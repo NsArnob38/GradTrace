@@ -292,6 +292,15 @@ class GraduationAuditor:
 
         # Wait, GED Choices have been relaxed into the Free Elective pool (up to 33 credits)
 
+        science_options = {**C.BBA_GED_CHOICE_SCI, **C.BBA_GED_CHOICE_LAB}
+        if science_options:
+            science_credits = sum(cr for code, cr in science_options.items() if code in passed)
+            science_required = 12
+            if science_credits < science_required:
+                remaining["GED Science & Lab"] = {
+                    f"Science and lab courses ({science_required - science_credits} credits needed)": science_required - science_credits
+                }
+
         # Waivable courses
         waivable_remaining = {}
         for course, cr in C.BBA_GED_WAIVABLE.items():
