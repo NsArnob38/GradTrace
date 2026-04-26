@@ -979,141 +979,143 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                 </div>
                             )}
 
-                            <div className="mt-5 pt-4 border-t border-border dark:border-gray-800">
-                                <div className="flex items-center justify-between gap-3 mb-3">
-                                    <div>
-                                        <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> AI Planner</p>
-                                        <p className="text-sm text-muted dark:text-gray-400">Choose a strategy and generate a realistic next-term course plan.</p>
-                                    </div>
-                                    <button
-                                        onClick={handleGenerateAiPlan}
-                                        disabled={aiPlanLoading}
-                                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-60"
-                                    >
-                                        {aiPlanLoading ? "Generating..." : "Generate Smart Plans"}
-                                    </button>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                                    <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 px-3 py-2">
-                                        <label className="text-[10px] text-muted dark:text-gray-400 uppercase tracking-wider font-semibold block mb-1">Max Courses / Term</label>
-                                        <select
-                                            value={maxCoursesPerTerm}
-                                            onChange={(e) => setMaxCoursesPerTerm(Number(e.target.value))}
-                                            className="w-full bg-transparent text-sm outline-none"
+                            {!eligible && (
+                                <div className="mt-5 pt-4 border-t border-border dark:border-gray-800">
+                                    <div className="flex items-center justify-between gap-3 mb-3">
+                                        <div>
+                                            <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> AI Planner</p>
+                                            <p className="text-sm text-muted dark:text-gray-400">Choose a strategy and generate a realistic next-term course plan.</p>
+                                        </div>
+                                        <button
+                                            onClick={handleGenerateAiPlan}
+                                            disabled={aiPlanLoading}
+                                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent/10 text-accent hover:bg-accent/20 disabled:opacity-60"
                                         >
-                                            {[3, 4, 5, 6].map((count) => (
-                                                <option key={count} value={count} className="text-black">{count} courses</option>
-                                            ))}
-                                        </select>
+                                            {aiPlanLoading ? "Generating..." : "Generate Smart Plans"}
+                                        </button>
                                     </div>
-                                    <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 px-3 py-2">
-                                        <label className="text-[10px] text-muted dark:text-gray-400 uppercase tracking-wider font-semibold block mb-1">Max Credits / Term</label>
-                                        <select
-                                            value={maxCreditsPerTerm}
-                                            onChange={(e) => setMaxCreditsPerTerm(Number(e.target.value))}
-                                            className="w-full bg-transparent text-sm outline-none"
-                                        >
-                                            {[9, 12, 15, 18].map((credits) => (
-                                                <option key={credits} value={credits} className="text-black">{credits} credits</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
 
-                                {aiPlanError && (
-                                    <div className="text-sm text-danger bg-danger/10 border border-danger/20 rounded-lg px-3 py-2 mb-3">
-                                        {aiPlanError}
-                                    </div>
-                                )}
-
-                                {aiPlan && (
-                                    <>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
-                                            {[
-                                                { key: "FASTEST", label: "Fastest", icon: <Target className="w-3.5 h-3.5" /> },
-                                                { key: "BALANCED", label: "Balanced", icon: <Gauge className="w-3.5 h-3.5" /> },
-                                                { key: "CGPA", label: "CGPA Recovery", icon: <TrendingUp className="w-3.5 h-3.5" /> },
-                                            ].map((planTab) => (
-                                                <button
-                                                    key={planTab.key}
-                                                    onClick={() => setSelectedAiPlan(planTab.key)}
-                                                    className={`text-left rounded-lg border px-3 py-2 transition-colors ${selectedAiPlan === planTab.key
-                                                        ? "bg-accent/10 border-accent/30 text-accent"
-                                                        : "bg-bg dark:bg-gray-800 border-border dark:border-gray-700 text-muted hover:text-primary"}`}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                            <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 px-3 py-2">
+                                                <label className="text-[10px] text-muted dark:text-gray-400 uppercase tracking-wider font-semibold block mb-1">Max Courses / Term</label>
+                                                <select
+                                                    value={maxCoursesPerTerm}
+                                                    onChange={(e) => setMaxCoursesPerTerm(Number(e.target.value))}
+                                                    className="w-full bg-transparent text-sm outline-none"
                                                 >
-                                                    <span className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">{planTab.icon}{planTab.label}</span>
-                                                    <p className="text-[11px] mt-1 opacity-80">{aiPlan[planTab.key]?.totalCredits ?? 0} planned credits</p>
-                                                </button>
-                                            ))}
+                                                    {[3, 4, 5, 6].map((count) => (
+                                                        <option key={count} value={count} className="text-black">{count} courses</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 px-3 py-2">
+                                                <label className="text-[10px] text-muted dark:text-gray-400 uppercase tracking-wider font-semibold block mb-1">Max Credits / Term</label>
+                                                <select
+                                                    value={maxCreditsPerTerm}
+                                                    onChange={(e) => setMaxCreditsPerTerm(Number(e.target.value))}
+                                                    className="w-full bg-transparent text-sm outline-none"
+                                                >
+                                                    {[9, 12, 15, 18].map((credits) => (
+                                                        <option key={credits} value={credits} className="text-black">{credits} credits</option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </div>
 
-                                        {selectedPlan && (
-                                            <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 p-3">
-                                                <div className="flex items-start justify-between gap-3 mb-2">
-                                                    <div>
-                                                        <p className="text-sm font-semibold text-primary dark:text-gray-100">{selectedPlan.title}</p>
-                                                        <p className="text-xs text-muted dark:text-gray-400">{selectedPlan.subtitle}</p>
-                                                    </div>
-                                                    <span className="text-[11px] px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold">{selectedPlan.totalCredits} credits</span>
-                                                </div>
-
-                                                <div className="flex flex-wrap gap-2 mb-3">
-                                                    {selectedPlan.courses.length > 0 ? selectedPlan.courses.map((course, index) => (
-                                                        <span key={course} className="text-xs bg-white dark:bg-gray-900 border border-border dark:border-gray-700 px-2.5 py-1 rounded-md font-mono">
-                                                            {index + 1}. {course}
-                                                        </span>
-                                                    )) : (
-                                                        <span className="text-sm text-muted dark:text-gray-400">No additional courses recommended.</span>
-                                                    )}
-                                                </div>
-
-                                                <div className="rounded-md border border-accent/30 bg-accent/10 px-2.5 py-2 mb-3">
-                                                    <p className="text-[10px] uppercase tracking-wider text-accent font-semibold">Next-term progress</p>
-                                                    <p className="text-sm font-semibold text-primary dark:text-gray-100">{selectedPlanTermSummary}</p>
-                                                    <p className="text-[11px] mt-1 text-muted dark:text-gray-400">
-                                                        This is a semester plan, not a promise that all graduation requirements finish immediately.
-                                                    </p>
-                                                </div>
-
-                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
-                                                    <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
-                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Plan coverage</p>
-                                                        <p className="text-sm font-semibold">{selectedPlanProgressText}</p>
-                                                    </div>
-                                                    <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
-                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Projected status</p>
-                                                        <p className={`text-sm font-semibold ${selectedPlanStatusTone}`}>
-                                                            {selectedPlanStatusText}
-                                                        </p>
-                                                    </div>
-                                                    <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
-                                                        <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">After this term</p>
-                                                        <p className="text-sm font-semibold">
-                                                            {selectedPlanRequirementsText}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="rounded-md border border-border dark:border-gray-700 bg-white/40 dark:bg-gray-900/70 px-2.5 py-2 mb-3">
-                                                    <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Long-term graduation context</p>
-                                                    <p className="text-sm font-semibold text-muted dark:text-gray-300">{selectedPlanCreditText}</p>
-                                                    <p className="text-[11px] mt-1 text-muted dark:text-gray-400">
-                                                        The number above is the remaining program-wide gap after this semester plan. Future terms are still expected.
-                                                    </p>
-                                                </div>
-
-                                                <div>
-                                                    <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Why this plan</p>
-                                                    {selectedPlan.reasoning.map((line, i) => (
-                                                        <p key={`${selectedAiPlan}-reason-${i}`} className="text-xs text-muted dark:text-gray-400 mb-1">- {line}</p>
-                                                    ))}
-                                                </div>
+                                        {aiPlanError && (
+                                            <div className="text-sm text-danger bg-danger/10 border border-danger/20 rounded-lg px-3 py-2 mb-3">
+                                                {aiPlanError}
                                             </div>
                                         )}
-                                    </>
-                                )}
-                            </div>
+
+                                        {aiPlan && (
+                                            <>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
+                                                    {[
+                                                        { key: "FASTEST", label: "Fastest", icon: <Target className="w-3.5 h-3.5" /> },
+                                                        { key: "BALANCED", label: "Balanced", icon: <Gauge className="w-3.5 h-3.5" /> },
+                                                        { key: "CGPA", label: "CGPA Recovery", icon: <TrendingUp className="w-3.5 h-3.5" /> },
+                                                    ].map((planTab) => (
+                                                        <button
+                                                            key={planTab.key}
+                                                            onClick={() => setSelectedAiPlan(planTab.key)}
+                                                            className={`text-left rounded-lg border px-3 py-2 transition-colors ${selectedAiPlan === planTab.key
+                                                                ? "bg-accent/10 border-accent/30 text-accent"
+                                                                : "bg-bg dark:bg-gray-800 border-border dark:border-gray-700 text-muted hover:text-primary"}`}
+                                                        >
+                                                            <span className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">{planTab.icon}{planTab.label}</span>
+                                                            <p className="text-[11px] mt-1 opacity-80">{aiPlan[planTab.key]?.totalCredits ?? 0} planned credits</p>
+                                                        </button>
+                                                    ))}
+                                                </div>
+
+                                                {selectedPlan && (
+                                                    <div className="bg-bg dark:bg-gray-800 rounded-lg border border-border dark:border-gray-700 p-3">
+                                                        <div className="flex items-start justify-between gap-3 mb-2">
+                                                            <div>
+                                                                <p className="text-sm font-semibold text-primary dark:text-gray-100">{selectedPlan.title}</p>
+                                                                <p className="text-xs text-muted dark:text-gray-400">{selectedPlan.subtitle}</p>
+                                                            </div>
+                                                            <span className="text-[11px] px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold">{selectedPlan.totalCredits} credits</span>
+                                                        </div>
+
+                                                        <div className="flex flex-wrap gap-2 mb-3">
+                                                            {selectedPlan.courses.length > 0 ? selectedPlan.courses.map((course, index) => (
+                                                                <span key={course} className="text-xs bg-white dark:bg-gray-900 border border-border dark:border-gray-700 px-2.5 py-1 rounded-md font-mono">
+                                                                    {index + 1}. {course}
+                                                                </span>
+                                                            )) : (
+                                                                <span className="text-sm text-muted dark:text-gray-400">No additional courses recommended.</span>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="rounded-md border border-accent/30 bg-accent/10 px-2.5 py-2 mb-3">
+                                                            <p className="text-[10px] uppercase tracking-wider text-accent font-semibold">Next-term progress</p>
+                                                            <p className="text-sm font-semibold text-primary dark:text-gray-100">{selectedPlanTermSummary}</p>
+                                                            <p className="text-[11px] mt-1 text-muted dark:text-gray-400">
+                                                                This is a semester plan, not a promise that all graduation requirements finish immediately.
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+                                                            <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
+                                                                <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Plan coverage</p>
+                                                                <p className="text-sm font-semibold">{selectedPlanProgressText}</p>
+                                                            </div>
+                                                            <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
+                                                                <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Projected status</p>
+                                                                <p className={`text-sm font-semibold ${selectedPlanStatusTone}`}>
+                                                                    {selectedPlanStatusText}
+                                                                </p>
+                                                            </div>
+                                                            <div className="rounded-md border border-border dark:border-gray-700 bg-white/60 dark:bg-gray-900 px-2.5 py-2">
+                                                                <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">After this term</p>
+                                                                <p className="text-sm font-semibold">
+                                                                    {selectedPlanRequirementsText}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="rounded-md border border-border dark:border-gray-700 bg-white/40 dark:bg-gray-900/70 px-2.5 py-2 mb-3">
+                                                            <p className="text-[10px] uppercase tracking-wider text-muted dark:text-gray-400">Long-term graduation context</p>
+                                                            <p className="text-sm font-semibold text-muted dark:text-gray-300">{selectedPlanCreditText}</p>
+                                                            <p className="text-[11px] mt-1 text-muted dark:text-gray-400">
+                                                                The number above is the remaining program-wide gap after this semester plan. Future terms are still expected.
+                                                            </p>
+                                                        </div>
+
+                                                        <div>
+                                                            <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Why this plan</p>
+                                                            {selectedPlan.reasoning.map((line, i) => (
+                                                                <p key={`${selectedAiPlan}-reason-${i}`} className="text-xs text-muted dark:text-gray-400 mb-1">- {line}</p>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                </div>
+                            )}
                         </div>
                     )}
                 </motion.div>

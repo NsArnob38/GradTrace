@@ -231,7 +231,7 @@ export function AuditDetailScreen(): React.JSX.Element {
         <View style={styles.bannerTop}>
           <Text style={styles.bannerTitle}>{level3.eligible ? "Eligible for Graduation" : "Not Yet Eligible"}</Text>
           <View style={[styles.bannerStatus, level3.eligible ? styles.bannerStatusOk : styles.bannerStatusWarn]}>
-            <Text style={styles.bannerStatusText}>{level3.eligible ? "ON TRACK" : "ACTION REQUIRED"}</Text>
+            <Text style={styles.bannerStatusText}>{level3.eligible ? "GRADUATED" : "ACTION REQUIRED"}</Text>
           </View>
         </View>
         <View style={styles.metricGrid}>
