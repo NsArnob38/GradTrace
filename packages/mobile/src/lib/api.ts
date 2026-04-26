@@ -237,9 +237,114 @@ type RegisterResponse = {
   message: string;
 };
 
+export type AdminLoginResponse = {
+  token: string;
+  admin_id: string;
+};
+
+export type MobileAdminStats = {
+  total_students: number;
+  total_audits: number;
+  audits_today: number;
+  latest_audit: { email: string; created_at: string } | null;
+};
+
+export type MobileAdminStudent = {
+  id: string;
+  email: string;
+  created_at: string;
+  total_audits: number;
+  full_name?: string;
+  student_id?: string;
+  program?: string;
+  bba_concentration?: string;
+};
+
+export type MobileAdminAudit = {
+  id: string;
+  email?: string;
+  generated_at: string;
+  level_1?: { program?: string; credits_earned?: number; total_earned?: number };
+  level_2?: { cgpa?: number; credits_earned?: number };
+  level_3?: { eligible?: boolean; is_eligible?: boolean };
+};
+
+export type MobileProgramCourse = {
+  id?: string;
+  program_code: string;
+  course_code: string;
+  course_name: string;
+  credits: number;
+  category: string;
+};
+
+async function adminJson<T>(
+  token: string,
+  path: string,
+  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+  body?: unknown
+): Promise<T> {
+  const payload = await requestJson<unknown>(`${env.apiUrl}${path}`, {
+    method,
+    token,
+    body,
+  });
+  const envelope = parseEnvelope<T>(payload);
+  if (!envelope.success) {
+    throw new Error(envelope.error || "Admin API request failed");
+  }
+  if (envelope.data === null) {
+    throw new Error("Admin API returned empty data");
+  }
+  return envelope.data;
+}
+
 export async function registerAccount(email: string, password: string): Promise<RegisterResponse> {
   return publicJson<RegisterResponse>("/auth/register", "POST", {
     email,
     password,
   });
+}
+
+export async function adminLogin(adminId: string, password: string): Promise<AdminLoginResponse> {
+  return requestJson<AdminLoginResponse>(`${env.apiUrl}/admin/login`, {
+    method: "POST",
+    body: { admin_id: adminId, password },
+  });
+}
+
+export async function getAdminStats(token: string): Promise<MobileAdminStats> {
+  return adminJson<MobileAdminStats>(token, "/admin/stats");
+}
+
+export async function listAdminStudents(token: string): Promise<MobileAdminStudent[]> {
+  return adminJson<MobileAdminStudent[]>(token, "/admin/students");
+}
+
+export async function listAdminAudits(token: string): Promise<MobileAdminAudit[]> {
+  return adminJson<MobileAdminAudit[]>(token, "/admin/audits");
+}
+
+export async function listAdminAccounts(token: string): Promise<string[]> {
+  return adminJson<string[]>(token, "/admin/admins");
+}
+
+export async function addAdminAccount(token: string, adminId: string, password: string): Promise<void> {
+  await adminJson<unknown>(token, "/admin/admins", "POST", { admin_id: adminId, password });
+}
+
+export async function removeAdminAccount(token: string, adminId: string): Promise<void> {
+  await adminJson<unknown>(token, `/admin/admins/${encodeURIComponent(adminId)}`, "DELETE");
+}
+
+export async function listProgramCourses(token: string): Promise<MobileProgramCourse[]> {
+  return adminJson<MobileProgramCourse[]>(token, "/admin/programs");
+}
+
+export async function saveProgramCourses(token: string, entries: MobileProgramCourse[]): Promise<void> {
+  await adminJson<unknown>(token, "/admin/programs", "PUT", entries);
+}
+
+export async function deleteProgram(token: string, programCode: string): Promise<void> {
+  await adminJson<unknown>(token, `/admin/programs/${encodeURIComponent(programCode)}`, "DELETE");
 }

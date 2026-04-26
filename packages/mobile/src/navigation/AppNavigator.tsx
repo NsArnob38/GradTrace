@@ -10,6 +10,7 @@ import { HistoryScreen } from "../screens/HistoryScreen";
 import { UploadScreen } from "../screens/UploadScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { AuditDetailScreen } from "../screens/AuditDetailScreen";
+import { AdminScreen } from "../screens/AdminScreen";
 import type { MainTabParamList, RootStackParamList } from "./types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -101,7 +102,7 @@ function LoadingScreen(): React.JSX.Element {
 }
 
 export function AppNavigator(): React.JSX.Element {
-  const { session, loading } = useAuth();
+  const { session, isAdmin, loading } = useAuth();
 
   if (loading) return <LoadingScreen />;
 
@@ -119,6 +120,18 @@ export function AppNavigator(): React.JSX.Element {
             component={AuditDetailScreen}
             options={{
               title: "Audit Detail",
+              headerStyle: { backgroundColor: "#0F172A" },
+              headerTintColor: "#F8FAFC",
+            }}
+          />
+        </Stack.Navigator>
+      ) : isAdmin ? (
+        <Stack.Navigator>
+          <Stack.Screen
+            name="AdminHome"
+            component={AdminScreen}
+            options={{
+              title: "Admin",
               headerStyle: { backgroundColor: "#0F172A" },
               headerTintColor: "#F8FAFC",
             }}

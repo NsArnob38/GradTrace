@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   MainTabs: undefined;
+  AdminHome: undefined;
   AuditDetail: { transcriptId: string };
 };
 

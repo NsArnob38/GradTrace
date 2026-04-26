@@ -13,12 +13,14 @@ import { useAuth } from "../contexts/AuthContext";
 import { registerAccount } from "../lib/api";
 
 export function LoginScreen(): React.JSX.Element {
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn, signInAdmin, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [adminId, setAdminId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+  const [mode, setMode] = useState<"student" | "admin">("student");
 
   const handleLogin = async () => {
     setError("");
@@ -32,6 +34,24 @@ export function LoginScreen(): React.JSX.Element {
       await signIn(email.trim(), password);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+  };
+
+  const handleAdminLogin = async () => {
+    setError("");
+    setInfo("");
+    if (!adminId || !password) {
+      setError("Admin ID and password are required");
+      return;
+    }
+    setLoading(true);
+    try {
+      await signInAdmin(adminId.trim(), password);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Admin login failed");
       setLoading(false);
       return;
     }
@@ -79,42 +99,83 @@ export function LoginScreen(): React.JSX.Element {
     >
       <View style={styles.card}>
         <Text style={styles.title}>GradeTrace</Text>
-        <Text style={styles.subtitle}>Sign in with your NSU account</Text>
+        <Text style={styles.subtitle}>{mode === "student" ? "Sign in with your NSU account" : "Admin sign in"}</Text>
 
-        <Pressable style={styles.googleButton} disabled={loading} onPress={handleGoogleLogin}>
-          {loading ? <ActivityIndicator color="#020617" /> : <Text style={styles.googleButtonLabel}>Continue with NSU Google</Text>}
-        </Pressable>
-        <Text style={styles.orLabel}>or use email and password</Text>
+        <View style={styles.modeRow}>
+          <Pressable style={[styles.modeButton, mode === "student" && styles.modeButtonActive]} onPress={() => setMode("student")}>
+            <Text style={[styles.modeLabel, mode === "student" && styles.modeLabelActive]}>Student</Text>
+          </Pressable>
+          <Pressable style={[styles.modeButton, mode === "admin" && styles.modeButtonActive]} onPress={() => setMode("admin")}>
+            <Text style={[styles.modeLabel, mode === "admin" && styles.modeLabelActive]}>Admin</Text>
+          </Pressable>
+        </View>
 
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder="NSU Email"
-          placeholderTextColor="#64748B"
-          style={styles.input}
-        />
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholder="Password"
-          placeholderTextColor="#64748B"
-          style={styles.input}
-        />
+        {mode === "student" ? (
+          <>
+            <Pressable style={styles.googleButton} disabled={loading} onPress={handleGoogleLogin}>
+              {loading ? <ActivityIndicator color="#020617" /> : <Text style={styles.googleButtonLabel}>Continue with NSU Google</Text>}
+            </Pressable>
+            <Text style={styles.orLabel}>or use email and password</Text>
+
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder="NSU Email"
+              placeholderTextColor="#64748B"
+              style={styles.input}
+            />
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholder="Password"
+              placeholderTextColor="#64748B"
+              style={styles.input}
+            />
+          </>
+        ) : (
+          <>
+            <TextInput
+              value={adminId}
+              onChangeText={setAdminId}
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder="Admin ID"
+              placeholderTextColor="#64748B"
+              style={styles.input}
+            />
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholder="Password"
+              placeholderTextColor="#64748B"
+              style={styles.input}
+            />
+          </>
+        )}
 
         {!!error && <Text style={styles.error}>{error}</Text>}
         {!!info && <Text style={styles.info}>{info}</Text>}
 
-        <Pressable style={styles.button} disabled={loading} onPress={handleLogin}>
-          {loading ? <ActivityIndicator color="#020617" /> : <Text style={styles.buttonLabel}>Sign In</Text>}
-        </Pressable>
+        {mode === "student" ? (
+          <>
+            <Pressable style={styles.button} disabled={loading} onPress={handleLogin}>
+              {loading ? <ActivityIndicator color="#020617" /> : <Text style={styles.buttonLabel}>Sign In</Text>}
+            </Pressable>
 
-        <Pressable style={styles.secondaryButton} disabled={loading} onPress={handleCreateAccount}>
-          <Text style={styles.secondaryButtonLabel}>Create Account / Set Password</Text>
-        </Pressable>
+            <Pressable style={styles.secondaryButton} disabled={loading} onPress={handleCreateAccount}>
+              <Text style={styles.secondaryButtonLabel}>Create Account / Set Password</Text>
+            </Pressable>
+          </>
+        ) : (
+          <Pressable style={styles.button} disabled={loading} onPress={handleAdminLogin}>
+            {loading ? <ActivityIndicator color="#020617" /> : <Text style={styles.buttonLabel}>Admin Sign In</Text>}
+          </Pressable>
+        )}
 
       </View>
     </KeyboardAvoidingView>
@@ -164,6 +225,31 @@ const styles = StyleSheet.create({
     color: "#64748B",
     textAlign: "center",
     marginBottom: 4,
+  },
+  modeRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 4,
+  },
+  modeButton: {
+    flex: 1,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#334155",
+    alignItems: "center",
+    paddingVertical: 10,
+    backgroundColor: "#0B1220",
+  },
+  modeButtonActive: {
+    borderColor: "#22D3EE",
+    backgroundColor: "#083344",
+  },
+  modeLabel: {
+    color: "#94A3B8",
+    fontWeight: "700",
+  },
+  modeLabelActive: {
+    color: "#CFFAFE",
   },
   input: {
     backgroundColor: "#0B1220",
