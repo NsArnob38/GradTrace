@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
     BarChart3,
+    BookOpen,
     ChevronDown,
     ChevronUp,
     FileText,
     LogOut,
     Plus,
+    Save,
     Search,
     Shield,
     Trash2,
@@ -19,7 +21,7 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { api } from "@/lib/api";
 
-type Tab = "overview" | "students" | "audits" | "admins";
+type Tab = "overview" | "students" | "audits" | "programs" | "admins";
 
 type AdminStats = {
     total_students: number;
@@ -37,15 +39,6 @@ type AdminStudent = {
     student_id?: string;
     program?: string;
     bba_concentration?: string;
-    latest_audit?: {
-        summary?: {
-            cgpa?: number;
-            earned_credits?: number;
-            probation_phase?: string;
-            graduation_eligible?: boolean;
-        };
-        scanned_at?: string;
-    } | null;
 };
 
 type AdminAudit = {
@@ -57,12 +50,44 @@ type AdminAudit = {
     level_3?: { eligible?: boolean; is_eligible?: boolean };
 };
 
+type ProgramCourse = {
+    id?: string;
+    program_code: string;
+    course_code: string;
+    course_name: string;
+    credits: number;
+    category: string;
+};
+
+type EditableProgramCourse = {
+    course_code: string;
+    course_name: string;
+    credits: string;
+    category: string;
+};
+
+const NEW_PROGRAM = "__NEW_PROGRAM__";
+
 const TABS: Array<{ key: Tab; label: string; icon: typeof BarChart3 }> = [
     { key: "overview", label: "Overview", icon: BarChart3 },
     { key: "students", label: "Students", icon: Users },
     { key: "audits", label: "Audits", icon: FileText },
+    { key: "programs", label: "Programs", icon: BookOpen },
     { key: "admins", label: "Admin Accounts", icon: Shield },
 ];
+
+function normalizeCourseCode(value: string): string {
+    return value.trim().toUpperCase().replace(/\s+/g, "");
+}
+
+function toEditableProgramRows(rows: ProgramCourse[]): EditableProgramCourse[] {
+    return rows.map((row) => ({
+        course_code: row.course_code,
+        course_name: row.course_name,
+        credits: String(row.credits),
+        category: row.category,
+    }));
+}
 
 export default function AdminPage() {
     const router = useRouter();
@@ -78,12 +103,83 @@ export default function AdminPage() {
     const [students, setStudents] = useState<AdminStudent[]>([]);
     const [audits, setAudits] = useState<AdminAudit[]>([]);
     const [admins, setAdmins] = useState<string[]>([]);
+    const [allPrograms, setAllPrograms] = useState<ProgramCourse[]>([]);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedAudit, setExpandedAudit] = useState<string | null>(null);
     const [newAdminId, setNewAdminId] = useState("");
     const [newAdminPassword, setNewAdminPassword] = useState("");
     const [adminActionError, setAdminActionError] = useState<string | null>(null);
+
+    const [selectedProgramCode, setSelectedProgramCode] = useState<string>(NEW_PROGRAM);
+    const [programEditorCode, setProgramEditorCode] = useState("");
+    const [programEditorRows, setProgramEditorRows] = useState<EditableProgramCourse[]>([]);
+    const [programActionError, setProgramActionError] = useState<string | null>(null);
+    const [programActionSuccess, setProgramActionSuccess] = useState<string | null>(null);
+    const selectedProgramCodeRef = useRef(selectedProgramCode);
+
+    useEffect(() => {
+        selectedProgramCodeRef.current = selectedProgramCode;
+    }, [selectedProgramCode]);
+
+    const programCodes = useMemo(
+        () => Array.from(new Set(allPrograms.map((row) => row.program_code))).sort(),
+        [allPrograms]
+    );
+
+    const filteredStudents = students.filter((student) => {
+        const search = searchQuery.toLowerCase();
+        return [student.email, student.full_name, student.student_id, student.program]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(search));
+    });
+
+    const loadProgramEditor = (rows: ProgramCourse[], programCode: string) => {
+        const filtered = rows
+            .filter((row) => row.program_code === programCode)
+            .sort((a, b) => a.course_code.localeCompare(b.course_code));
+
+        setSelectedProgramCode(programCode);
+        setProgramEditorCode(programCode);
+        setProgramEditorRows(toEditableProgramRows(filtered));
+        setProgramActionError(null);
+        setProgramActionSuccess(null);
+    };
+
+    const startNewProgramEditor = () => {
+        setSelectedProgramCode(NEW_PROGRAM);
+        setProgramEditorCode("");
+        setProgramEditorRows([]);
+        setProgramActionError(null);
+        setProgramActionSuccess(null);
+    };
+
+    const reloadPrograms = async (preferredProgramCode?: string) => {
+        const result = await api.listPrograms();
+        if (!result.success) {
+            setProgramActionError(result.error || "Failed to load programs.");
+            return false;
+        }
+
+        const rows = ((result.data as ProgramCourse[] | null) ?? []).map((row) => ({
+            ...row,
+            program_code: String(row.program_code || "").toUpperCase(),
+            course_code: String(row.course_code || "").toUpperCase(),
+        }));
+
+        setAllPrograms(rows);
+
+        const nextCode = preferredProgramCode && rows.some((row) => row.program_code === preferredProgramCode)
+            ? preferredProgramCode
+            : rows[0]?.program_code;
+
+        if (nextCode) {
+            loadProgramEditor(rows, nextCode);
+        } else {
+            startNewProgramEditor();
+        }
+        return true;
+    };
 
     useEffect(() => {
         if (!hasAdminToken) {
@@ -107,7 +203,9 @@ export default function AdminPage() {
                         ? await api.listStudents()
                         : activeTab === "audits"
                             ? await api.listAdminAudits()
-                            : await api.listAdmins();
+                            : activeTab === "programs"
+                                ? await api.listPrograms()
+                                : await api.listAdmins();
 
             if (cancelled) return;
 
@@ -128,6 +226,25 @@ export default function AdminPage() {
                 setStudents((result.data as AdminStudent[] | null) ?? []);
             } else if (activeTab === "audits") {
                 setAudits((result.data as AdminAudit[] | null) ?? []);
+            } else if (activeTab === "programs") {
+                const rows = ((result.data as ProgramCourse[] | null) ?? []).map((row) => ({
+                    ...row,
+                    program_code: String(row.program_code || "").toUpperCase(),
+                    course_code: String(row.course_code || "").toUpperCase(),
+                }));
+                setAllPrograms(rows);
+
+                const currentProgramCode = selectedProgramCodeRef.current;
+                const nextCode =
+                    currentProgramCode !== NEW_PROGRAM && rows.some((row) => row.program_code === currentProgramCode)
+                        ? currentProgramCode
+                        : rows[0]?.program_code;
+
+                if (nextCode) {
+                    loadProgramEditor(rows, nextCode);
+                } else {
+                    startNewProgramEditor();
+                }
             } else {
                 setAdmins((result.data as string[] | null) ?? []);
             }
@@ -177,16 +294,96 @@ export default function AdminPage() {
         setAdmins((current) => current.filter((entry) => entry !== adminId));
     };
 
+    const handleProgramRowChange = (
+        index: number,
+        field: keyof EditableProgramCourse,
+        value: string
+    ) => {
+        setProgramEditorRows((current) =>
+            current.map((row, rowIndex) => (rowIndex === index ? { ...row, [field]: value } : row))
+        );
+        setProgramActionError(null);
+        setProgramActionSuccess(null);
+    };
+
+    const handleAddProgramRow = () => {
+        setProgramEditorRows((current) => [
+            ...current,
+            { course_code: "", course_name: "", credits: "3", category: "" },
+        ]);
+        setProgramActionError(null);
+        setProgramActionSuccess(null);
+    };
+
+    const handleRemoveProgramRow = (index: number) => {
+        setProgramEditorRows((current) => current.filter((_, rowIndex) => rowIndex !== index));
+        setProgramActionError(null);
+        setProgramActionSuccess(null);
+    };
+
+    const handleSaveProgram = async () => {
+        const normalizedProgramCode = programEditorCode.trim().toUpperCase();
+        if (!normalizedProgramCode) {
+            setProgramActionError("Program code is required.");
+            return;
+        }
+
+        if (programEditorRows.length === 0) {
+            setProgramActionError("Add at least one course, or delete the program.");
+            return;
+        }
+
+        const payload: ProgramCourse[] = [];
+        for (const row of programEditorRows) {
+            const courseCode = normalizeCourseCode(row.course_code);
+            const courseName = row.course_name.trim();
+            const category = row.category.trim();
+            const credits = Number(row.credits);
+
+            if (!courseCode || !courseName || !category || !Number.isFinite(credits)) {
+                setProgramActionError("Every course row needs code, name, category, and numeric credits.");
+                return;
+            }
+
+            payload.push({
+                program_code: normalizedProgramCode,
+                course_code: courseCode,
+                course_name: courseName,
+                credits,
+                category,
+            });
+        }
+
+        const result = await api.updatePrograms(payload as unknown as Record<string, unknown>[]);
+        if (!result.success) {
+            setProgramActionError(result.error || "Failed to save program courses.");
+            return;
+        }
+
+        const reloaded = await reloadPrograms(normalizedProgramCode);
+        if (reloaded) {
+            setProgramActionSuccess(`Saved ${payload.length} course${payload.length === 1 ? "" : "s"} for ${normalizedProgramCode}.`);
+        }
+    };
+
+    const handleDeleteProgram = async () => {
+        const normalizedProgramCode = programEditorCode.trim().toUpperCase();
+        if (!normalizedProgramCode) return;
+        if (!window.confirm(`Delete all courses for ${normalizedProgramCode}?`)) return;
+
+        const result = await api.deleteProgram(normalizedProgramCode);
+        if (!result.success) {
+            setProgramActionError(result.error || "Failed to delete program.");
+            return;
+        }
+
+        setProgramActionSuccess(`Deleted program ${normalizedProgramCode}.`);
+        await reloadPrograms();
+    };
+
     if (!hasAdminToken) {
         return <div className="min-h-screen bg-gray-50 dark:bg-gray-950" />;
     }
-
-    const filteredStudents = students.filter((student) => {
-        const search = searchQuery.toLowerCase();
-        return [student.email, student.full_name, student.student_id, student.program]
-            .filter(Boolean)
-            .some((value) => String(value).toLowerCase().includes(search));
-    });
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex text-neutral-900 dark:text-gray-100">
@@ -244,7 +441,7 @@ export default function AdminPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="max-w-5xl mx-auto"
+                        className="max-w-6xl mx-auto"
                     >
                         {activeTab === "overview" && stats && (
                             <div className="space-y-6">
@@ -284,7 +481,7 @@ export default function AdminPage() {
 
                         {activeTab === "students" && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center justify-between mb-8 gap-4">
                                     <h1 className="text-3xl font-bold text-neutral-900 dark:text-gray-100">Registered Students</h1>
                                     <div className="relative">
                                         <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -406,6 +603,170 @@ export default function AdminPage() {
                                             )}
                                         </tbody>
                                     </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === "programs" && (
+                            <div className="space-y-6">
+                                <div className="flex items-start justify-between gap-6 mb-4">
+                                    <div>
+                                        <h1 className="text-3xl font-bold text-neutral-900 dark:text-gray-100">Program Courses</h1>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            View and manage the course list for each academic program.
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={startNewProgramEditor}
+                                            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
+                                        >
+                                            <Plus className="w-4 h-4" /> New Program
+                                        </button>
+                                        {selectedProgramCode !== NEW_PROGRAM && (
+                                            <button
+                                                onClick={handleDeleteProgram}
+                                                className="inline-flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-800 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                            >
+                                                <Trash2 className="w-4 h-4" /> Delete Program
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 space-y-5">
+                                    <div className="grid grid-cols-1 md:grid-cols-[240px,1fr] gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Existing Programs</label>
+                                            <select
+                                                value={selectedProgramCode}
+                                                onChange={(event) => {
+                                                    const nextCode = event.target.value;
+                                                    if (nextCode === NEW_PROGRAM) {
+                                                        startNewProgramEditor();
+                                                        return;
+                                                    }
+                                                    loadProgramEditor(allPrograms, nextCode);
+                                                }}
+                                                className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                                            >
+                                                {programCodes.map((code) => (
+                                                    <option key={code} value={code}>{code}</option>
+                                                ))}
+                                                <option value={NEW_PROGRAM}>Create new program...</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Program Code</label>
+                                            <input
+                                                value={programEditorCode}
+                                                onChange={(event) => {
+                                                    setProgramEditorCode(event.target.value.toUpperCase());
+                                                    setProgramActionError(null);
+                                                    setProgramActionSuccess(null);
+                                                }}
+                                                placeholder="e.g. CSE or BBA"
+                                                className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {programActionError && (
+                                        <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+                                            {programActionError}
+                                        </div>
+                                    )}
+                                    {programActionSuccess && (
+                                        <div className="rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 px-4 py-3 text-sm text-green-700 dark:text-green-400">
+                                            {programActionSuccess}
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center justify-between gap-3">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            {programEditorRows.length} course{programEditorRows.length === 1 ? "" : "s"} in current editor.
+                                        </p>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={handleAddProgramRow}
+                                                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
+                                            >
+                                                <Plus className="w-4 h-4" /> Add Course
+                                            </button>
+                                            <button
+                                                onClick={handleSaveProgram}
+                                                className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 dark:bg-gray-100 px-4 py-2 text-sm font-medium text-white dark:text-gray-900 hover:bg-neutral-800 dark:hover:bg-gray-200"
+                                            >
+                                                <Save className="w-4 h-4" /> Save Program
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-800">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                                    <th className="px-4 py-3">Course Code</th>
+                                                    <th className="px-4 py-3">Course Name</th>
+                                                    <th className="px-4 py-3">Credits</th>
+                                                    <th className="px-4 py-3">Category</th>
+                                                    <th className="px-4 py-3 text-right">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-900">
+                                                {programEditorRows.map((row, index) => (
+                                                    <tr key={`${index}-${row.course_code}-${row.category}`}>
+                                                        <td className="px-4 py-3">
+                                                            <input
+                                                                value={row.course_code}
+                                                                onChange={(event) => handleProgramRowChange(index, "course_code", event.target.value.toUpperCase())}
+                                                                className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                                                            />
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            <input
+                                                                value={row.course_name}
+                                                                onChange={(event) => handleProgramRowChange(index, "course_name", event.target.value)}
+                                                                className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                                                            />
+                                                        </td>
+                                                        <td className="px-4 py-3 w-28">
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                step="1"
+                                                                value={row.credits}
+                                                                onChange={(event) => handleProgramRowChange(index, "credits", event.target.value)}
+                                                                className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                                                            />
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            <input
+                                                                value={row.category}
+                                                                onChange={(event) => handleProgramRowChange(index, "category", event.target.value)}
+                                                                className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                                                            />
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right">
+                                                            <button
+                                                                onClick={() => handleRemoveProgramRow(index)}
+                                                                className="inline-flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-800 px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" /> Remove
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {programEditorRows.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={5} className="px-6 py-10 text-center text-sm text-gray-400 dark:text-gray-500">
+                                                            No courses in this editor yet. Add a course to begin.
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         )}

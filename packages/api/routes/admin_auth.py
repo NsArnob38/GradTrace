@@ -176,7 +176,8 @@ async def get_audits(authorization: str = Header(...)):
 @router.get("/admins")
 async def list_admins(authorization: str = Header(...)):
     _require_admin_token(authorization)
-        
+
+    settings = get_settings()
     admins = []
     if settings.admin_credentials:
         for entry in settings.admin_credentials.split(","):
@@ -263,3 +264,16 @@ async def update_programs(entries: list[ProgramEntry] = Body(...), authorization
         db.table("programs").insert(payload).execute()
 
     return {"updated": len(payload)}
+
+
+@router.delete("/programs/{program_code}")
+async def delete_program(program_code: str, authorization: str = Header(...)):
+    _require_admin_token(authorization)
+
+    normalized = program_code.strip().upper()
+    if not normalized:
+        raise HTTPException(status_code=400, detail="Program code is required")
+
+    db = get_supabase_admin()
+    db.table("programs").delete().eq("program_code", normalized).execute()
+    return {"deleted": True, "program_code": normalized}

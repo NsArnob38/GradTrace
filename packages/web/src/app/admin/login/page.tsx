@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
 export default function AdminLogin() {
     const [adminId, setAdminId] = useState("");
     const [password, setPassword] = useState("");
@@ -20,7 +18,7 @@ export default function AdminLogin() {
         setLoading(true);
 
         try {
-            const res = await fetch(`${API_URL}/admin/login`, {
+            const res = await fetch(`/api/admin/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ admin_id: adminId, password }),

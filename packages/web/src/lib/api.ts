@@ -38,6 +38,7 @@ async function request<T = unknown>(
     options: RequestInit = {}
 ): Promise<ApiEnvelope<T>> {
     const isAdminPath = path.startsWith("/admin");
+    const requestUrl = isAdminPath ? `/api${path}` : `${API_URL}${path}`;
     const token = isAdminPath ? getAdminToken() : await getToken();
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -46,7 +47,7 @@ async function request<T = unknown>(
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
     try {
-        const res = await fetch(`${API_URL}${path}`, { ...options, headers });
+        const res = await fetch(requestUrl, { ...options, headers });
         const json = (await res.json().catch(() => ({ detail: res.statusText }))) as unknown;
         
         if (!res.ok) {
@@ -188,6 +189,7 @@ export const api = {
     listPrograms: () => request("/admin/programs"),
     updatePrograms: (entries: Record<string, unknown>[]) =>
         request("/admin/programs", { method: "PUT", body: JSON.stringify(entries) }),
+    deleteProgram: (program_code: string) => request(`/admin/programs/${encodeURIComponent(program_code)}`, { method: "DELETE" }),
 
     // MCP (proxied through Next.js API route)
     mcpCall: async <T = unknown>(method: "initialize" | "tools/list" | "tools/call", params: Record<string, unknown> = {}) => {
