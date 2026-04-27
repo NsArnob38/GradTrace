@@ -7,7 +7,7 @@ Local-first mobile app for GradeTrace using the existing Supabase auth, API, and
 - Supabase login with persistent session
 - Real audit history from backend
 - Audit detail view (levels, issues, roadmap)
-- AI planner using MCP tools (`plan_path`, `optimize_graduation_path`, `simulate_changes`)
+- Smart planner using MCP tools (`plan_path`, `optimize_graduation_path`, `simulate_changes`)
 - Transcript upload from camera, gallery, or file picker (PDF/CSV/image)
 
 ## Setup

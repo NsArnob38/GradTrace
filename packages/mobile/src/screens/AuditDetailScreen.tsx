@@ -271,7 +271,7 @@ export function AuditDetailScreen(): React.JSX.Element {
         {([
           ["roadmap", "Roadmap"],
           ["completed", "Completed"],
-          ["mcp", "MCP Planner"],
+          ["mcp", "Smart Planner"],
         ] as Array<[DetailTab, string]>).map(([key, label]) => (
           <Pressable
             key={key}
@@ -427,7 +427,7 @@ export function AuditDetailScreen(): React.JSX.Element {
         <View style={styles.mcpCard}>
           <View style={styles.mcpTitleRow}>
             <Ionicons name="sparkles" size={16} color="#67E8F9" />
-            <Text style={styles.cardTitle}>MCP Planner</Text>
+            <Text style={styles.cardTitle}>Smart Planner</Text>
           </View>
           <Text style={styles.caption}>
             {level3.eligible

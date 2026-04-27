@@ -983,7 +983,7 @@ export default function AuditReportPage({ params }: { params: Promise<{ id: stri
                                 <div className="mt-5 pt-4 border-t border-border dark:border-gray-800">
                                     <div className="flex items-center justify-between gap-3 mb-3">
                                         <div>
-                                            <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> AI Planner</p>
+                                            <p className="text-xs text-muted dark:text-gray-400 uppercase tracking-wider font-medium flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> Smart Planner</p>
                                             <p className="text-sm text-muted dark:text-gray-400">Choose a strategy and generate a realistic next-term course plan.</p>
                                         </div>
                                         <button
